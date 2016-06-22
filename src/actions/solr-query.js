@@ -47,11 +47,20 @@ const facetFields = (fields) => fields
 	.map((field) => `facet.field=${encodeURIComponent(field.field)}`)
 	.join("&");
 
+const buildSort = (sortFields) => sortFields
+	.filter((sortField) => sortField.value)
+	.map((sortField) => `${sortField.field} ${sortField.value}`)
+	.join(",");
 
-const solrQuery = (url, fields) => {
+const solrQuery = (url, fields, sortFields) => {
 	const queryParam = encodeURIComponent(buildQuery(fields));
+	const sortParam = encodeURIComponent(buildSort(sortFields));
 	const facetFieldParam = facetFields(fields);
-	return `${url}?q=${queryParam.length > 0 ? queryParam : "*:*"}&facet=on&wt=json${facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}`;
+
+	return `${url}?q=${queryParam.length > 0 ? queryParam : "*:*"}` +
+		`${sortParam.length > 0 ? `&sort=${sortParam}` : ""}` +
+		`${facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}` +
+		"&facet=on&wt=json";
 };
 
 export default solrQuery;

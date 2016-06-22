@@ -12,7 +12,7 @@ const fields = [
 
 const sortFields = [
 	{label: "Name", field: "koppelnaam_s"},
-	{label: "Date of birth", field: "birthDate_i"},
+	{label: "Date of birth", field: "birthDate_i", value: "asc"},
 	{label: "Date of death", field: "deathDate_i"}
 ];
 

@@ -24,10 +24,10 @@ const submitQuery = (field, value, isSortField) => (dispatch, getState) => {
 		searchFields.map((searchField) => searchField.field === field ? {...searchField, value: value} : searchField) : searchFields;
 
 	const newSortFields = isSortField ?
-		sortFields.map((sortField) => sortField.field === field ? {...sortField, value: value} : sortField) : sortFields;
+		sortFields.map((sortField) => sortField.field === field ? {...sortField, value: value} : {...sortField, value: null}) : sortFields;
 
 	server.performXhr({
-		url: solrQuery(url, newFields)
+		url: solrQuery(url, newFields, newSortFields)
 	}, (err, resp) => {
 		if (resp.statusCode >= 200 && resp.statusCode < 300) {
 			dispatch({type: "SET_RESULTS", data: JSON.parse(resp.body)});
