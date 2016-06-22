@@ -17,17 +17,21 @@ const initializeQuery = (url, searchFields, sortFields) => (dispatch) => {
 	});
 };
 
-const submitQuery = (field, value) => (dispatch, getState) => {
+const submitQuery = (field, value, isSortField) => (dispatch, getState) => {
 	const { queries } = getState();
-	const { searchFields, url } = queries;
-	const newFields = searchFields.map((searchField) => searchField.field === field ? {...searchField, value: value} : searchField);
+	const { sortFields, searchFields, url } = queries;
+	const newFields = !isSortField ?
+		searchFields.map((searchField) => searchField.field === field ? {...searchField, value: value} : searchField) : searchFields;
+
+	const newSortFields = isSortField ?
+		sortFields.map((sortField) => sortField.field === field ? {...sortField, value: value} : sortField) : sortFields;
 
 	server.performXhr({
 		url: solrQuery(url, newFields)
 	}, (err, resp) => {
 		if (resp.statusCode >= 200 && resp.statusCode < 300) {
 			dispatch({type: "SET_RESULTS", data: JSON.parse(resp.body)});
-			dispatch({type: "SET_FIELD_VALUES", newFields: newFields});
+			dispatch({type: "SET_FIELD_VALUES", newFields: newFields, newSortFields: newSortFields});
 		} else {
 			console.warn("Server error: ", resp.statusCode);
 		}
@@ -37,5 +41,6 @@ const submitQuery = (field, value) => (dispatch, getState) => {
 export default {
 	onInit: (url, fields, sortFields) => store.dispatch(initializeQuery(url, fields, sortFields)),
 
-	onFieldChange: (field, value) => store.dispatch(submitQuery(field, value))
+	onFieldChange: (field, value, isSortField = false) => store.dispatch(submitQuery(field, value, isSortField))
+
 };

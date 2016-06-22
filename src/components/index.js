@@ -68,7 +68,7 @@ class SolrFacetedSearch extends React.Component {
 					<div className={cx({"panel": bootstrapCss, "panel-default": bootstrapCss})}>
 						<div className={cx({"panel-heading": bootstrapCss})}>
 							<ResultCount bootstrapCss={bootstrapCss} numFound={results.numFound} />
-							<SortComponent bootstrapCss={bootstrapCss} sortFields={sortFields} />
+							<SortComponent bootstrapCss={bootstrapCss} onChange={onFieldChange} sortFields={sortFields} />
 						</div>
 						<ul className={cx({"list-group": bootstrapCss})}>
 							{results.docs.map((doc, i) => <Result bootstrapCss={bootstrapCss} doc={doc} fields={this.props.searchFields} key={i} onSelect={this.props.onSelectDoc} />)}

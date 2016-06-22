@@ -10,7 +10,7 @@ export default function(state=initialState, action) {
 		case "SET_QUERY_FIELDS":
 			return {...state, searchFields: action.searchFields, sortFields: action.sortFields, url: action.url};
 		case "SET_FIELD_VALUES":
-			return {...state, searchFields: action.newFields};
+			return {...state, searchFields: action.newFields, sortFields: action.newSortFields};
 	}
 
 	return state;

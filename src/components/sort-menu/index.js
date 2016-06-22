@@ -28,6 +28,15 @@ class SortMenu extends React.Component {
 		}
 	}
 
+	onSelect(sortField) {
+		const foundIdx = this.props.sortFields.indexOf(sortField);
+		if (foundIdx < 0) {
+			this.props.onChange(sortField, "asc", true);
+		} else {
+			this.props.onChange(sortField, null, true);
+		}
+	}
+
 	handleDocumentClick(ev) {
 		const { isOpen } = this.state;
 		if (isOpen && !ReactDOM.findDOMNode(this).contains(ev.target)) {
@@ -41,26 +50,28 @@ class SortMenu extends React.Component {
 		const { bootstrapCss, sortFields } = this.props;
 		if (sortFields.length === 0) { return null; }
 
+		const value = sortFields.find((sf) => sf.value);
+
 		return (
 			<span className={cx({"dropdown": bootstrapCss, "pull-right": bootstrapCss, "open": this.state.isOpen})}>
 				<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "dropdown-toggle": bootstrapCss})}
 					onClick={this.toggleSelect.bind(this)}>
-					- select sort - <span className="caret"></span>
+					{value ? value.label : "- select sort -"} <span className="caret"></span>
 				</button>
 
 				<ul className="dropdown-menu">
 					{sortFields.map((sortField, i) => (
 						<li key={i}>
-							<a onClick={() => { console.log(sortField); this.toggleSelect(); }}>{sortField.label}</a>
+							<a onClick={() => { this.onSelect(sortField.field); this.toggleSelect(); }}>{sortField.label}</a>
 						</li>
 					))}
-					{/* value ? (
+					{value ? (
 						<li>
-							<a onClick={() => { onClear(); this.toggleSelect();}}>
+							<a onClick={() => { this.props.onChange(value.field, null, true); this.toggleSelect();}}>
 								- clear -
 							</a>
 						</li>
-					) : null*/}
+					) : null}
 				</ul>
 
 			</span>
@@ -70,6 +81,7 @@ class SortMenu extends React.Component {
 
 SortMenu.propTypes = {
 	bootstrapCss: React.PropTypes.bool,
+	onChange: React.PropTypes.func,
 	sortFields: React.PropTypes.array
 };
 
