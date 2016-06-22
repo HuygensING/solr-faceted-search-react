@@ -53,27 +53,40 @@ class SortMenu extends React.Component {
 		const value = sortFields.find((sf) => sf.value);
 
 		return (
-			<span className={cx({"dropdown": bootstrapCss, "pull-right": bootstrapCss, "open": this.state.isOpen})}>
-				<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "dropdown-toggle": bootstrapCss})}
-					onClick={this.toggleSelect.bind(this)}>
-					{value ? value.label : "- select sort -"} <span className="caret"></span>
-				</button>
+			<span className={cx({"pull-right": bootstrapCss})}>
+				<span className={cx({"dropdown": bootstrapCss, "open": this.state.isOpen})}>
+					<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "dropdown-toggle": bootstrapCss})}
+						onClick={this.toggleSelect.bind(this)}>
+						{value ? value.label : "- select sort -"} <span className="caret"></span>
+					</button>
 
-				<ul className="dropdown-menu">
-					{sortFields.map((sortField, i) => (
-						<li key={i}>
-							<a onClick={() => { this.onSelect(sortField.field); this.toggleSelect(); }}>{sortField.label}</a>
-						</li>
-					))}
-					{value ? (
-						<li>
-							<a onClick={() => { this.props.onChange(value.field, null, true); this.toggleSelect();}}>
-								- clear -
-							</a>
-						</li>
-					) : null}
-				</ul>
-
+					<ul className="dropdown-menu">
+						{sortFields.map((sortField, i) => (
+							<li key={i}>
+								<a onClick={() => { this.onSelect(sortField.field); this.toggleSelect(); }}>{sortField.label}</a>
+							</li>
+						))}
+						{value ? (
+							<li>
+								<a onClick={() => { this.props.onChange(value.field, null, true); this.toggleSelect();}}>
+									- clear -
+								</a>
+							</li>
+						) : null}
+					</ul>
+				</span>
+				{value ? (
+					<span className={cx({"btn-group": bootstrapCss})}>
+						<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: value.value === "asc"})}
+							onClick={() => this.props.onChange(value.field, "asc", true) }>
+							asc
+						</button>
+						<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: value.value === "desc"})}
+							onClick={() => this.props.onChange(value.field, "desc", true)}>
+							desc
+						</button>
+					</span>
+				) : null}
 			</span>
 		);
 	}
