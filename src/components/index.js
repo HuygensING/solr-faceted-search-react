@@ -6,6 +6,7 @@ import ListFacet from "./list-facet";
 import Result from "./results/result";
 import RangeFacet from "./range-facet";
 import CountLabel from "./results/count-label";
+import SortMenu from "./sort-menu";
 
 import store from "../reducers/store";
 
@@ -23,7 +24,7 @@ class SolrFacetedSearch extends React.Component {
 
 	componentDidMount() {
 		this.unsubscribe = store.subscribe(this.updateState.bind(this));
-		onInit(this.props.solrUrl, this.props.searchFields);
+		onInit(this.props.solrUrl, this.props.searchFields, this.props.sortFields);
 	}
 
 	componentWillUnmount() {
@@ -37,9 +38,10 @@ class SolrFacetedSearch extends React.Component {
 
 	render() {
 		const { queries, results } = this.state;
-		const { searchFields } = queries;
+		const { searchFields, sortFields } = queries;
 		const { customComponents, bootstrapCss } = this.props;
 		const ResultCount = customComponents.results.resultCount;
+		const SortComponent = customComponents.sortFields.menu;
 
 		return (
 			<div className={cx("solr-faceted-search", {"container": bootstrapCss, "col-md-12": bootstrapCss})}>
@@ -48,7 +50,7 @@ class SolrFacetedSearch extends React.Component {
 				<div className={cx({"col-md-3": bootstrapCss})}>
 					<div className={cx({"panel": bootstrapCss, "panel-default": bootstrapCss})}>
 						<header className={cx({"panel-heading": bootstrapCss})}>
-							<h3>Search</h3>
+							<label>Search</label>
 						</header>
 
 						<ul className={cx("solr-search-fields", {"list-group": bootstrapCss})}>
@@ -64,7 +66,10 @@ class SolrFacetedSearch extends React.Component {
 
 				<div className={cx("solr-search-results", {"col-md-9": bootstrapCss})}>
 					<div className={cx({"panel": bootstrapCss, "panel-default": bootstrapCss})}>
-						<ResultCount bootstrapCss={bootstrapCss} numFound={results.numFound} />
+						<div className={cx({"panel-heading": bootstrapCss})}>
+							<ResultCount bootstrapCss={bootstrapCss} numFound={results.numFound} />
+							<SortComponent bootstrapCss={bootstrapCss} sortFields={sortFields} />
+						</div>
 						<ul className={cx({"list-group": bootstrapCss})}>
 							{results.docs.map((doc, i) => <Result bootstrapCss={bootstrapCss} doc={doc} fields={this.props.searchFields} key={i} onSelect={this.props.onSelectDoc} />)}
 						</ul>
@@ -86,11 +91,15 @@ SolrFacetedSearch.defaultProps = {
 		results: {
 			result: Result,
 			resultCount: CountLabel
+		},
+		sortFields: {
+			menu: SortMenu
 		}
 	},
 	searchFields: [
 		{type: "text", field: "*"}
-	]
+	],
+	sortFields: []
 };
 
 SolrFacetedSearch.propTypes = {
@@ -98,8 +107,9 @@ SolrFacetedSearch.propTypes = {
 	customComponents: React.PropTypes.object,
 	onSelectDoc: React.PropTypes.func.isRequired,
 	resultCountLabels: React.PropTypes.object,
-	searchFields: React.PropTypes.array.isRequired,
-	solrUrl: React.PropTypes.string.isRequired
+	searchFields: React.PropTypes.array,
+	solrUrl: React.PropTypes.string.isRequired,
+	sortFields: React.PropTypes.array
 };
 
 export default SolrFacetedSearch;

@@ -2,12 +2,12 @@ import store from "../reducers/store";
 import server from "./server";
 import solrQuery from "./solr-query";
 
-const initializeQuery = (url, searchFields) => (dispatch) => {
-	dispatch({type: "SET_QUERY_FIELDS", url: url, searchFields: searchFields});
+const initializeQuery = (url, searchFields, sortFields) => (dispatch) => {
+	dispatch({type: "SET_QUERY_FIELDS", url: url, searchFields: searchFields, sortFields: sortFields});
 
 
 	server.performXhr({
-		url: solrQuery(url, searchFields)
+		url: solrQuery(url, searchFields, sortFields)
 	}, (err, resp) => {
 		if (resp.statusCode >= 200 && resp.statusCode < 300) {
 			dispatch({type: "SET_RESULTS", data: JSON.parse(resp.body)});
@@ -35,7 +35,7 @@ const submitQuery = (field, value) => (dispatch, getState) => {
 };
 
 export default {
-	onInit: (url, fields) => store.dispatch(initializeQuery(url, fields)),
+	onInit: (url, fields, sortFields) => store.dispatch(initializeQuery(url, fields, sortFields)),
 
 	onFieldChange: (field, value) => store.dispatch(submitQuery(field, value))
 };
