@@ -1,9 +1,3 @@
-/*
-http://localhost:8983/solr/cnwpersons/select?facet=on&facet.field=combinedDomains_ss&facet.field=deathDate_i&indent=on&q=*:*&rows=1&wt=json
-http://localhost:8983/solr/cnwpersons/schema
-http://localhost:3000/solr/cnwpersons/select?q=maria*%20AND%20(domains_ss:%22Geneeskunde%22+OR+domains_ss:%22Onderwijs%22)+AND+(networkDomains_ss:%22Verwey%22)%20AND%20(deathDate_i:[1933%20TO%201938])&wt=json&facet=on&facet.field=deathDate_i
-*/
-
 const rangeFacetToQueryFilter = (field) => {
 	const filters = field.value || [];
 	if (filters.length < 2) {
@@ -52,7 +46,7 @@ const buildSort = (sortFields) => sortFields
 	.map((sortField) => `${sortField.field} ${sortField.value}`)
 	.join(",");
 
-const solrQuery = (url, fields, sortFields) => {
+const solrQuery = (url, fields, sortFields, rows) => {
 	const queryParam = encodeURIComponent(buildQuery(fields));
 	const sortParam = encodeURIComponent(buildSort(sortFields));
 	const facetFieldParam = facetFields(fields);
@@ -60,6 +54,7 @@ const solrQuery = (url, fields, sortFields) => {
 	return `${url}?q=${queryParam.length > 0 ? queryParam : "*:*"}` +
 		`${sortParam.length > 0 ? `&sort=${sortParam}` : ""}` +
 		`${facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}` +
+		`&rows=${rows}` +
 		"&facet=on&wt=json";
 };
 
