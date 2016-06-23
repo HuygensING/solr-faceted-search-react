@@ -9,7 +9,7 @@ import ResultHeader from "./results/header";
 import ResultList from "./results/list";
 import ResultContainer from "./results/container";
 
-
+import SearchFieldContainer from "./search-field-container";
 
 import RangeFacet from "./range-facet";
 import CountLabel from "./results/count-label";
@@ -49,31 +49,28 @@ class SolrFacetedSearch extends React.Component {
 		const { queries, results } = this.state;
 		const { searchFields, sortFields } = queries;
 		const { customComponents, bootstrapCss } = this.props;
+
+
 		const ResultCount = customComponents.results.resultCount;
 		const ResultHeaderComponent = customComponents.results.header;
 		const ResultContainerComponent = customComponents.results.container;
+		const SearchFieldContainerComponent = customComponents.searchFields.container;
 		const ResultListComponent = customComponents.results.list;
+
 
 		const SortComponent = customComponents.sortFields.menu;
 
+
 		return (
 			<div className={cx("solr-faceted-search", {"container": bootstrapCss, "col-md-12": bootstrapCss})}>
-				<div className={cx({"col-md-3": bootstrapCss})}>
-					<div className={cx({"panel": bootstrapCss, "panel-default": bootstrapCss})}>
-						<header className={cx({"panel-heading": bootstrapCss})}>
-							<label>Search</label>
-						</header>
-
-						<ul className={cx("solr-search-fields", {"list-group": bootstrapCss})}>
-							{searchFields.map((searchField, i) => {
-								const { type, field } = searchField;
-								const SearchComponent = customComponents.searchFields[type];
-								const facets = type === "list-facet" || type === "range-facet" ? results.facets[field] || [] : null;
-								return <SearchComponent key={i} {...this.state} {...searchField} bootstrapCss={bootstrapCss} facets={facets} onChange={onFieldChange} />;
-							})}
-						</ul>
-					</div>
-				</div>
+				<SearchFieldContainerComponent bootstrapCss={bootstrapCss}>
+					{searchFields.map((searchField, i) => {
+						const { type, field } = searchField;
+						const SearchComponent = customComponents.searchFields[type];
+						const facets = type === "list-facet" || type === "range-facet" ? results.facets[field] || [] : null;
+						return <SearchComponent key={i} {...this.state} {...searchField} bootstrapCss={bootstrapCss} facets={facets} onChange={onFieldChange} />;
+					})}
+				</SearchFieldContainerComponent>
 
 				<ResultContainerComponent bootstrapCss={bootstrapCss}>
 					<ResultHeaderComponent bootstrapCss={bootstrapCss}>
@@ -96,7 +93,8 @@ SolrFacetedSearch.defaultProps = {
 		searchFields: {
 			text: TextSearch,
 			"list-facet": ListFacet,
-			"range-facet": RangeFacet
+			"range-facet": RangeFacet,
+			container: SearchFieldContainer
 		},
 		results: {
 			result: Result,
