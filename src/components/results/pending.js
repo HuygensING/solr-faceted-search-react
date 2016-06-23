@@ -1,11 +1,9 @@
 import React from "react";
-import cx from "classnames";
 
 class Pending extends React.Component {
 
 	render() {
-		const { bootstrapCss } = this.props;
-		return <div className={cx({"panel-body": bootstrapCss})}>Waiting for results</div>;
+		return <span>Waiting for results</span>;
 	}
 }
 

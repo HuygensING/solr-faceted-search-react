@@ -1,3 +1,7 @@
+a {
+	cursor: pointer;
+}
+
 .list-facet > ul {
 	overflow-y: auto;
 	height: 200px;

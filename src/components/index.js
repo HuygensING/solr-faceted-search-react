@@ -9,6 +9,7 @@ import ResultHeader from "./results/header";
 import ResultList from "./results/list";
 import ResultPending from "./results/pending";
 import ResultContainer from "./results/container";
+import ResultPagination from "./results/pagination";
 
 import SearchFieldContainer from "./search-field-container";
 
@@ -19,7 +20,12 @@ import SortMenu from "./sort-menu";
 
 import store from "../reducers/store";
 
-import { onInit, onSearchFieldChange, onSortFieldChange } from "../actions";
+import {
+	onInit,
+	onSearchFieldChange,
+	onSortFieldChange,
+	onPageChange
+} from "../actions";
 
 
 
@@ -33,7 +39,7 @@ class SolrFacetedSearch extends React.Component {
 
 	componentDidMount() {
 		this.unsubscribe = store.subscribe(this.updateState.bind(this));
-		onInit(this.props.solrUrl, this.props.searchFields, this.props.sortFields, this.props.rows);
+		onInit(this.props.solrUrl, this.props.searchFields, this.props.sortFields, this.props.rows, this.props.pageStrategy);
 	}
 
 	componentWillUnmount() {
@@ -60,20 +66,14 @@ class SolrFacetedSearch extends React.Component {
 		const ResultHeaderComponent = customComponents.results.header;
 		const ResultListComponent = customComponents.results.list;
 		const ResultPendingComponent = customComponents.results.pending;
+		const PaginateComponent = customComponents.results.paginate;
+
 		const SortComponent = customComponents.sortFields.menu;
+		const resultPending = results.pending ? (<ResultPendingComponent bootstrapCss={bootstrapCss} />) : null;
 
-		const resultBody = results.pending
-			? (<ResultPendingComponent bootstrapCss={bootstrapCss} />)
-			: (<ResultListComponent bootstrapCss={bootstrapCss}>
-					{results.docs.map((doc, i) => (
-						<Result bootstrapCss={bootstrapCss}
-							doc={doc}
-							fields={this.props.searchFields}
-							key={i}
-							onSelect={this.props.onSelectDoc} />
-					))}
-				</ResultListComponent>);
-
+		const pagination = query.pageStrategy === "paginate" ?
+			<PaginateComponent {...this.state} bootstrapCss={bootstrapCss} onChange={onPageChange} /> :
+			null;
 
 		return (
 			<div className={cx("solr-faceted-search", {"container": bootstrapCss, "col-md-12": bootstrapCss})}>
@@ -94,9 +94,20 @@ class SolrFacetedSearch extends React.Component {
 				<ResultContainerComponent bootstrapCss={bootstrapCss}>
 					<ResultHeaderComponent bootstrapCss={bootstrapCss}>
 						<ResultCount bootstrapCss={bootstrapCss} numFound={results.numFound} />
+						{resultPending}
 						<SortComponent bootstrapCss={bootstrapCss} onChange={onSortFieldChange} sortFields={sortFields} />
 					</ResultHeaderComponent>
-					{resultBody}
+					{pagination}
+					<ResultListComponent bootstrapCss={bootstrapCss}>
+						{results.docs.map((doc, i) => (
+							<Result bootstrapCss={bootstrapCss}
+								doc={doc}
+								fields={this.props.searchFields}
+								key={i}
+								onSelect={this.props.onSelectDoc} />
+						))}
+					</ResultListComponent>
+					{pagination}
 				</ResultContainerComponent>
 			</div>
 		);
@@ -118,12 +129,14 @@ SolrFacetedSearch.defaultProps = {
 			header: ResultHeader,
 			list: ResultList,
 			container: ResultContainer,
-			pending: ResultPending
+			pending: ResultPending,
+			paginate: ResultPagination
 		},
 		sortFields: {
 			menu: SortMenu
 		}
 	},
+	pageStrategy: "paginate",
 	rows: 20,
 	searchFields: [
 		{type: "text", field: "*"}
@@ -135,6 +148,7 @@ SolrFacetedSearch.propTypes = {
 	bootstrapCss: React.PropTypes.bool,
 	customComponents: React.PropTypes.object,
 	onSelectDoc: React.PropTypes.func.isRequired,
+	pageStrategy: React.PropTypes.string,
 	resultCountLabels: React.PropTypes.object,
 	rows: React.PropTypes.number,
 	searchFields: React.PropTypes.array,

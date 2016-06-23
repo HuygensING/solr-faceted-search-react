@@ -47,7 +47,7 @@ const buildSort = (sortFields) => sortFields
 	.join(",");
 
 const solrQuery = (query) => {
-	const { url, searchFields, sortFields, rows } = query;
+	const { url, searchFields, sortFields, rows, start } = query;
 
 	const queryParam = encodeURIComponent(buildQuery(searchFields));
 	const sortParam = encodeURIComponent(buildSort(sortFields));
@@ -57,6 +57,7 @@ const solrQuery = (query) => {
 		`${sortParam.length > 0 ? `&sort=${sortParam}` : ""}` +
 		`${facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}` +
 		`&rows=${rows}` +
+		(start === null ? "" : `&start=${start}`) +
 		"&facet=on&wt=json";
 };
 

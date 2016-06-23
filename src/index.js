@@ -12,10 +12,16 @@ const fields = [
 
 const sortFields = [
 	{label: "Name", field: "koppelnaam_s"},
-	{label: "Date of birth", field: "birthDate_i", value: "asc"},
+	{label: "Date of birth", field: "birthDate_i"},
 	{label: "Date of death", field: "deathDate_i"}
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
-	ReactDOM.render(<Search bootstrapCss={true} onSelectDoc={(doc) => console.log(doc)} searchFields={fields} solrUrl="/solr/cnwpersons/select" sortFields={sortFields} />, document.getElementById("app"));
+	ReactDOM.render(
+		<Search bootstrapCss={true}
+			onSelectDoc={(doc) => console.log(doc)}
+			searchFields={fields}
+			solrUrl="/solr/cnwpersons/select"
+			sortFields={sortFields}
+		/>, document.getElementById("app"));
 });
