@@ -46,20 +46,20 @@ class SolrFacetedSearch extends React.Component {
 
 
 	render() {
-		const { queries, results } = this.state;
-		const { searchFields, sortFields } = queries;
+		const { query, results } = this.state;
+
+		const { searchFields, sortFields } = query;
+
 		const { customComponents, bootstrapCss } = this.props;
 
+		const SearchFieldContainerComponent = customComponents.searchFields.container;
+		const ResultContainerComponent = customComponents.results.container;
 
 		const ResultCount = customComponents.results.resultCount;
 		const ResultHeaderComponent = customComponents.results.header;
-		const ResultContainerComponent = customComponents.results.container;
-		const SearchFieldContainerComponent = customComponents.searchFields.container;
 		const ResultListComponent = customComponents.results.list;
 
-
 		const SortComponent = customComponents.sortFields.menu;
-
 
 		return (
 			<div className={cx("solr-faceted-search", {"container": bootstrapCss, "col-md-12": bootstrapCss})}>
@@ -84,7 +84,13 @@ class SolrFacetedSearch extends React.Component {
 					</ResultHeaderComponent>
 
 					<ResultListComponent bootstrapCss={bootstrapCss}>
-						{results.docs.map((doc, i) => <Result bootstrapCss={bootstrapCss} doc={doc} fields={this.props.searchFields} key={i} onSelect={this.props.onSelectDoc} />)}
+						{results.docs.map((doc, i) => (
+							<Result bootstrapCss={bootstrapCss}
+								doc={doc}
+								fields={this.props.searchFields}
+								key={i}
+								onSelect={this.props.onSelectDoc} />
+						))}
 					</ResultListComponent>
 				</ResultContainerComponent>
 			</div>

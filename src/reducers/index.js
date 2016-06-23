@@ -1,8 +1,8 @@
-import queries from "./queries";
+import query from "./query";
 import results from "./results";
 
 
 export default {
-	queries: queries,
+	query: query,
 	results: results
 };
