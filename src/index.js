@@ -1,6 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Search from "./components";
+import {
+	SolrFacetedSearch,
+	solrStore,
+	solrActions
+} from "./index1";
+
 
 const fields = [
 	{label: "All text fields", field: "*", type: "text"},
@@ -16,12 +21,22 @@ const sortFields = [
 	{label: "Date of death", field: "deathDate_i"}
 ];
 
-document.addEventListener("DOMContentLoaded", () => {
+
+solrStore.subscribe(() => {
 	ReactDOM.render(
-		<Search bootstrapCss={true}
-			onSelectDoc={(doc) => console.log(doc)}
-			searchFields={fields}
-			solrUrl="/solr/cnwpersons/select"
-			sortFields={sortFields}
-		/>, document.getElementById("app"));
+		<div>
+			<SolrFacetedSearch
+				{...solrActions}
+				{...solrStore.getState()}
+				bootstrapCss={true}
+				onSelectDoc={(doc) => console.log(doc)}
+			/>
+		</div>, document.getElementById("app"));
 });
+
+
+document.addEventListener("DOMContentLoaded", () =>
+
+	solrActions.onInit("/solr/cnwpersons/select", fields, sortFields, 20, "paginate")
+
+);
