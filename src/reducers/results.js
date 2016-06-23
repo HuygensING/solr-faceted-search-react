@@ -1,7 +1,8 @@
 const initialState = {
 	facets: {},
 	docs: [],
-	numFound: 0
+	numFound: 0,
+	pending: false
 };
 
 
@@ -12,7 +13,12 @@ export default function(state=initialState, action) {
 				...state,
 				docs: action.data.response.docs,
 				numFound: action.data.response.numFound,
-				facets: action.data.facet_counts.facet_fields
+				facets: action.data.facet_counts.facet_fields,
+				pending: false
+			};
+		case "SET_RESULTS_PENDING":
+			return {
+				...state, pending: true
 			};
 	}
 

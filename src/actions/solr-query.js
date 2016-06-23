@@ -46,10 +46,12 @@ const buildSort = (sortFields) => sortFields
 	.map((sortField) => `${sortField.field} ${sortField.value}`)
 	.join(",");
 
-const solrQuery = (url, fields, sortFields, rows) => {
-	const queryParam = encodeURIComponent(buildQuery(fields));
+const solrQuery = (query) => {
+	const { url, searchFields, sortFields, rows } = query;
+
+	const queryParam = encodeURIComponent(buildQuery(searchFields));
 	const sortParam = encodeURIComponent(buildSort(sortFields));
-	const facetFieldParam = facetFields(fields);
+	const facetFieldParam = facetFields(searchFields);
 
 	return `${url}?q=${queryParam.length > 0 ? queryParam : "*:*"}` +
 		`${sortParam.length > 0 ? `&sort=${sortParam}` : ""}` +

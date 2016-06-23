@@ -7,6 +7,7 @@ import ListFacet from "./list-facet";
 import Result from "./results/result";
 import ResultHeader from "./results/header";
 import ResultList from "./results/list";
+import ResultPending from "./results/pending";
 import ResultContainer from "./results/container";
 
 import SearchFieldContainer from "./search-field-container";
@@ -58,8 +59,21 @@ class SolrFacetedSearch extends React.Component {
 		const ResultCount = customComponents.results.resultCount;
 		const ResultHeaderComponent = customComponents.results.header;
 		const ResultListComponent = customComponents.results.list;
-
+		const ResultPendingComponent = customComponents.results.pending;
 		const SortComponent = customComponents.sortFields.menu;
+
+		const resultBody = results.pending
+			? (<ResultPendingComponent bootstrapCss={bootstrapCss} />)
+			: (<ResultListComponent bootstrapCss={bootstrapCss}>
+					{results.docs.map((doc, i) => (
+						<Result bootstrapCss={bootstrapCss}
+							doc={doc}
+							fields={this.props.searchFields}
+							key={i}
+							onSelect={this.props.onSelectDoc} />
+					))}
+				</ResultListComponent>);
+
 
 		return (
 			<div className={cx("solr-faceted-search", {"container": bootstrapCss, "col-md-12": bootstrapCss})}>
@@ -82,16 +96,7 @@ class SolrFacetedSearch extends React.Component {
 						<ResultCount bootstrapCss={bootstrapCss} numFound={results.numFound} />
 						<SortComponent bootstrapCss={bootstrapCss} onChange={onSortFieldChange} sortFields={sortFields} />
 					</ResultHeaderComponent>
-
-					<ResultListComponent bootstrapCss={bootstrapCss}>
-						{results.docs.map((doc, i) => (
-							<Result bootstrapCss={bootstrapCss}
-								doc={doc}
-								fields={this.props.searchFields}
-								key={i}
-								onSelect={this.props.onSelectDoc} />
-						))}
-					</ResultListComponent>
+					{resultBody}
 				</ResultContainerComponent>
 			</div>
 		);
@@ -112,7 +117,8 @@ SolrFacetedSearch.defaultProps = {
 			resultCount: CountLabel,
 			header: ResultHeader,
 			list: ResultList,
-			container: ResultContainer
+			container: ResultContainer,
+			pending: ResultPending
 		},
 		sortFields: {
 			menu: SortMenu

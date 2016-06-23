@@ -3,12 +3,10 @@ import server from "./server";
 import solrQuery from "./solr-query";
 
 const submitQuery = (query, dispatch) => {
-	const { url, sortFields, searchFields, rows } = query;
-
 	dispatch({type: "SET_RESULTS_PENDING"});
 
 	server.performXhr({
-		url: solrQuery(url, searchFields, sortFields, rows)
+		url: solrQuery(query)
 	}, (err, resp) => {
 		if (resp.statusCode >= 200 && resp.statusCode < 300) {
 			dispatch({type: "SET_RESULTS", data: JSON.parse(resp.body)});
