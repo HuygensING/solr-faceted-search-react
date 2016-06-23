@@ -18,7 +18,7 @@ import SortMenu from "./sort-menu";
 
 import store from "../reducers/store";
 
-import { onInit, onFieldChange } from "../actions";
+import { onInit, onSearchFieldChange, onSortFieldChange } from "../actions";
 
 
 
@@ -68,14 +68,19 @@ class SolrFacetedSearch extends React.Component {
 						const { type, field } = searchField;
 						const SearchComponent = customComponents.searchFields[type];
 						const facets = type === "list-facet" || type === "range-facet" ? results.facets[field] || [] : null;
-						return <SearchComponent key={i} {...this.state} {...searchField} bootstrapCss={bootstrapCss} facets={facets} onChange={onFieldChange} />;
+						return (<SearchComponent
+							key={i} {...this.state} {...searchField}
+							bootstrapCss={bootstrapCss}
+							facets={facets}
+							onChange={onSearchFieldChange} />
+						);
 					})}
 				</SearchFieldContainerComponent>
 
 				<ResultContainerComponent bootstrapCss={bootstrapCss}>
 					<ResultHeaderComponent bootstrapCss={bootstrapCss}>
 						<ResultCount bootstrapCss={bootstrapCss} numFound={results.numFound} />
-						<SortComponent bootstrapCss={bootstrapCss} onChange={onFieldChange} sortFields={sortFields} />
+						<SortComponent bootstrapCss={bootstrapCss} onChange={onSortFieldChange} sortFields={sortFields} />
 					</ResultHeaderComponent>
 
 					<ResultListComponent bootstrapCss={bootstrapCss}>

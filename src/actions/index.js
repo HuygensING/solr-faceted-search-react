@@ -52,8 +52,7 @@ const updateSortField = (field, value) => (dispatch, getState) => {
 export default {
 	onInit: (url, fields, sortFields, rows) => store.dispatch(initializeQuery(url, fields, sortFields, rows)),
 
-	onFieldChange: (field, value, isSortField = false) => isSortField ?
-		store.dispatch(updateSortField(field, value)) :
-		store.dispatch(updateSearchField(field, value))
+	onSearchFieldChange: (field, value) => store.dispatch(updateSearchField(field, value)),
 
+	onSortFieldChange: (field, value) => store.dispatch(updateSortField(field, value))
 };
