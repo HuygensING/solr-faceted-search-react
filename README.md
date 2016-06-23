@@ -6,7 +6,7 @@ import {
 	SolrFacetedSearch,
 	solrStore,
 	solrActions
-} from "./index1";
+} from "solr-faceted-search-react";
 
 
 const fields = [
