@@ -4,8 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {
 	SolrFacetedSearch,
-	solrStore,
-	solrActions
+	SolrClient
 } from "solr-faceted-search-react";
 
 
@@ -24,22 +23,30 @@ const sortFields = [
 ];
 
 
-solrStore.subscribe(() => {
+function doRender(state, handlers) {
+	console.log(handlers);
 	ReactDOM.render(
 		<div>
 			<SolrFacetedSearch
-				{...solrActions}
-				{...solrStore.getState()}
+				{...state}
+				{...handlers}
 				bootstrapCss={true}
 				onSelectDoc={(doc) => console.log(doc)}
 			/>
 		</div>, document.getElementById("app"));
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+	const client = new SolrClient({
+		url: "http://localhost:8983/solr/cnwpersons/select",
+		searchFields: fields,
+		sortFields: sortFields,
+		rows: 20,
+		pageStrategy: "paginate",
+		onChange: (state, handlers) => doRender(state, handlers)
+	}).initialize();
+
+	client.setCurrentPage(5);
 });
-
-
-document.addEventListener("DOMContentLoaded", () =>
-
-	solrActions.onInit("http://localhost:8983/solr/cnwpersons/select", fields, sortFields, 20, "paginate")
-
-);
 ```

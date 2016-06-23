@@ -19,8 +19,6 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "redux": "^3.5.2",
-    "redux-thunk": "^2.1.0",
     "xhr": "^2.2.0"
   },
   "devDependencies": {

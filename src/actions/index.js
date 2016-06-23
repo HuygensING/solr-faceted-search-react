@@ -1,6 +1,7 @@
-import store from "../reducers/store";
 import server from "./server";
 import solrQuery from "./solr-query";
+import queryReducer from "../reducers/query";
+import resultReducer from "../reducers/results";
 
 const submitQuery = (query, dispatch) => {
 	dispatch({type: "SET_RESULTS_PENDING"});
@@ -16,60 +17,81 @@ const submitQuery = (query, dispatch) => {
 	});
 };
 
-const initializeQuery = (url, searchFields, sortFields, rows, pageStrategy) => (dispatch) => {
-	const query = {
-		url: url,
-		searchFields: searchFields,
-		sortFields: sortFields,
-		rows: rows,
-		pageStrategy: pageStrategy,
-		start: pageStrategy === "paginate" ? 0 : null
-	};
 
-	dispatch({type: "SET_QUERY_FIELDS", ...query});
+class SolrClient {
+	constructor(settings) {
+		const { onChange } = settings;
 
-	submitQuery(query, dispatch);
-};
+		this.onChange = onChange;
+		this.state = {
+			query: settings,
+			results: {
+				facets: [],
+				docs: [],
+				numFound: 0
+			}
+		};
+	}
 
+	initialize() {
+		const { query } = this.state;
+		const { pageStrategy } = query;
+		const payload = {type: "SET_QUERY_FIELDS",
+			...query, start: pageStrategy === "paginate" ? 0 : null
+		};
 
-const updateSearchField = (field, value) => (dispatch, getState) => {
-	const { query } = getState();
-	const { searchFields, pageStrategy } = query;
-	const newFields = searchFields
-		.map((searchField) => searchField.field === field ? {...searchField, value: value} : searchField);
+		this.sendQuery(queryReducer(this.state.query, payload));
 
-	dispatch({type: "SET_SEARCH_FIELDS", newFields: newFields});
+		return this;
+	}
 
-	submitQuery({...query, searchFields: newFields, start: pageStrategy === "paginate" ? 0 : null}, dispatch);
-};
+	sendQuery(query = this.state.query) {
+		this.state.query = query;
+		submitQuery(query, (action) => {
+			this.state.results = resultReducer(this.state.results, action);
+			this.onChange(this.state, this.getHandlers());
+		});
+	}
 
-const updateSortField = (field, value) => (dispatch, getState) => {
-	const { query } = getState();
-	const { sortFields, pageStrategy } = query;
-	const newSortFields = sortFields
-		.map((sortField) => sortField.field === field ? {...sortField, value: value} : {...sortField, value: null});
+	setCurrentPage(page) {
+		const { query } = this.state;
+		const { rows } = query;
+		const payload = {type: "SET_START", newStart: page * rows};
 
-	dispatch({type: "SET_SORT_FIELDS", newSortFields: newSortFields});
+		this.sendQuery(queryReducer(this.state.query, payload));
 
-	submitQuery({...query, sortFields: newSortFields, start: pageStrategy === "paginate" ? 0 : null}, dispatch);
-};
+	}
 
-const updateStart = (page) => (dispatch, getState) => {
-	const { query } = getState();
-	const { rows } = query;
+	setSearchFieldValue(field, value) {
+		const { query } = this.state;
+		const { searchFields } = query;
+		const newFields = searchFields
+			.map((searchField) => searchField.field === field ? {...searchField, value: value} : searchField);
 
-	dispatch({type: "SET_START", newStart: page * rows});
+		const payload = {type: "SET_SEARCH_FIELDS", newFields: newFields};
 
-	submitQuery({...query, start: page * rows}, dispatch);
+		this.sendQuery(queryReducer(this.state.query, payload));
+	}
 
-};
+	setSortFieldValue(field, value) {
+		const { query } = this.state;
+		const { sortFields } = query;
+		const newSortFields = sortFields
+			.map((sortField) => sortField.field === field ? {...sortField, value: value} : {...sortField, value: null});
 
-export default {
-	onInit: (url, fields, sortFields, rows, pageStrategy) => store.dispatch(initializeQuery(url, fields, sortFields, rows, pageStrategy)),
+		const payload = {type: "SET_SORT_FIELDS", newSortFields: newSortFields};
+		this.sendQuery(queryReducer(this.state.query, payload));
+	}
 
-	onSearchFieldChange: (field, value) => store.dispatch(updateSearchField(field, value)),
+	getHandlers() {
+		return {
+			onSortFieldChange: this.setSortFieldValue.bind(this),
+			onSearchFieldChange: this.setSearchFieldValue.bind(this),
+			onPageChange: this.setCurrentPage.bind(this)
+		};
+	}
+}
 
-	onSortFieldChange: (field, value) => store.dispatch(updateSortField(field, value)),
-
-	onPageChange: (page) => store.dispatch(updateStart(page))
+export {
+	SolrClient
 };
