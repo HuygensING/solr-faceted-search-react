@@ -31,9 +31,9 @@ class SortMenu extends React.Component {
 	onSelect(sortField) {
 		const foundIdx = this.props.sortFields.indexOf(sortField);
 		if (foundIdx < 0) {
-			this.props.onChange(sortField, "asc", true);
+			this.props.onChange(sortField, "asc");
 		} else {
-			this.props.onChange(sortField, null, true);
+			this.props.onChange(sortField, null);
 		}
 	}
 
@@ -68,7 +68,7 @@ class SortMenu extends React.Component {
 						))}
 						{value ? (
 							<li>
-								<a onClick={() => { this.props.onChange(value.field, null, true); this.toggleSelect();}}>
+								<a onClick={() => { this.props.onChange(value.field, null); this.toggleSelect();}}>
 									- clear -
 								</a>
 							</li>
@@ -78,11 +78,11 @@ class SortMenu extends React.Component {
 				{value ? (
 					<span className={cx({"btn-group": bootstrapCss})}>
 						<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: value.value === "asc"})}
-							onClick={() => this.props.onChange(value.field, "asc", true) }>
+							onClick={() => this.props.onChange(value.field, "asc") }>
 							asc
 						</button>
 						<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: value.value === "desc"})}
-							onClick={() => this.props.onChange(value.field, "desc", true)}>
+							onClick={() => this.props.onChange(value.field, "desc")}>
 							desc
 						</button>
 					</span>

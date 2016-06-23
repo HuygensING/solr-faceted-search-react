@@ -37,7 +37,10 @@ class RangeFacet extends React.Component {
 
 
 		const newState = {
-			value: [ Math.floor(range.lowerLimit * realRange) + lowerBound, Math.floor(range.upperLimit * realRange) + lowerBound]
+			value: [
+				Math.floor(range.lowerLimit * realRange) + lowerBound,
+				Math.ceil(range.upperLimit * realRange) + lowerBound
+			]
 		};
 
 		if(range.refresh) {
