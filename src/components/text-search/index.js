@@ -41,7 +41,7 @@ class TextSearch extends React.Component {
 				<input
 					onChange={this.handleInputChange.bind(this)}
 					onKeyDown={this.handleInputKeyDown.bind(this)}
-					value={this.state.value} />
+					value={this.state.value || ""} />
 				<button onClick={this.handleSubmit.bind(this)}>
 					Search
 				</button>

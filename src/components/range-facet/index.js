@@ -83,7 +83,7 @@ class RangeFacet extends React.Component {
 				</header>
 				<RangeSlider lowerLimit={this.getPercentage(range, filterRange[0])} onChange={this.onRangeChange.bind(this)} upperLimit={this.getPercentage(range, filterRange[1])} />
 				<label>{filterRange[0]}</label>
-				<label>{filterRange[1]}</label>
+				<label className={cx({"pull-right": bootstrapCss})}>{filterRange[1]}</label>
 			</li>
 		);
 	}

@@ -4,6 +4,21 @@ import ReactDOM from "react-dom";
 const MOUSE_DOWN = 0;
 const MOUSE_UP = 1;
 
+const styles = {
+	slider: {
+		"MozUserSelect": "none",
+		"WebkitUserSelect": "none",
+		"MsUserSelect": "none",
+		"UserSelect": "none",
+		"WebkitUserDrag": "none",
+		"userDrag": "none",
+		"cursor": "pointer",
+		width: "100%",
+		stroke: "#f1ebe6",
+		fill: "#f1ebe6"
+	}
+};
+
 class RangeSlider extends React.Component {
 	constructor(props) {
 		super(props);
@@ -132,7 +147,7 @@ class RangeSlider extends React.Component {
 	render() {
 		let keys = this.state.hoverState === "lowerLimit" ? ["upperLimit", "lowerLimit"] : ["lowerLimit", "upperLimit"];
 		return (
-			<svg className="facet-range-slider"
+			<svg className="facet-range-slider" style={styles.slider}
 				viewBox="0 0 400 26">
 
 				<path d="M0 0 L 0 26 Z" fill="transparent" />

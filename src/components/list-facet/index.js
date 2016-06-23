@@ -4,7 +4,6 @@ import cx from "classnames";
 import CheckedIcon from "../icons/checked";
 import UncheckedIcon from "../icons/unchecked";
 
-
 class ListFacet extends React.Component {
 
 
@@ -35,9 +34,9 @@ class ListFacet extends React.Component {
 						</button>
 					</h3>
 				</header>
-				<ul className={cx({"list-group": bootstrapCss})}>
+				<ul className={cx({"list-group": bootstrapCss})} style={{overflowY: "auto", maxHeight: "200px"}}>
 					{facetValues.map((facetValue, i) => (
-						<li className={cx({"list-group-item": bootstrapCss})} key={i} onClick={() => this.handleClick(facetValue)}>
+						<li className={cx({"list-group-item": bootstrapCss})} key={i} onClick={() => this.handleClick(facetValue)} style={{cursor: "pointer"}}>
 							{value.indexOf(facetValue) > -1 ? <CheckedIcon /> : <UncheckedIcon />} {facetValue} ({facetCounts[i]})
 						</li>
 					))}
