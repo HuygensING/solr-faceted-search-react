@@ -93,6 +93,8 @@ In the quick start example, the SolrClient state is tightly coupled to the rende
 In many cases however, you might want to manage state yourself at application scope. 
 The example below illustrates how you can delegate state management to your own reducer/store using redux.
 
+(To rebuild the webapp with redux follow the [building the redux example](#building-the-redux-example).)
+
 Given this reducer:
 ```javascript
 // solr-reducer.js
@@ -152,6 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 ```
+To rebuild the webapp with redux follow the [building the redux example](#building-the-redux-example).
+
 
 ## Injecting custom components
 
@@ -465,4 +469,24 @@ Load this index.html in a browser
 </html>
 ```
 
-Back to [quick start](#quick-start)
+This is enough for the [quick start](#quick-start).
+
+### Building the redux example
+
+To run the redux integration example install redux:
+```bash
+	$ npm i redux --save
+```
+
+And rebuild like this:
+```bash
+	$ ./node_modules/.bin/browserify index.js \
+		--require react \
+		--require react-dom \
+		--require redux \
+		--transform [ babelify --presets [ react es2015 stage-2 ] ] \
+		--standalone FacetedSearch \
+		-o web.js
+```
+
+Back to the [redux example](#redux-integration)
