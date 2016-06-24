@@ -33,6 +33,7 @@ Installing this module:
 The source below assumes succesfully [setting up solr](#setting-up-solr).
 
 ```javascript
+// index.js
 import React from "react";
 import ReactDOM from "react-dom";
 import {
