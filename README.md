@@ -23,13 +23,13 @@ This quick start assumes a solr installation as documented in the section on [se
 
 Instructions on building a tiny web project from this example can be found [here](#building)
 
-##### Installing this module
+Installing this module:
 
 ```bash
 	$ npm i git+https://github.com/renevanderark/solr-react-client-work-in-progress --save
 ```
 
-##### The source below assumes succesfully [setting up solr](#setting-up-solr).
+The source below assumes succesfully [setting up solr](#setting-up-solr).
 
 ```javascript
 import React from "react";
