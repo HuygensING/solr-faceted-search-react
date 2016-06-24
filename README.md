@@ -1,5 +1,7 @@
 # Solr faceted search client and react component pack 
 
+[![Build Status](https://travis-ci.org/renevanderark/solr-react-client-work-in-progress.svg?branch=master)](https://travis-ci.org/renevanderark/solr-react-client-work-in-progress)
+
 ## Table of Contents
 
 1. [Quick start](#quick-start)
