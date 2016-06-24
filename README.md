@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// The client class
 	new SolrClient({
 		// The solr index url to be queried by the client
-		url: "http://localhost:8983/solr/cnwpersons/select",
+		url: "http://localhost:8983/solr/gettingstarted/select",
 		searchFields: fields,
 		sortFields: sortFields,
 
@@ -80,9 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 ```
 
-
-
-
 ## Injecting custom components
 
 ## Redux integration
@@ -95,13 +92,13 @@ Download solr from the [download page](http://lucene.apache.org/solr/mirrors-sol
 
 ### Start solr with CORS
 
-##### Navigate to the solr dir (assuming solr-6.1.0).
+Navigate to the solr dir (assuming solr-6.1.0).
 
 ```bash
 	$ cd solr-6.1.0
 ```
 
-##### Edit the file server/etc/webdefault.xml and add these lines just above the last closing tag
+Edit the file server/etc/webdefault.xml and add these lines just above the last closing tag
 
 ```xml
 	<!-- enable CORS filters (only suitable for local testing, use a proxy for real world application) -->
@@ -117,7 +114,7 @@ Download solr from the [download page](http://lucene.apache.org/solr/mirrors-sol
 </web-app>
 ```
 
-##### Start the solr server
+Start the solr server
 
 ```bash
 	$ bin/solr start -e cloud -noprompt
@@ -128,27 +125,34 @@ Download solr from the [download page](http://lucene.apache.org/solr/mirrors-sol
 Get sample data from this project
 
 ```bash
-	$ wget https://raw.githubusercontent.com/renevanderark/solr-react-client-work-in-progress/master/sample-data.json
+	$ wget https://raw.githubusercontent.com/renevanderark/solr-react-client-work-in-progress/master/solr-sample-data.json
 ```
 
+Load the sample data into the gettingstarted index of solr
+
+```bash
+	$ bin/post -c gettingstarted solr-sample-data.json
+```
+
+Check whether the data was succesfully indexed by navigation to [http://localhost:8983/solr/gettingstarted/select?q=*:*&wt=json](http://localhost:8983/solr/gettingstarted/select?q=*:*&wt=json)
 
 ## Building
 
 These are just some minimal steps for building a webapp from the quick start with browserify.
 
-##### Install react
+Install react
 
 ```bash
 	$ npm i react react-dom --save
 ```
 
-##### For this example install
+For this example install
 
 ```
 	$ npm i browserify babelify babel-preset-react babel-preset-react babel-preset-es2015 --save-dev
 ```
 
-##### Run browserify
+Run browserify
 ```bash
 	$ ./node_modules/.bin/browserify index.js \
 		--require react \
@@ -158,7 +162,7 @@ These are just some minimal steps for building a webapp from the quick start wit
 		-o web.js
 ```
 
-##### Load this index.html in a browser
+Load this index.html in a browser
 
 ```html
 <!DOCTYPE html>
