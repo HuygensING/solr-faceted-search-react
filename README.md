@@ -128,7 +128,7 @@ Download solr from the [download page](http://lucene.apache.org/solr/mirrors-sol
 Get sample data from this project
 
 ```bash
-	$ wget 
+	$ wget https://raw.githubusercontent.com/renevanderark/solr-react-client-work-in-progress/master/sample-data.json
 ```
 
 
