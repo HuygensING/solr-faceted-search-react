@@ -2,13 +2,11 @@
 
 ## Table of Contents
 
-1. [Quick start][quickstart]
+1. [Quick start](#quick-start)
 2. 
 
 
-## 1 [quickstart]: Quick Start
-
-fooasd
+## Quick Start
 
 
 ```javascript
