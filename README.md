@@ -8,9 +8,15 @@
 
 3. [Injecting custom components](#injecting-custom-components)
 
-4. [Setting up Solr](#setting-up-solr)
+4. [Bootstrap CSS class names](#bootstrap-css-class-names)
 
-5. [Building](#building)
+5. [Using the SolrClient class](#using-the-solrclient-class)
+
+6. [Component Lego](#component-lego)
+
+7. [Setting up Solr](#setting-up-solr)
+
+8. [Building](#building)
 
 ## Quick Start
 
@@ -144,6 +150,217 @@ document.addEventListener("DOMContentLoaded", () => {
 
 ## Injecting custom components
 
+The SolrFacetedSearch component provides the facility of overriding its inner components. 
+
+The default components are exposed through the defaultComponentPack, which has the following structure:
+
+```javascript
+{
+	searchFields: {
+		text: TextSearch, // src/components/text-search/index.js
+		"list-facet": ListFacet, // src/components/list-facet/index.js
+		"range-facet": RangeFacet,  // src/components/range-facet/index.js
+		container: SearchFieldContainer //  src/components/search-field-container.js
+	},
+	results: {
+		result: Result, // src/components/results/result.js
+		resultCount: CountLabel, // src/components/results/count-label.js
+		header: ResultHeader, // src/components/results/header.js
+		list: ResultList, // src/components/results/list.js
+		container: ResultContainer, // src/components/results/container.js
+		pending: ResultPending, // src/components/results/pending.js
+		paginate: ResultPagination // src/components/results/pagination.js
+	},
+	sortFields: {
+		menu: SortMenu // src/components/sort-menu/index.js
+	}
+}
+```
+
+To override a default component an altered version of the defaultComponentPack can be passed to the SolrFacetedSearch component
+via the customComponents prop:
+```javascript
+import {
+	SolrFacetedSearch,
+	SolrClient,
+	defaultComponentPack
+} from "solr-faceted-search-react";
+
+// Custom class for the result component
+class MyResult extends React.Component {
+	render() {
+		return (<li>
+			<a onClick={() => this.props.onSelect(this.props.doc)}>MyResult: {this.props.doc.name_t}</a>
+		</li>)
+	}
+}
+
+// Create a custom component pack from the default component pack
+const myComponentPack = {
+	...defaultComponentPack,
+	results: {
+		...defaultComponentPack.results,
+		result: MyResult
+	}
+}
+
+// Render with the custom result component
+ReactDOM.render(
+	<SolrFacetedSearch
+		{...state}
+		{...handlers}
+		bootstrapCss={true}
+		customComponents={myComponentPack}
+		onSelectDoc={(doc) => console.log(doc)}
+	/>,
+	document.getElementById("app")
+);
+```
+
+When overriding a component it is worthwhile to look at the prop signature (and usage) in the source of the default component.
+
+## Bootstrap CSS class names
+
+The SolrFacetedSearch component and its default components optionally add bootstrap class names to the rendered dom elements.
+
+To turn this off, render the SolrFacetedSearch component with the property bootstrapCss set to false.
+
+```javascript
+ReactDOM.render(
+	<SolrFacetedSearch
+		{...state}
+		{...handlers}
+		bootstrapCss={false}
+		onSelectDoc={(doc) => console.log(doc)}
+	/>,
+	document.getElementById("app")
+);
+```
+
+## Using the SolrClient class
+
+##### Settings passed to the constructor:
+
+```javascript
+{
+	url: "..." // the search url
+	searchFields: [{...}] // the search field configuration
+	sortFields: [{...}] // the sort field configuration
+	onChange: (state, handlers) => {...} // the change handler for query and result state
+	rows: [0-9]+ // [optional] amount of results per page
+	pageStrategy: "paginate" // [optional, defaults to "paginate", currently only supports "paginate"]
+}
+
+```
+
+##### Layout of searchFields:
+```javascript
+	[
+		{
+			label: "All fields", // label of the field
+			field: "*", // field in index (asterisk indicates search in default text field)
+			type: "text" // renders a free input, sends a text filter query
+		},
+		{
+			label: ...
+			field: "name_t" // field in index
+			type: "text",
+			value: "jo*" // [optional: initial text search value]
+		},
+		{
+			label: ...
+			field: "deathDate_i",
+			type: "range-facet", // renders a range slider, sends a range query,
+			value: [1890, 1900] // [optional: initial range value of filter]
+		},
+		{
+			label: ...
+			field: "characteristics_ss",
+			type: "list-facet", // renders a facet list with checkboxes, sends a filter query
+			value: ["Publicist", "Bestuurslid vakvereniging"] // [optional: initial active filters]
+		}
+	]
+```
+Search fields are presented in order of configuration array.
+
+##### Layout of sortFields:
+```javascript
+[
+	{
+		label: "Name", // Label of the field
+		field: "koppelnaam_s" // field in index
+		value: "asc" // [optional: presorts on this field ascendingly]
+	},
+	{
+		label: "Date of birth",
+		field: "birthDate_i",
+		value: "desc" // [optional: presorts on this field descendingly]
+	}
+]
+```
+
+##### Methods
+
+The SolrClient class exposes a number of methods to manipulate its state directly.
+
+Invoking the methods below will trigger a new solr search (and rerender of the SolrFacetedSearch component).
+
+These methods should be called after .initialize() has been invoked.
+
+
+##### Changing the result page:
+
+```javascript
+	solrClient.setCurrentPage(3); // jump to page 3 (humans: 4) of the results
+```
+
+##### Setting active filters on a searchField
+
+```javascript
+	solrClient.setSearchFieldValue("characteristics_ss", ["Publicist", "Bestuurslid vakvereniging"]); // filter on exacly "Publicist" and "Bestuurslid vakvereniging"
+	solrClient.setSearchFieldValue("deathDate_i", [1890, 1900]); // filter on exactly the range 1890-1900
+	solrClient.setSearchFieldValue("name_t", "jo*"); // find all persons with a name starting with "jo"
+```
+
+#### Setting sortations
+```javascript
+	solrClient.setSortFieldValue("name_t", "asc"); // sort by name ascendingly
+	solrClient.setSortFieldValue("birthDate_i", "desc"); // sort by birth date descendingly
+```
+
+## Component Lego
+
+The SolrFacetedSearch component is not actually needed as a wrapper around the components.
+
+If the container classes in the defaultComponentPack do not provide enough flexibility for moving around components, 
+they can be used in a standalone manner.
+
+Note, however, that prop management based on state.query and state.results is then up to the app developer.
+
+Minor example:
+```javascript
+
+	// ...
+
+	const TextSearch = defaultComponentPack.searchFields.text;
+
+	// ...
+
+	ReactDOM.render(
+		<div>
+			<TextSearch 
+				bootstrapCss={false}
+				field="name_t"
+				label="Standalone name field"
+				onChange={solrClient.getHandlers().onSearchFieldChange}
+				value={state.query.searchFields.find((sf) => sf.field === "name_t").value }
+			/>
+			{state.results.docs.map((doc, i) => <div key={i}>{doc.name_t}</div>)}
+		</div>,
+		document.getElementById("app")
+	)
+```
+
 
 
 ## Setting up solr
@@ -211,7 +428,7 @@ Install react
 For this example install
 
 ```
-	$ npm i browserify babelify babel-preset-react babel-preset-react babel-preset-es2015 --save-dev
+	$ npm i browserify babelify babel-preset-react babel-preset-react babel-preset-es2015 babel-preset-stage-2 --save-dev
 ```
 
 Run browserify
@@ -219,7 +436,7 @@ Run browserify
 	$ ./node_modules/.bin/browserify index.js \
 		--require react \
 		--require react-dom \
-		--transform [ babelify --presets [ react es2015 ] ] \
+		--transform [ babelify --presets [ react es2015 stage-2 ] ] \
 		--standalone FacetedSearch \
 		-o web.js
 ```
