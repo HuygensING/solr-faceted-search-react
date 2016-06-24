@@ -32,6 +32,7 @@ class SolrClient {
 			}
 		};
 
+		if (!this.state.query.pageStrategy) { this.state.query.pageStrategy = "paginate"; }
 		if (!this.state.query.rows) { this.state.query.rows = 20; }
 	}
 
