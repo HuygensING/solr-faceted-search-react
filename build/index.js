@@ -693,7 +693,14 @@ var solrQuery = function solrQuery(query) {
 };
 
 exports["default"] = solrQuery;
-module.exports = exports["default"];
+exports.rangeFacetToQueryFilter = rangeFacetToQueryFilter;
+exports.listFacetFieldToQueryFilter = listFacetFieldToQueryFilter;
+exports.textFieldToQueryFilter = textFieldToQueryFilter;
+exports.fieldToQueryFilter = fieldToQueryFilter;
+exports.buildQuery = buildQuery;
+exports.facetFields = facetFields;
+exports.buildSort = buildSort;
+exports.solrQuery = solrQuery;
 
 },{}],13:[function(_dereq_,module,exports){
 "use strict";

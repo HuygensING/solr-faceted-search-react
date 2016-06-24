@@ -11,7 +11,9 @@
     "url": ""
   },
   "scripts": {
-    "start": "scripts/watch.sh"
+    "start": "scripts/watch.sh",
+    "test": "mocha --compilers js:babel/register --recursive test",
+    "test:watch": "nodemon -x \"mocha --compilers js:babel/register --recursive --watch test\" -w test -w build"
   },
   "peerDependencies": {
     "react": ">= 0.14.7 < 16",
@@ -29,6 +31,9 @@
     "derequire": "^2.0.3",
     "eslint": "^1.10.3",
     "eslint-plugin-react": "^3.16.1",
+    "expect": "^1.20.1",
+    "mocha": "^2.5.3",
+    "nodemon": "^1.9.2",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "watchify": "^3.7.0"

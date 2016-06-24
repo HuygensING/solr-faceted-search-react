@@ -62,3 +62,14 @@ const solrQuery = (query) => {
 };
 
 export default solrQuery;
+
+export {
+	rangeFacetToQueryFilter,
+	listFacetFieldToQueryFilter,
+	textFieldToQueryFilter,
+	fieldToQueryFilter,
+	buildQuery,
+	facetFields,
+	buildSort,
+	solrQuery
+};
