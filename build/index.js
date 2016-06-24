@@ -1777,7 +1777,7 @@ var Pagination = (function (_React$Component) {
 					),
 					_react2["default"].createElement(
 						"li",
-						{ className: (0, _classnames2["default"])({ "disabled": currentPage >= pageAmt }), key: "end" },
+						{ className: (0, _classnames2["default"])({ "disabled": currentPage === pageAmt - 1 }), key: "end" },
 						_react2["default"].createElement(
 							"a",
 							{ onClick: this.onPageChange.bind(this, pageAmt - 1) },

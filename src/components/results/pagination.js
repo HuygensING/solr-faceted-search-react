@@ -51,7 +51,7 @@ class Pagination extends React.Component {
 					<li className={cx({"disabled": currentPage + 1 >= pageAmt})} key="next">
 						<a onClick={this.onPageChange.bind(this, currentPage + 1, pageAmt)}>&gt;</a>
 					</li>
-					<li className={cx({"disabled": currentPage >= pageAmt})} key="end">
+					<li className={cx({"disabled": currentPage === pageAmt - 1})} key="end">
 						<a onClick={this.onPageChange.bind(this, pageAmt - 1)}>&gt;&gt;</a>
 					</li>
 				</ul>

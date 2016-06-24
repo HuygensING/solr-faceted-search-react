@@ -16,13 +16,13 @@
 
 7. [Setting up Solr](#setting-up-solr)
 
-8. [Building](#building)
+8. [Building the example webapp](#building-the-example-webapp)
 
 ## Quick Start
 
 This quick start assumes a solr installation as documented in the section on [setting up solr](#setting-up-solr).
 
-Instructions on building a tiny web project from this example can be found [here](#building).
+Instructions on building a tiny web project from this example can be found [here](#building-the-example-webapp).
 
 Installing this module:
 
@@ -80,6 +80,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	}).initialize(); // this will send an initial search, fetching all results from solr
 });
 ```
+
+Instructions on building this example can be found [here](#building-the-example-webapp).
+
+
 
 ## Redux integration
 
@@ -415,7 +419,10 @@ Load the sample data into the gettingstarted index of solr
 
 Check whether the data was succesfully indexed by navigation to [http://localhost:8983/solr/gettingstarted/select?q=*:*&wt=json](http://localhost:8983/solr/gettingstarted/select?q=*:*&wt=json)
 
-## Building
+### Done
+This completes the solr instruction. Back to [quick start](#quick-start)
+
+## Building the example webapp
 
 These are just some minimal steps for building a webapp from the quick start with browserify.
 
@@ -456,3 +463,5 @@ Load this index.html in a browser
 </body>
 </html>
 ```
+
+Back to [quick start](#quick-start)
