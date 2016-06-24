@@ -472,7 +472,12 @@ var submitQuery = function submitQuery(query, dispatch) {
 	dispatch({ type: "SET_RESULTS_PENDING" });
 
 	_server2["default"].performXhr({
-		url: (0, _solrQuery2["default"])(query)
+		url: query.url,
+		data: (0, _solrQuery2["default"])(query),
+		method: "POST",
+		headers: {
+			"Content-type": "application/x-www-form-urlencoded"
+		}
 	}, function (err, resp) {
 		if (resp.statusCode >= 200 && resp.statusCode < 300) {
 			dispatch({ type: "SET_RESULTS", data: JSON.parse(resp.body) });
@@ -675,7 +680,6 @@ var buildSort = function buildSort(sortFields) {
 };
 
 var solrQuery = function solrQuery(query) {
-	var url = query.url;
 	var searchFields = query.searchFields;
 	var sortFields = query.sortFields;
 	var rows = query.rows;
@@ -685,7 +689,7 @@ var solrQuery = function solrQuery(query) {
 	var sortParam = encodeURIComponent(buildSort(sortFields));
 	var facetFieldParam = facetFields(searchFields);
 
-	return url + "?q=" + (queryParam.length > 0 ? queryParam : "*:*") + ("" + (sortParam.length > 0 ? "&sort=" + sortParam : "")) + ("" + (facetFieldParam.length > 0 ? "&" + facetFieldParam : "")) + ("&rows=" + rows) + (start === null ? "" : "&start=" + start) + "&facet=on&wt=json";
+	return "q=" + (queryParam.length > 0 ? queryParam : "*:*") + ("" + (sortParam.length > 0 ? "&sort=" + sortParam : "")) + ("" + (facetFieldParam.length > 0 ? "&" + facetFieldParam : "")) + ("&rows=" + rows) + (start === null ? "" : "&start=" + start) + "&facet=on&wt=json";
 };
 
 exports["default"] = solrQuery;
