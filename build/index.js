@@ -497,6 +497,10 @@ var SolrClient = (function () {
 				numFound: 0
 			}
 		};
+
+		if (!this.state.query.rows) {
+			this.state.query.rows = 20;
+		}
 	}
 
 	_createClass(SolrClient, [{

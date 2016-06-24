@@ -31,6 +31,8 @@ class SolrClient {
 				numFound: 0
 			}
 		};
+
+		if (!this.state.query.rows) { this.state.query.rows = 20; }
 	}
 
 	initialize() {
