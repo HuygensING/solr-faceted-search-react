@@ -181,6 +181,7 @@ The default components are exposed through the defaultComponentPack, which has t
 		container: ResultContainer, // src/components/results/container.js
 		pending: ResultPending, // src/components/results/pending.js
 		paginate: ResultPagination // src/components/results/pagination.js
+		preloadIndicator: PreloadIndicator // src/components/results/preload-indicator.js
 	},
 	sortFields: {
 		menu: SortMenu // src/components/sort-menu/index.js
@@ -259,7 +260,8 @@ ReactDOM.render(
 	sortFields: [{...}] // the sort field configuration,
 	onChange: (state, handlers) => {...} // the change handler for query and result state
 	rows: [1-9][0-9]+ // [optional] amount of results per page
-	pageStrategy: "paginate" // [optional, defaults to "paginate", currently only supports "paginate"]
+	pageStrategy: "paginate" // [optional, defaults to "paginate", other option is "cursor" - in which case you must provide a unique idField from the index]
+	idField: "id" // [optional, but required when using pageStrategy: "cursor"!]
 	facetLimit: [1-9][0-9]+ // [optional, sets the facet.limit param (defaults to -1 = all) ]
 	facetSort: "index" // [optional, how to sort the list facets by default (defaults to solr default)]
 	filters: [{...}] // [optional: static filters passed to search, not visible in user interface]
