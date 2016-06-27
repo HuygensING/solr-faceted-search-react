@@ -78,7 +78,7 @@ const solrQuery = (query) => {
 	const facetLimitParam = `facet.limit=${facetLimit || -1}`;
 	const facetSortParam = `facet.sort=${facetSort || "index"}`;
 
-	const cursorMarkParam = pageStrategy === "cursor" ? `cursorMark=${cursorMark || "*"}` : "";
+	const cursorMarkParam = pageStrategy === "cursor" ? `cursorMark=${encodeURIComponent(cursorMark || "*")}` : "";
 	const idSort = pageStrategy === "cursor" ? [{field: idField, value: "asc"}] : [];
 
 	const sortParam = buildSort(sortFields.concat(idSort));

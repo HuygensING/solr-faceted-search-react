@@ -754,7 +754,7 @@ var solrQuery = function solrQuery(query) {
 	var facetLimitParam = "facet.limit=" + (facetLimit || -1);
 	var facetSortParam = "facet.sort=" + (facetSort || "index");
 
-	var cursorMarkParam = pageStrategy === "cursor" ? "cursorMark=" + (cursorMark || "*") : "";
+	var cursorMarkParam = pageStrategy === "cursor" ? "cursorMark=" + encodeURIComponent(cursorMark || "*") : "";
 	var idSort = pageStrategy === "cursor" ? [{ field: idField, value: "asc" }] : [];
 
 	var sortParam = buildSort(sortFields.concat(idSort));
