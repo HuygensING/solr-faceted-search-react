@@ -77,26 +77,26 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 			})).toEqual("field_name:val");
 		});
 
-		it("should set the filter value to '*' when field.value is null or empty", () => { //eslint-disable-line no-undef
+		it("should ignore the filter value to when field.value is null or empty", () => { //eslint-disable-line no-undef
 			expect(textFieldToQueryFilter({
 				field: "field_name",
 				value: null
-			})).toEqual("field_name:*");
+			})).toEqual(null);
 
 			expect(textFieldToQueryFilter({
 				field: "*",
 				value: null
-			})).toEqual("*");
+			})).toEqual(null);
 
 			expect(textFieldToQueryFilter({
 				field: "field_name",
 				value: ""
-			})).toEqual("field_name:*");
+			})).toEqual(null);
 
 			expect(textFieldToQueryFilter({
 				field: "*",
 				value: ""
-			})).toEqual("*");
+			})).toEqual(null);
 
 		});
 	});
@@ -141,20 +141,20 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				type: "text",
 				value: "val",
 				field: "field_name"
-			}])).toEqual("field_name:val");
+			}])).toEqual("fq=field_name:val");
 
 
 			expect(buildQuery([{
 				type: "list-facet",
 				value: [10, 30],
 				field: "field_name"
-			}])).toEqual("field_name:(\"10\" OR \"30\")");
+			}])).toEqual("fq=field_name:(\"10\" OR \"30\")");
 
 			expect(buildQuery([{
 				type: "range-facet",
 				value: [10, 30],
 				field: "field_name"
-			}])).toEqual("(field_name:[10 TO 30])");
+			}])).toEqual("fq=(field_name:[10 TO 30])");
 		});
 
 		it("should ignore unsupported field types", () => {  //eslint-disable-line no-undef
@@ -193,7 +193,7 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 
 		});
 
-		it("should join query parts with AND", () => {  //eslint-disable-line no-undef
+		it("should join query parts with ampersand", () => {  //eslint-disable-line no-undef
 			const query = buildQuery([{
 				type: "text",
 				value: "val",
@@ -208,12 +208,12 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				field: "field_name"
 			}]);
 
-			const parts = query.split(" AND ");
+			const parts = query.split("&");
 
 			expect(parts.length).toEqual(3);
-			expect(parts.indexOf("(field_name:[10 TO 30])") > -1).toEqual(true);
-			expect(parts.indexOf("field_name:(\"10\" OR \"30\")") > -1).toEqual(true);
-			expect(parts.indexOf("field_name:val") > -1).toEqual(true);
+			expect(parts.indexOf("fq=(field_name:[10 TO 30])") > -1).toEqual(true);
+			expect(parts.indexOf("fq=field_name:(\"10\" OR \"30\")") > -1).toEqual(true);
+			expect(parts.indexOf("fq=field_name:val") > -1).toEqual(true);
 		});
 	});
 
@@ -299,10 +299,18 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				start: 0
 			};
 			expect(solrQuery(query).split("&").indexOf("q=*:*") > -1).toEqual(true);
+		});
 
+		it("should set the fq parameters", () => {  //eslint-disable-line no-undef
+			const query = {
+				searchFields: [],
+				sortFields: [],
+				rows: 10,
+				start: 0
+			};
 			expect(solrQuery({...query, searchFields: [
 				{type: "text", field: "field_name", value: "val"}]
-			}).split("&").indexOf("q=field_name:val") > -1).toEqual(true);
+			}).split("&").indexOf("fq=field_name:val") > -1).toEqual(true);
 		});
 
 		it("should set the rows parameter", () => {  //eslint-disable-line no-undef

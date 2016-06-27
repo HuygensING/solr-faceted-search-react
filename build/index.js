@@ -645,7 +645,11 @@ var listFacetFieldToQueryFilter = function listFacetFieldToQueryFilter(field) {
 };
 
 var textFieldToQueryFilter = function textFieldToQueryFilter(field) {
-	return field.field === "*" ? field.value || "*" : field.field + ":" + (field.value || "*");
+	if (!field.value || field.value.length === 0) {
+		return null;
+	}
+
+	return field.field === "*" ? field.value : field.field + ":" + field.value;
 };
 
 var fieldToQueryFilter = function fieldToQueryFilter(field) {
@@ -662,7 +666,9 @@ var fieldToQueryFilter = function fieldToQueryFilter(field) {
 var buildQuery = function buildQuery(fields) {
 	return fields.map(fieldToQueryFilter).filter(function (queryFilter) {
 		return queryFilter !== null;
-	}).join(" AND ");
+	}).map(function (queryFilter) {
+		return "fq=" + queryFilter;
+	}).join("&");
 };
 
 var facetFields = function facetFields(fields) {
@@ -688,13 +694,13 @@ var solrQuery = function solrQuery(query) {
 	var start = query.start;
 	var facetLimit = query.facetLimit;
 
-	var queryParam = buildQuery(searchFields);
+	var queryParams = buildQuery(searchFields);
 	var sortParam = buildSort(sortFields);
 	var facetFieldParam = facetFields(searchFields);
 
 	var facetLimitParam = "facet.limit=" + (facetLimit || -1);
 
-	return "q=" + (queryParam.length > 0 ? queryParam : "*:*") + ("" + (sortParam.length > 0 ? "&sort=" + sortParam : "")) + ("" + (facetFieldParam.length > 0 ? "&" + facetFieldParam : "")) + ("&rows=" + rows) + ("&" + facetLimitParam) + (start === null ? "" : "&start=" + start) + "&facet=on&wt=json";
+	return "q=*:*&" + (queryParams.length > 0 ? queryParams : "") + ("" + (sortParam.length > 0 ? "&sort=" + sortParam : "")) + ("" + (facetFieldParam.length > 0 ? "&" + facetFieldParam : "")) + ("&rows=" + rows) + ("&" + facetLimitParam) + (start === null ? "" : "&start=" + start) + "&facet=on&wt=json";
 };
 
 exports["default"] = solrQuery;
@@ -1527,7 +1533,7 @@ var Result = (function (_React$Component) {
 		value: function render() {
 			var numFound = this.props.numFound;
 
-			var resultLabel = numFound > 1 ? resultCountLabels.pl : resultCountLabels.numFound === 1 ? resultCountLabels.sg : resultCountLabels.none;
+			var resultLabel = numFound > 1 ? resultCountLabels.pl : numFound === 1 ? resultCountLabels.sg : resultCountLabels.none;
 
 			return _react2["default"].createElement(
 				"label",

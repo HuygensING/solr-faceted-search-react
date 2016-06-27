@@ -17,8 +17,13 @@ const listFacetFieldToQueryFilter = (field) => {
 	return `${field.field}:(${filterQ})`;
 };
 
-const textFieldToQueryFilter = (field) =>
-	field.field === "*" ? field.value || "*" : `${field.field}:${field.value || "*"}`;
+const textFieldToQueryFilter = (field) => {
+	if(!field.value || field.value.length === 0) {
+		return null;
+	}
+
+	return field.field === "*" ? field.value : `${field.field}:${field.value}`;
+};
 
 const fieldToQueryFilter = (field) => {
 	if (field.type === "text") {
@@ -34,7 +39,8 @@ const fieldToQueryFilter = (field) => {
 const buildQuery = (fields) => fields
 	.map(fieldToQueryFilter)
 	.filter((queryFilter) => queryFilter !== null)
-	.join(" AND ");
+	.map((queryFilter) => `fq=${queryFilter}`)
+	.join("&");
 
 const facetFields = (fields) => fields
 	.filter((field) => field.type === "list-facet" || field.type === "range-facet")
@@ -49,13 +55,13 @@ const buildSort = (sortFields) => sortFields
 const solrQuery = (query) => {
 	const { searchFields, sortFields, rows, start, facetLimit } = query;
 
-	const queryParam = buildQuery(searchFields);
+	const queryParams = buildQuery(searchFields);
 	const sortParam = buildSort(sortFields);
 	const facetFieldParam = facetFields(searchFields);
 
 	const facetLimitParam = `facet.limit=${facetLimit || -1}`;
 
-	return `q=${queryParam.length > 0 ? queryParam : "*:*"}` +
+	return `q=*:*&${queryParams.length > 0 ? queryParams : ""}` +
 		`${sortParam.length > 0 ? `&sort=${sortParam}` : ""}` +
 		`${facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}` +
 		`&rows=${rows}` +
