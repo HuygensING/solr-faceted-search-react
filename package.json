@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/HuygensING/solr-faceted-search-react.git"
   },
   "scripts": {
     "start": "scripts/watch.sh",
