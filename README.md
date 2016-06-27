@@ -27,7 +27,7 @@ Instructions on building a tiny web project from this example can be found [here
 Installing this module:
 
 ```bash
-	$ npm i git+https://github.com/HuygensING/solr-faceted-search-react --save
+	$ npm i solr-faceted-search-react --save
 ```
 
 The source below assumes succesfully [setting up solr](#setting-up-solr).
