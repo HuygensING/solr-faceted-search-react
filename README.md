@@ -5,20 +5,17 @@
 ## Table of Contents
 
 1. [Quick start](#quick-start)
-
 2. [Redux integration](#redux-integration)
+3. [Dynamically loaded result lists](#dynamically-loaded-result-lists)
+4. [Using preset filters](#using-preset-filters)
+5. [Injecting custom components](#injecting-custom-components)
+6. [Bootstrap CSS class names](#bootstrap-css-class-names)
+7. [Using the SolrClient class](#using-the-solrclient-class)
+8. [Component Lego](#component-lego)
 
-3. [Injecting custom components](#injecting-custom-components)
+Appendix A: [Setting up Solr](#setting-up-solr)
 
-4. [Bootstrap CSS class names](#bootstrap-css-class-names)
-
-5. [Using the SolrClient class](#using-the-solrclient-class)
-
-6. [Component Lego](#component-lego)
-
-7. [Setting up Solr](#setting-up-solr)
-
-8. [Building the example webapp](#building-the-example-webapp)
+Appendix B: [Building the example webapp](#building-the-example-webapp)
 
 ## Quick Start
 
@@ -157,6 +154,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
 ```
 To rebuild the webapp with redux follow the [building the redux example](#building-the-redux-example).
+
+## Dynamically loaded result lists
+
+If you want to change the way to paginate through the result list initialize the SolrClient with pageStrategy set to "cursor".
+
+In this case you must also provide a unique idField, which is explained [here](https://cwiki.apache.org/confluence/display/solr/Pagination+of+Results#PaginationofResults-FetchingALargeNumberofSortedResults:Cursors). 
+
+
+```javascript
+const solrClient = new SolrClient({
+	pageStrategy: "cursor", // do not paginate, but dynamically load new results
+	idField: "id" // the field name in the index which is unique per indexed document.
+	// ...
+});
+```
+
+## Using preset filters
+
+If you want to show only a subset of the index, filtered by a specific field, you can via the the filters prop of the SolrClient:
+
+```javascript
+const solrClient = new SolrClient({
+	filters: [
+		{field: "name_t", value "maria"},
+		{field: "birthDate_i", type: "range", value [1880, 1890]}
+	]
+	// ...
+});
+```
+
 
 
 ## Injecting custom components
