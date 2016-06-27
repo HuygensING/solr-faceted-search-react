@@ -9,9 +9,8 @@ const resultCountLabels = {
 class Result extends React.Component {
 	render() {
 		const { numFound } = this.props;
-
 		const resultLabel = numFound > 1 ? resultCountLabels.pl :
-			resultCountLabels.numFound === 1 ? resultCountLabels.sg :
+			numFound === 1 ? resultCountLabels.sg :
 			resultCountLabels.none;
 
 		return (
