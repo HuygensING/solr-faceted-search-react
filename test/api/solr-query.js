@@ -302,7 +302,7 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 
 			expect(solrQuery({...query, searchFields: [
 				{type: "text", field: "field_name", value: "val"}]
-			}).split("&").indexOf("q=" + encodeURIComponent("field_name:val")) > -1).toEqual(true);
+			}).split("&").indexOf("q=field_name:val") > -1).toEqual(true);
 		});
 
 		it("should set the rows parameter", () => {  //eslint-disable-line no-undef
@@ -327,7 +327,7 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 			expect(solrQuery({...query, sortFields: [{
 				field: "field_name",
 				value: "asc"
-			}]}).split("&").indexOf("sort=" + encodeURIComponent("field_name asc")) > -1).toEqual(true);
+			}]}).split("&").indexOf("sort=field_name asc") > -1).toEqual(true);
 		});
 
 		it("should (not) set the facet.fields parameter", () => {  //eslint-disable-line no-undef

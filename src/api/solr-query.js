@@ -38,7 +38,7 @@ const buildQuery = (fields) => fields
 
 const facetFields = (fields) => fields
 	.filter((field) => field.type === "list-facet" || field.type === "range-facet")
-	.map((field) => `facet.field=${encodeURIComponent(field.field)}`)
+	.map((field) => `facet.field=${field.field}`)
 	.join("&");
 
 const buildSort = (sortFields) => sortFields
@@ -49,8 +49,8 @@ const buildSort = (sortFields) => sortFields
 const solrQuery = (query) => {
 	const { searchFields, sortFields, rows, start, facetLimit } = query;
 
-	const queryParam = encodeURIComponent(buildQuery(searchFields));
-	const sortParam = encodeURIComponent(buildSort(sortFields));
+	const queryParam = buildQuery(searchFields);
+	const sortParam = buildSort(sortFields);
 	const facetFieldParam = facetFields(searchFields);
 
 	const facetLimitParam = `facet.limit=${facetLimit || -1}`;

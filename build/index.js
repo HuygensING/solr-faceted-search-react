@@ -669,7 +669,7 @@ var facetFields = function facetFields(fields) {
 	return fields.filter(function (field) {
 		return field.type === "list-facet" || field.type === "range-facet";
 	}).map(function (field) {
-		return "facet.field=" + encodeURIComponent(field.field);
+		return "facet.field=" + field.field;
 	}).join("&");
 };
 
@@ -688,8 +688,8 @@ var solrQuery = function solrQuery(query) {
 	var start = query.start;
 	var facetLimit = query.facetLimit;
 
-	var queryParam = encodeURIComponent(buildQuery(searchFields));
-	var sortParam = encodeURIComponent(buildSort(sortFields));
+	var queryParam = buildQuery(searchFields);
+	var sortParam = buildSort(sortFields);
 	var facetFieldParam = facetFields(searchFields);
 
 	var facetLimitParam = "facet.limit=" + (facetLimit || -1);
