@@ -47,16 +47,19 @@ const buildSort = (sortFields) => sortFields
 	.join(",");
 
 const solrQuery = (query) => {
-	const { searchFields, sortFields, rows, start } = query;
+	const { searchFields, sortFields, rows, start, facetLimit } = query;
 
 	const queryParam = encodeURIComponent(buildQuery(searchFields));
 	const sortParam = encodeURIComponent(buildSort(sortFields));
 	const facetFieldParam = facetFields(searchFields);
 
+	const facetLimitParam = `facet.limit=${facetLimit || -1}`;
+
 	return `q=${queryParam.length > 0 ? queryParam : "*:*"}` +
 		`${sortParam.length > 0 ? `&sort=${sortParam}` : ""}` +
 		`${facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}` +
 		`&rows=${rows}` +
+		`&${facetLimitParam}` +
 		(start === null ? "" : `&start=${start}`) +
 		"&facet=on&wt=json";
 };

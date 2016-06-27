@@ -258,8 +258,9 @@ ReactDOM.render(
 	searchFields: [{...}] // the search field configuration
 	sortFields: [{...}] // the sort field configuration
 	onChange: (state, handlers) => {...} // the change handler for query and result state
-	rows: [0-9]+ // [optional] amount of results per page
+	rows: [1-9][0-9]+ // [optional] amount of results per page
 	pageStrategy: "paginate" // [optional, defaults to "paginate", currently only supports "paginate"]
+	facetLimit: [1-9][0-9]+ // [optional, sets the facet.limit param (defaults to -1 = all) ]
 }
 
 ```

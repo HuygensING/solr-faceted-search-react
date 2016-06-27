@@ -686,12 +686,15 @@ var solrQuery = function solrQuery(query) {
 	var sortFields = query.sortFields;
 	var rows = query.rows;
 	var start = query.start;
+	var facetLimit = query.facetLimit;
 
 	var queryParam = encodeURIComponent(buildQuery(searchFields));
 	var sortParam = encodeURIComponent(buildSort(sortFields));
 	var facetFieldParam = facetFields(searchFields);
 
-	return "q=" + (queryParam.length > 0 ? queryParam : "*:*") + ("" + (sortParam.length > 0 ? "&sort=" + sortParam : "")) + ("" + (facetFieldParam.length > 0 ? "&" + facetFieldParam : "")) + ("&rows=" + rows) + (start === null ? "" : "&start=" + start) + "&facet=on&wt=json";
+	var facetLimitParam = "facet.limit=" + (facetLimit || -1);
+
+	return "q=" + (queryParam.length > 0 ? queryParam : "*:*") + ("" + (sortParam.length > 0 ? "&sort=" + sortParam : "")) + ("" + (facetFieldParam.length > 0 ? "&" + facetFieldParam : "")) + ("&rows=" + rows) + ("&" + facetLimitParam) + (start === null ? "" : "&start=" + start) + "&facet=on&wt=json";
 };
 
 exports["default"] = solrQuery;

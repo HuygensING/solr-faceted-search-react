@@ -376,5 +376,27 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 			};
 			expect(solrQuery(query).split("&").indexOf("facet=on") > -1).toEqual(true);
 		});
+
+		it("should set the facet.limit parameter to -1 by default", () => {  //eslint-disable-line no-undef
+			const query = {
+				searchFields: [],
+				sortFields: [],
+				rows: 10,
+				start: null
+			};
+			expect(solrQuery(query).split("&").indexOf("facet.limit=-1") > -1).toEqual(true);
+		});
+
+		it("should set the facet.limit parameter from the facetLimit prop", () => {  //eslint-disable-line no-undef
+			const query = {
+				searchFields: [],
+				sortFields: [],
+				rows: 10,
+				start: null,
+				facetLimit: 100
+			};
+
+			expect(solrQuery(query).split("&").indexOf("facet.limit=100") > -1).toEqual(true);
+		});
 	});
 });
