@@ -1,6 +1,6 @@
 # Solr faceted search client and react component pack 
 
-[![Build Status](https://travis-ci.org/renevanderark/solr-react-client-work-in-progress.svg?branch=master)](https://travis-ci.org/renevanderark/solr-react-client-work-in-progress)
+[![Build Status](https://travis-ci.org/HuygensING/solr-faceted-search-react.svg?branch=master)](https://travis-ci.org/renevanderark/solr-react-client-work-in-progress)
 
 ## Table of Contents
 
@@ -26,7 +26,7 @@ Instructions on building a tiny web project from this example can be found [here
 Installing this module:
 
 ```bash
-	$ npm i git+https://github.com/renevanderark/solr-react-client-work-in-progress --save
+	$ npm i git+https://github.com/HuygensING/solr-faceted-search-react --save
 ```
 
 The source below assumes succesfully [setting up solr](#setting-up-solr).
@@ -464,7 +464,7 @@ Start the solr server
 Get sample data from this project
 
 ```bash
-	$ wget https://raw.githubusercontent.com/renevanderark/solr-react-client-work-in-progress/master/solr-sample-data.json
+	$ wget https://raw.githubusercontent.com/HuygensING/solr-faceted-search-react/master/solr-sample-data.json
 ```
 
 Load the sample data into the gettingstarted index of solr
