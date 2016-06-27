@@ -62,6 +62,17 @@ class SolrClient {
 		this.sendQuery(queryReducer(this.state.query, payload));
 	}
 
+	setFacetSort(field, value) {
+		const { query } = this.state;
+		const { searchFields } = query;
+		const newFields = searchFields
+			.map((searchField) => searchField.field === field ? {...searchField, facetSort: value} : searchField);
+
+		const payload = {type: "SET_SEARCH_FIELDS", newFields: newFields};
+
+		this.sendQuery(queryReducer(this.state.query, payload));
+	}
+
 	setSortFieldValue(field, value) {
 		const { query } = this.state;
 		const { sortFields } = query;
@@ -76,6 +87,7 @@ class SolrClient {
 		return {
 			onSortFieldChange: this.setSortFieldValue.bind(this),
 			onSearchFieldChange: this.setSearchFieldValue.bind(this),
+			onFacetSortChange: this.setFacetSort.bind(this),
 			onPageChange: this.setCurrentPage.bind(this)
 		};
 	}

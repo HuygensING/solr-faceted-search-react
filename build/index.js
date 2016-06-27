@@ -589,6 +589,20 @@ var SolrClient = (function () {
 			this.sendQuery((0, _reducersQuery2["default"])(this.state.query, payload));
 		}
 	}, {
+		key: "setFacetSort",
+		value: function setFacetSort(field, value) {
+			var query = this.state.query;
+			var searchFields = query.searchFields;
+
+			var newFields = searchFields.map(function (searchField) {
+				return searchField.field === field ? _extends({}, searchField, { facetSort: value }) : searchField;
+			});
+
+			var payload = { type: "SET_SEARCH_FIELDS", newFields: newFields };
+
+			this.sendQuery((0, _reducersQuery2["default"])(this.state.query, payload));
+		}
+	}, {
 		key: "setSortFieldValue",
 		value: function setSortFieldValue(field, value) {
 			var query = this.state.query;
@@ -607,6 +621,7 @@ var SolrClient = (function () {
 			return {
 				onSortFieldChange: this.setSortFieldValue.bind(this),
 				onSearchFieldChange: this.setSearchFieldValue.bind(this),
+				onFacetSortChange: this.setFacetSort.bind(this),
 				onPageChange: this.setCurrentPage.bind(this)
 			};
 		}
@@ -682,6 +697,14 @@ var facetFields = function facetFields(fields) {
 	}).join("&");
 };
 
+var facetSorts = function facetSorts(fields) {
+	return fields.filter(function (field) {
+		return field.facetSort;
+	}).map(function (field) {
+		return "f." + field.field + ".facet.sort=" + field.facetSort;
+	}).join("&");
+};
+
 var buildSort = function buildSort(sortFields) {
 	return sortFields.filter(function (sortField) {
 		return sortField.value;
@@ -696,6 +719,7 @@ var solrQuery = function solrQuery(query) {
 	var rows = query.rows;
 	var start = query.start;
 	var facetLimit = query.facetLimit;
+	var facetSort = query.facetSort;
 
 	var filters = (query.filters || []).map(function (filter) {
 		return _extends({}, filter, { type: filter.type || "text" });
@@ -703,10 +727,10 @@ var solrQuery = function solrQuery(query) {
 	var queryParams = buildQuery(searchFields.concat(filters));
 	var sortParam = buildSort(sortFields);
 	var facetFieldParam = facetFields(searchFields);
-
+	var facetSortParams = facetSorts(searchFields);
 	var facetLimitParam = "facet.limit=" + (facetLimit || -1);
-
-	return "q=*:*&" + (queryParams.length > 0 ? queryParams : "") + ("" + (sortParam.length > 0 ? "&sort=" + sortParam : "")) + ("" + (facetFieldParam.length > 0 ? "&" + facetFieldParam : "")) + ("&rows=" + rows) + ("&" + facetLimitParam) + (start === null ? "" : "&start=" + start) + "&facet=on&wt=json";
+	var facetSortParam = "facet.sort=" + (facetSort || "index");
+	return "q=*:*&" + (queryParams.length > 0 ? queryParams : "") + ("" + (sortParam.length > 0 ? "&sort=" + sortParam : "")) + ("" + (facetFieldParam.length > 0 ? "&" + facetFieldParam : "")) + ("" + (facetSortParams.length > 0 ? "&" + facetSortParams : "")) + ("&rows=" + rows) + ("&" + facetLimitParam) + ("&" + facetSortParam) + (start === null ? "" : "&start=" + start) + "&facet=on&wt=json";
 };
 
 exports["default"] = solrQuery;
@@ -716,6 +740,7 @@ exports.textFieldToQueryFilter = textFieldToQueryFilter;
 exports.fieldToQueryFilter = fieldToQueryFilter;
 exports.buildQuery = buildQuery;
 exports.facetFields = facetFields;
+exports.facetSorts = facetSorts;
 exports.buildSort = buildSort;
 exports.solrQuery = solrQuery;
 
@@ -978,11 +1003,13 @@ var ListFacet = (function (_React$Component) {
 			var _this = this;
 
 			var _props = this.props;
+			var query = _props.query;
 			var label = _props.label;
 			var facets = _props.facets;
 			var field = _props.field;
 			var value = _props.value;
 			var bootstrapCss = _props.bootstrapCss;
+			var facetSort = _props.facetSort;
 
 			var facetCounts = facets.filter(function (facet, i) {
 				return i % 2 === 1;
@@ -990,6 +1017,8 @@ var ListFacet = (function (_React$Component) {
 			var facetValues = facets.filter(function (facet, i) {
 				return i % 2 === 0;
 			});
+
+			var facetSortValue = facetSort ? facetSort : query.facetSort ? query.facetSort : query.facetLimit && query.facetLimit > -1 ? "count" : "index";
 
 			return _react2["default"].createElement(
 				"li",
@@ -1003,11 +1032,31 @@ var ListFacet = (function (_React$Component) {
 						label,
 						_react2["default"].createElement(
 							"button",
-							{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss }),
+							{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss }),
 								onClick: function () {
 									return _this.props.onChange(field, []);
 								} },
 							"❌"
+						)
+					),
+					_react2["default"].createElement(
+						"span",
+						{ className: (0, _classnames2["default"])({ "btn-group": bootstrapCss }) },
+						_react2["default"].createElement(
+							"button",
+							{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "index" }),
+								onClick: function () {
+									return _this.props.onFacetSortChange(field, "index");
+								} },
+							"a-z"
+						),
+						_react2["default"].createElement(
+							"button",
+							{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "count" }),
+								onClick: function () {
+									return _this.props.onFacetSortChange(field, "count");
+								} },
+							"0-9"
 						)
 					)
 				),
@@ -1042,10 +1091,14 @@ ListFacet.defaultProps = {
 
 ListFacet.propTypes = {
 	bootstrapCss: _react2["default"].PropTypes.bool,
+	children: _react2["default"].PropTypes.array,
+	facetSort: _react2["default"].PropTypes.string,
 	facets: _react2["default"].PropTypes.array.isRequired,
 	field: _react2["default"].PropTypes.string.isRequired,
 	label: _react2["default"].PropTypes.string,
 	onChange: _react2["default"].PropTypes.func,
+	onFacetSortChange: _react2["default"].PropTypes.func,
+	query: _react2["default"].PropTypes.object,
 	value: _react2["default"].PropTypes.array
 };
 

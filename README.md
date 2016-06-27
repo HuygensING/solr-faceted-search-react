@@ -261,6 +261,7 @@ ReactDOM.render(
 	rows: [1-9][0-9]+ // [optional] amount of results per page
 	pageStrategy: "paginate" // [optional, defaults to "paginate", currently only supports "paginate"]
 	facetLimit: [1-9][0-9]+ // [optional, sets the facet.limit param (defaults to -1 = all) ]
+	facetSort: "index" // [optional, how to sort the list facets by default (defaults to solr default)]
 	filters: [{...}] // [optional: static filters passed to search, not visible in user interface]
 }
 
@@ -291,6 +292,7 @@ ReactDOM.render(
 			field: "characteristics_ss",
 			type: "list-facet", // renders a facet list with checkboxes, sends a filter query
 			value: ["Publicist", "Bestuurslid vakvereniging"] // [optional: initial active filters]
+			facetSort: "index" // [optional: how to sort the list facet, options: "index" / "count"]
 		}
 	]
 ```

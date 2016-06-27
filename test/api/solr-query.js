@@ -7,6 +7,7 @@ import {
 	fieldToQueryFilter,
 	buildQuery,
 	facetFields,
+	facetSorts,
 	buildSort,
 	solrQuery
 } from "../../src/api/solr-query";
@@ -255,6 +256,28 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 		});
 	});
 
+	describe("buildFacetSort", () => { //eslint-disable-line no-undef
+		it("should add the facet.field_name.sort parameter for searchFields where facetSort is set", () => { //eslint-disable-line no-undef
+			const facetSortParams = facetSorts([{
+				type: "list-facet",
+				field: "field_name1"
+			}, {
+				type: "list-facet",
+				facetSort: "index",
+				field: "field_name2"
+			}, {
+				type: "list-facet",
+				facetSort: "count",
+				field: "field_name3"
+			}]);
+
+			const parts = facetSortParams.split("&");
+			expect(parts.length).toEqual(2);
+			expect(parts.indexOf("f.field_name2.facet.sort=index") > -1).toEqual(true);
+			expect(parts.indexOf("f.field_name3.facet.sort=count") > -1).toEqual(true);
+		});
+	});
+
 	describe("buildSort", () => {  //eslint-disable-line no-undef
 		it("should ignore fields where field.value is null or empty", () => { //eslint-disable-line no-undef
 			expect(buildSort([{
@@ -289,6 +312,8 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 			}])).toEqual("field_name asc,other_field_name desc");
 		});
 	});
+
+
 
 	describe("solrQuery", () => {  //eslint-disable-line no-undef
 		it("should set the q parameter", () => { //eslint-disable-line no-undef
@@ -342,7 +367,7 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				rows: 10,
 				start: 0
 			};
-			expect(solrQuery(query).indexOf("sort")).toEqual(-1);
+			expect(solrQuery(query).indexOf("&sort=")).toEqual(-1);
 
 			expect(solrQuery({...query, sortFields: [{
 				field: "field_name",
@@ -350,7 +375,7 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 			}]}).split("&").indexOf("sort=field_name asc") > -1).toEqual(true);
 		});
 
-		it("should (not) set the facet.fields parameter", () => {  //eslint-disable-line no-undef
+		it("should (not) set the facet.field parameters", () => {  //eslint-disable-line no-undef
 			const query = {
 				searchFields: [],
 				sortFields: [],
@@ -358,7 +383,6 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				start: 0
 			};
 			expect(solrQuery(query).indexOf("facet.field")).toEqual(-1);
-
 
 			expect(solrQuery({...query, searchFields: [{
 				field: "field_name",
@@ -415,8 +439,18 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				start: null,
 				facetLimit: 100
 			};
-
 			expect(solrQuery(query).split("&").indexOf("facet.limit=100") > -1).toEqual(true);
+		});
+
+		it("should set the facet.sort parameter from the facetSort prop", () => {  //eslint-disable-line no-undef
+			const query = {
+				searchFields: [],
+				sortFields: [],
+				rows: 10,
+				start: null,
+				facetSort: "index"
+			};
+			expect(solrQuery(query).split("&").indexOf("facet.sort=index") > -1).toEqual(true);
 		});
 	});
 });

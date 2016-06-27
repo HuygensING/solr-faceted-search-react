@@ -47,25 +47,32 @@ const facetFields = (fields) => fields
 	.map((field) => `facet.field=${field.field}`)
 	.join("&");
 
+const facetSorts = (fields) => fields
+	.filter((field) => field.facetSort)
+	.map((field) => `f.${field.field}.facet.sort=${field.facetSort}`)
+	.join("&");
+
 const buildSort = (sortFields) => sortFields
 	.filter((sortField) => sortField.value)
 	.map((sortField) => `${sortField.field} ${sortField.value}`)
 	.join(",");
 
 const solrQuery = (query) => {
-	const { searchFields, sortFields, rows, start, facetLimit } = query;
+	const { searchFields, sortFields, rows, start, facetLimit, facetSort } = query;
 	const filters = (query.filters || []).map((filter) => ({...filter, type: filter.type || "text"}));
 	const queryParams = buildQuery(searchFields.concat(filters));
 	const sortParam = buildSort(sortFields);
 	const facetFieldParam = facetFields(searchFields);
-
+	const facetSortParams = facetSorts(searchFields);
 	const facetLimitParam = `facet.limit=${facetLimit || -1}`;
-
+	const facetSortParam = `facet.sort=${facetSort || "index"}`;
 	return `q=*:*&${queryParams.length > 0 ? queryParams : ""}` +
 		`${sortParam.length > 0 ? `&sort=${sortParam}` : ""}` +
 		`${facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}` +
+		`${facetSortParams.length > 0 ? `&${facetSortParams}` : ""}` +
 		`&rows=${rows}` +
 		`&${facetLimitParam}` +
+		`&${facetSortParam}` +
 		(start === null ? "" : `&start=${start}`) +
 		"&facet=on&wt=json";
 };
@@ -79,6 +86,7 @@ export {
 	fieldToQueryFilter,
 	buildQuery,
 	facetFields,
+	facetSorts,
 	buildSort,
 	solrQuery
 };

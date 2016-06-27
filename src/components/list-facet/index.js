@@ -18,22 +18,37 @@ class ListFacet extends React.Component {
 
 
 	render() {
-		const { label, facets, field, value, bootstrapCss } = this.props;
+		const { query, label, facets, field, value, bootstrapCss, facetSort } = this.props;
 
 		const facetCounts = facets.filter((facet, i) => i % 2 === 1);
 		const facetValues = facets.filter((facet, i) => i % 2 === 0);
+
+		const facetSortValue = facetSort ? facetSort :
+			query.facetSort ? query.facetSort :
+			(query.facetLimit && query.facetLimit > -1 ? "count" : "index");
 
 		return (
 			<li className={cx("list-facet", {"list-group-item": bootstrapCss})} id={`solr-list-facet-${field}`}>
 				<header>
 					<h3>
 						{label}
-						<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss})}
+						<button className={cx({"btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss})}
 							onClick={() => this.props.onChange(field, [])}>
 							&#x274c;
 						</button>
 					</h3>
+					<span className={cx({"btn-group": bootstrapCss})}>
+						<button className={cx({"btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "index"})}
+							onClick={() => this.props.onFacetSortChange(field, "index") }>
+							a-z
+						</button>
+						<button className={cx({"btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "count"})}
+							onClick={() => this.props.onFacetSortChange(field, "count")}>
+							0-9
+						</button>
+					</span>
 				</header>
+
 				<ul className={cx({"list-group": bootstrapCss})} style={{overflowY: "auto", maxHeight: "200px"}}>
 					{facetValues.map((facetValue, i) => (
 						<li className={cx({"list-group-item": bootstrapCss})} key={i} onClick={() => this.handleClick(facetValue)} style={{cursor: "pointer"}}>
@@ -52,10 +67,14 @@ ListFacet.defaultProps = {
 
 ListFacet.propTypes = {
 	bootstrapCss: React.PropTypes.bool,
+	children: React.PropTypes.array,
+	facetSort: React.PropTypes.string,
 	facets: React.PropTypes.array.isRequired,
 	field: React.PropTypes.string.isRequired,
 	label: React.PropTypes.string,
 	onChange: React.PropTypes.func,
+	onFacetSortChange: React.PropTypes.func,
+	query: React.PropTypes.object,
 	value: React.PropTypes.array
 };
 
