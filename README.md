@@ -17,6 +17,7 @@ Appendix A: [Setting up Solr](#setting-up-solr)
 
 Appendix B: [Building the example webapp](#building-the-example-webapp)
 
+
 ## Quick Start
 
 This quick start assumes a solr installation as documented in the section on [setting up solr](#setting-up-solr).
