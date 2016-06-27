@@ -7,6 +7,8 @@ class SolrClient {
 		const { onChange } = settings;
 
 		this.onChange = onChange;
+		delete settings.onChange;
+
 		this.state = {
 			query: settings,
 			results: {

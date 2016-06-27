@@ -521,6 +521,8 @@ var SolrClient = (function () {
 		var onChange = settings.onChange;
 
 		this.onChange = onChange;
+		delete settings.onChange;
+
 		this.state = {
 			query: settings,
 			results: {
