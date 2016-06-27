@@ -1,6 +1,7 @@
 import expect from "expect";
 import sinon from "sinon";
 import { SolrClient } from "../../src/api/solr-client";
+import server from "../../src/api/server";
 
 const DEFAULT_ROWS = 20;
 
@@ -75,71 +76,223 @@ describe("SolrClient", () => { //eslint-disable-line no-undef
 				url: "url"
 			});
 			const setPage = 5;
-			let calls = 0;
 			sinon.stub(underTest, "sendQuery", (queryState) => {
-				if (++calls === 2) {
-					underTest.sendQuery.restore();
-					try {
-						expect(queryState.start).toEqual(setPage * DEFAULT_ROWS);
-						done();
-					} catch (e) {
-						done(e);
-					}
+				underTest.sendQuery.restore();
+				try {
+					expect(queryState.start).toEqual(setPage * DEFAULT_ROWS);
+					done();
+				} catch (e) {
+					done(e);
 				}
 			});
 
-			underTest.initialize().setCurrentPage(setPage);
+			underTest.setCurrentPage(setPage);
 		});
 	});
 
 	describe("setSearchFieldValue", () => { //eslint-disable-line no-undef
-/*	setSearchFieldValue(field, value) {
-		const { query } = this.state;
-		const { searchFields } = query;
-		const newFields = searchFields
-			.map((searchField) => searchField.field === field ? {...searchField, value: value} : searchField);
+		it("should update the filter value for the given searchField key", (done) => { //eslint-disable-line no-undef
+			const underTest = new SolrClient({
+				onChange: () => {},
+				searchFields: [{
+					field: "searchField",
+					value: "initial-value"
+				}, {
+					field: "otherField",
+					value: "original-value"
+				}],
+				url: "url"
+			});
+			const newValue = "new value";
 
-		const payload = {type: "SET_SEARCH_FIELDS", newFields: newFields};
+			sinon.stub(underTest, "sendQuery", (queryState) => {
+				underTest.sendQuery.restore();
+				try {
+					expect(queryState.searchFields).toEqual([{
+						field: "searchField",
+						value: newValue
+					}, {
+						field: "otherField",
+						value: "original-value"
+					}]);
+					done();
+				} catch (e) {
+					done(e);
+				}
+			});
 
-		this.sendQuery(queryReducer(this.state.query, payload));
-	}
-*/
+			underTest.setSearchFieldValue("searchField", newValue);
+		});
 	});
 
 	describe("setSortFieldValue", () => { //eslint-disable-line no-undef
-/*	setSortFieldValue(field, value) {
-		const { query } = this.state;
-		const { sortFields } = query;
-		const newSortFields = sortFields
-			.map((sortField) => sortField.field === field ? {...sortField, value: value} : {...sortField, value: null});
+		it("should update the sort value for the given sortField key and clear the others", (done) => { //eslint-disable-line no-undef
+			const underTest = new SolrClient({
+				onChange: () => {},
+				sortFields: [{
+					field: "sortField"
+				}, {
+					field: "otherSort",
+					value: "asc"
+				}],
+				url: "url"
+			});
+			const newValue = "desc";
 
-		const payload = {type: "SET_SORT_FIELDS", newSortFields: newSortFields};
-		this.sendQuery(queryReducer(this.state.query, payload));
-	}
-*/
+			sinon.stub(underTest, "sendQuery", (queryState) => {
+				underTest.sendQuery.restore();
+				try {
+					expect(queryState.sortFields).toEqual([{
+						field: "sortField",
+						value: newValue
+					}, {
+						field: "otherSort",
+						value: null
+					}]);
+					done();
+				} catch (e) {
+					done(e);
+				}
+			});
+
+			underTest.setSortFieldValue("sortField", newValue);
+		});
 	});
 
 
 	describe("sendQuery", () => { //eslint-disable-line no-undef
-/*	sendQuery(query = this.state.query) {
-		this.state.query = query;
-		submitQuery(query, (action) => {
-			this.state.results = resultReducer(this.state.results, action);
-			this.onChange(this.state, this.getHandlers());
+		it("should send the query with submitQuery and pass the new state to the onChange callback", (done) => { //eslint-disable-line no-undef
+			const finalize = (e) => {
+				server.submitQuery.restore();
+				done(e);
+			};
+
+			sinon.stub(server, "submitQuery", (query, cb) => {
+				try {
+					expect(query).toEqual("confirm-query-passed");
+					cb({
+						type: "SET_RESULTS",
+						data: {
+							response: {
+								docs: ["123"],
+								numFound: 123
+							},
+							"facet_counts": {
+								"facet_fields": ["123"]
+							}
+						}
+					});
+				} catch (e) {
+					finalize(e);
+				}
+			});
+
+			const underTest = new SolrClient({
+				onChange: (newState) => {
+					const { query, results } = newState;
+					try {
+						expect(query).toEqual("confirm-query-passed");
+						expect(results).toEqual({
+							docs: ["123"],
+							numFound: 123,
+							facets: ["123"],
+							pending: false
+						});
+						finalize();
+					} catch (e) {
+						finalize(e);
+					}
+				}
+			});
+
+			underTest.sendQuery("confirm-query-passed");
 		});
-	}
-*/
+
+		it("should send the query from state when no param is passed", (done) => { //eslint-disable-line no-undef
+			const finalize = (e) => {
+				server.submitQuery.restore();
+				done(e);
+			};
+
+			sinon.stub(server, "submitQuery", (query, cb) => {
+				try {
+					expect(query).toEqual({
+						searchFields: "searchFields",
+						pageStrategy: "paginate",
+						rows: 20
+					});
+
+					cb({});
+				} catch (e) {
+					finalize(e);
+				}
+			});
+
+			const underTest = new SolrClient({
+				searchFields: "searchFields",
+				onChange: (newState) => {
+					const { query } = newState;
+					try {
+						expect(query).toEqual({
+							searchFields: "searchFields",
+							pageStrategy: "paginate",
+							rows: 20
+						});
+						finalize();
+					} catch (e) {
+						finalize(e);
+					}
+				}
+			});
+
+			underTest.sendQuery();
+		});
+
+		it("should pass the handlers from getHandlers to the onChange callback", (done) => { //eslint-disable-line no-undef
+			const finalize = (e) => {
+				server.submitQuery.restore();
+				done(e);
+			};
+
+			sinon.stub(server, "submitQuery", (query, cb) => {
+				cb({});
+			});
+
+			const underTest = new SolrClient({
+				onChange: (newState, handlers) => {
+					try {
+						const { onPageChange, onSortFieldChange, onSearchFieldChange } = handlers;
+						expect(onPageChange()).toEqual("confirm-current-page-handler");
+						expect(onSortFieldChange()).toEqual("confirm-sortfield-handler");
+						expect(onSearchFieldChange()).toEqual("confirm-searchfield-handler");
+						finalize();
+					} catch (e) {
+						finalize(e);
+					}
+				}
+			});
+
+			underTest.setSortFieldValue = () => "confirm-sortfield-handler";
+			underTest.setSearchFieldValue = () => "confirm-searchfield-handler";
+			underTest.setCurrentPage = () => "confirm-current-page-handler";
+
+			underTest.sendQuery();
+		});
 	});
 
 
 	describe("getHandlers", () => { //eslint-disable-line no-undef
-/*	getHandlers() {
-		return {
-			onSortFieldChange: this.setSortFieldValue.bind(this),
-			onSearchFieldChange: this.setSearchFieldValue.bind(this),
-			onPageChange: this.setCurrentPage.bind(this)
-		};
-	}
-*/
+		it("should return the handlers", () => { //eslint-disable-line no-undef
+			const underTest = new SolrClient({ onChange: () => {} });
+			underTest.setSortFieldValue = () => "confirm-sortfield-handler";
+			underTest.setSearchFieldValue = () => "confirm-searchfield-handler";
+			underTest.setCurrentPage = () => "confirm-current-page-handler";
+
+			const { onPageChange, onSortFieldChange, onSearchFieldChange } = underTest.getHandlers();
+
+			expect(onPageChange()).toEqual("confirm-current-page-handler");
+			expect(onSortFieldChange()).toEqual("confirm-sortfield-handler");
+			expect(onSearchFieldChange()).toEqual("confirm-searchfield-handler");
+		});
 	});
 });

@@ -14,10 +14,10 @@ describe("resultsReducer", () => { //eslint-disable-line no-undef
 				response: {
 					docs: ["123"],
 					numFound: 123
-			},
-			"facet_counts": {
-				"facet_fields": ["123"]
-			}
+				},
+				"facet_counts": {
+					"facet_fields": ["123"]
+				}
 			}
 		})).toEqual({
 			init: "bar",
