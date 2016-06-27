@@ -979,10 +979,14 @@ var _iconsUnchecked2 = _interopRequireDefault(_iconsUnchecked);
 var ListFacet = (function (_React$Component) {
 	_inherits(ListFacet, _React$Component);
 
-	function ListFacet() {
+	function ListFacet(props) {
 		_classCallCheck(this, ListFacet);
 
-		_get(Object.getPrototypeOf(ListFacet.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(ListFacet.prototype), "constructor", this).call(this, props);
+
+		this.state = {
+			filter: ""
+		};
 	}
 
 	_createClass(ListFacet, [{
@@ -1039,6 +1043,10 @@ var ListFacet = (function (_React$Component) {
 							"❌"
 						)
 					),
+					_react2["default"].createElement("input", { onChange: function (ev) {
+							return _this.setState({ filter: ev.target.value });
+						}, placeholder: "Filter... ", type: "text", value: this.state.filter }),
+					" ",
 					_react2["default"].createElement(
 						"span",
 						{ className: (0, _classnames2["default"])({ "btn-group": bootstrapCss }) },
@@ -1064,7 +1072,7 @@ var ListFacet = (function (_React$Component) {
 					"ul",
 					{ className: (0, _classnames2["default"])({ "list-group": bootstrapCss }), style: { overflowY: "auto", maxHeight: "200px" } },
 					facetValues.map(function (facetValue, i) {
-						return _react2["default"].createElement(
+						return _this.state.filter.length === 0 || facetValue.toLowerCase().indexOf(_this.state.filter.toLowerCase()) > -1 ? _react2["default"].createElement(
 							"li",
 							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }), key: i, onClick: function () {
 									return _this.handleClick(facetValue);
@@ -1075,7 +1083,7 @@ var ListFacet = (function (_React$Component) {
 							" (",
 							facetCounts[i],
 							")"
-						);
+						) : null;
 					})
 				)
 			);

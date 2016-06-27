@@ -6,6 +6,13 @@ import UncheckedIcon from "../icons/unchecked";
 
 class ListFacet extends React.Component {
 
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			filter: ""
+		};
+	}
 
 	handleClick(value) {
 		const foundIdx = this.props.value.indexOf(value);
@@ -37,6 +44,7 @@ class ListFacet extends React.Component {
 							&#x274c;
 						</button>
 					</h3>
+					<input onChange={(ev) => this.setState({filter: ev.target.value})} placeholder="Filter... " type="text" value={this.state.filter} />&nbsp;
 					<span className={cx({"btn-group": bootstrapCss})}>
 						<button className={cx({"btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "index"})}
 							onClick={() => this.props.onFacetSortChange(field, "index") }>
@@ -50,11 +58,12 @@ class ListFacet extends React.Component {
 				</header>
 
 				<ul className={cx({"list-group": bootstrapCss})} style={{overflowY: "auto", maxHeight: "200px"}}>
-					{facetValues.map((facetValue, i) => (
+					{facetValues.map((facetValue, i) =>
+						this.state.filter.length === 0 || facetValue.toLowerCase().indexOf(this.state.filter.toLowerCase()) > -1 ? (
 						<li className={cx({"list-group-item": bootstrapCss})} key={i} onClick={() => this.handleClick(facetValue)} style={{cursor: "pointer"}}>
 							{value.indexOf(facetValue) > -1 ? <CheckedIcon /> : <UncheckedIcon />} {facetValue} ({facetCounts[i]})
-						</li>
-					))}
+						</li>) : null
+					)}
 				</ul>
 			</li>
 		);
