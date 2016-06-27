@@ -26,10 +26,77 @@ describe("queryReducer", () => { //eslint-disable-line no-undef
 		});
 	});
 
-	it("should SET_SEARCH_FIELDS");  //eslint-disable-line no-undef
+	it("should SET_SEARCH_FIELDS", () => {  //eslint-disable-line no-undef
+		expect(queryReducer({
+			initial: "x",
+			pageStrategy: "paginate"
+		},
+		{
+			type: "SET_SEARCH_FIELDS",
+			newFields: "y"
+		})).toEqual({
+			initial: "x",
+			searchFields: "y",
+			start: 0,
+			pageStrategy: "paginate"
+		});
 
-	it("should SET_SORT_FIELDS");  //eslint-disable-line no-undef
+		expect(queryReducer({
+			initial: "x",
+			pageStrategy: "anyother"
+		},
+		{
+			type: "SET_SEARCH_FIELDS",
+			newFields: "y"
+		})).toEqual({
+			initial: "x",
+			searchFields: "y",
+			start: null,
+			pageStrategy: "anyother"
+		});
+	});
 
-	it("should SET_START");  //eslint-disable-line no-undef
 
+
+	it("should SET_SORT_FIELDS", () => {  //eslint-disable-line no-undef
+		expect(queryReducer({
+			initial: "x",
+			pageStrategy: "paginate"
+		}, {
+			type: "SET_SORT_FIELDS",
+			newSortFields: "y"
+		})).toEqual({
+			initial: "x",
+			sortFields: "y",
+			start: 0,
+			pageStrategy: "paginate"
+		});
+
+		expect(queryReducer({
+			initial: "x",
+			pageStrategy: "anyother"
+		}, {
+			type: "SET_SORT_FIELDS",
+			newSortFields: "y"
+		})).toEqual({
+			initial: "x",
+			sortFields: "y",
+			start: null,
+			pageStrategy: "anyother"
+		});
+
+	});
+
+	it("should SET_START", () => {  //eslint-disable-line no-undef
+		expect(queryReducer({
+			initial: "x",
+			start: 100
+		}, {
+			type: "SET_START",
+			newStart: 10
+		})).toEqual({
+			initial: "x",
+			start: 10
+		});
+	});
 });
