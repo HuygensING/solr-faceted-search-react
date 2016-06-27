@@ -30,7 +30,7 @@ const fieldToQueryFilter = (field) => {
 		return textFieldToQueryFilter(field);
 	} else if (field.type === "list-facet") {
 		return listFacetFieldToQueryFilter(field);
-	} else if (field.type === "range-facet") {
+	} else if (field.type.indexOf("range") > -1) {
 		return rangeFacetToQueryFilter(field);
 	}
 	return null;
@@ -54,8 +54,8 @@ const buildSort = (sortFields) => sortFields
 
 const solrQuery = (query) => {
 	const { searchFields, sortFields, rows, start, facetLimit } = query;
-
-	const queryParams = buildQuery(searchFields);
+	const filters = (query.filters || []).map((filter) => ({...filter, type: filter.type || "text"}));
+	const queryParams = buildQuery(searchFields.concat(filters));
 	const sortParam = buildSort(sortFields);
 	const facetFieldParam = facetFields(searchFields);
 

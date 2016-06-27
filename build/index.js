@@ -623,6 +623,9 @@ exports.SolrClient = SolrClient;
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var rangeFacetToQueryFilter = function rangeFacetToQueryFilter(field) {
 	var filters = field.value || [];
 	if (filters.length < 2) {
@@ -657,7 +660,7 @@ var fieldToQueryFilter = function fieldToQueryFilter(field) {
 		return textFieldToQueryFilter(field);
 	} else if (field.type === "list-facet") {
 		return listFacetFieldToQueryFilter(field);
-	} else if (field.type === "range-facet") {
+	} else if (field.type.indexOf("range") > -1) {
 		return rangeFacetToQueryFilter(field);
 	}
 	return null;
@@ -694,7 +697,10 @@ var solrQuery = function solrQuery(query) {
 	var start = query.start;
 	var facetLimit = query.facetLimit;
 
-	var queryParams = buildQuery(searchFields);
+	var filters = (query.filters || []).map(function (filter) {
+		return _extends({}, filter, { type: filter.type || "text" });
+	});
+	var queryParams = buildQuery(searchFields.concat(filters));
 	var sortParam = buildSort(sortFields);
 	var facetFieldParam = facetFields(searchFields);
 

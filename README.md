@@ -256,11 +256,12 @@ ReactDOM.render(
 {
 	url: "..." // the search url
 	searchFields: [{...}] // the search field configuration
-	sortFields: [{...}] // the sort field configuration
+	sortFields: [{...}] // the sort field configuration,
 	onChange: (state, handlers) => {...} // the change handler for query and result state
 	rows: [1-9][0-9]+ // [optional] amount of results per page
 	pageStrategy: "paginate" // [optional, defaults to "paginate", currently only supports "paginate"]
 	facetLimit: [1-9][0-9]+ // [optional, sets the facet.limit param (defaults to -1 = all) ]
+	filters: [{...}] // [optional: static filters passed to search, not visible in user interface]
 }
 
 ```
@@ -310,6 +311,22 @@ Search fields are presented in order of configuration array.
 	}
 ]
 ```
+
+##### Layout of filters:
+```javascript
+	[
+		{
+			field: "name_t" // field in index
+			value: "jo*" // filter value
+		},
+		{
+			field: "deathDate_i",
+			type: "range",
+			value: [1890, 1900] // [optional: initial range value of filter]
+		}
+	]
+```
+
 
 ##### Methods
 

@@ -313,6 +313,18 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 			}).split("&").indexOf("fq=field_name:val") > -1).toEqual(true);
 		});
 
+		it("should set the fq parameters from static filters", () => {  //eslint-disable-line no-undef
+			const query = {
+				searchFields: [],
+				sortFields: [],
+				rows: 10,
+				start: 0
+			};
+			expect(solrQuery({...query, filters: [{field: "field_name", value: "val"}]
+			}).split("&").indexOf("fq=field_name:val") > -1).toEqual(true);
+		});
+
+
 		it("should set the rows parameter", () => {  //eslint-disable-line no-undef
 			const query = {
 				searchFields: [],
