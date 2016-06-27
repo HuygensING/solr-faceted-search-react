@@ -444,6 +444,58 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _xhr = _dereq_("xhr");
+
+var _xhr2 = _interopRequireDefault(_xhr);
+
+var _solrQuery = _dereq_("./solr-query");
+
+var _solrQuery2 = _interopRequireDefault(_solrQuery);
+
+var performXhr = function performXhr(options, accept) {
+	var reject = arguments.length <= 2 || arguments[2] === undefined ? function () {
+		console.warn("Undefined reject callback! ");(console.trace || function () {})();
+	} : arguments[2];
+
+	(0, _xhr2["default"])(options, accept, reject);
+};
+
+var submitQuery = function submitQuery(query, callback) {
+	callback({ type: "SET_RESULTS_PENDING" });
+
+	performXhr({
+		url: query.url,
+		data: (0, _solrQuery2["default"])(query),
+		method: "POST",
+		headers: {
+			"Content-type": "application/x-www-form-urlencoded"
+		}
+	}, function (err, resp) {
+		if (resp.statusCode >= 200 && resp.statusCode < 300) {
+			callback({ type: "SET_RESULTS", data: JSON.parse(resp.body) });
+		} else {
+			console.log("Server error: ", resp.statusCode);
+		}
+	});
+};
+
+var server = {
+	performXhr: performXhr,
+	submitQuery: submitQuery
+};
+
+exports["default"] = server;
+module.exports = exports["default"];
+
+},{"./solr-query":12,"xhr":8}],11:[function(_dereq_,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -451,14 +503,6 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _server = _dereq_("./server");
-
-var _server2 = _interopRequireDefault(_server);
-
-var _solrQuery = _dereq_("./solr-query");
-
-var _solrQuery2 = _interopRequireDefault(_solrQuery);
 
 var _reducersQuery = _dereq_("../reducers/query");
 
@@ -468,24 +512,7 @@ var _reducersResults = _dereq_("../reducers/results");
 
 var _reducersResults2 = _interopRequireDefault(_reducersResults);
 
-var submitQuery = function submitQuery(query, dispatch) {
-	dispatch({ type: "SET_RESULTS_PENDING" });
-
-	_server2["default"].performXhr({
-		url: query.url,
-		data: (0, _solrQuery2["default"])(query),
-		method: "POST",
-		headers: {
-			"Content-type": "application/x-www-form-urlencoded"
-		}
-	}, function (err, resp) {
-		if (resp.statusCode >= 200 && resp.statusCode < 300) {
-			dispatch({ type: "SET_RESULTS", data: JSON.parse(resp.body) });
-		} else {
-			console.log("Server error: ", resp.statusCode);
-		}
-	});
-};
+var _server = _dereq_("./server");
 
 var SolrClient = (function () {
 	function SolrClient(settings) {
@@ -533,7 +560,7 @@ var SolrClient = (function () {
 			var query = arguments.length <= 0 || arguments[0] === undefined ? this.state.query : arguments[0];
 
 			this.state.query = query;
-			submitQuery(query, function (action) {
+			(0, _server.submitQuery)(query, function (action) {
 				_this.state.results = (0, _reducersResults2["default"])(_this.state.results, action);
 				_this.onChange(_this.state, _this.getHandlers());
 			});
@@ -591,31 +618,7 @@ var SolrClient = (function () {
 
 exports.SolrClient = SolrClient;
 
-},{"../reducers/query":31,"../reducers/results":32,"./server":11,"./solr-query":12}],11:[function(_dereq_,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-var _xhr = _dereq_("xhr");
-
-var _xhr2 = _interopRequireDefault(_xhr);
-
-exports["default"] = {
-	performXhr: function performXhr(options, accept) {
-		var reject = arguments.length <= 2 || arguments[2] === undefined ? function () {
-			console.warn("Undefined reject callback! ");(console.trace || function () {})();
-		} : arguments[2];
-
-		(0, _xhr2["default"])(options, accept, reject);
-	}
-};
-module.exports = exports["default"];
-
-},{"xhr":8}],12:[function(_dereq_,module,exports){
+},{"../reducers/query":31,"../reducers/results":32,"./server":10}],12:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2482,14 +2485,14 @@ var _componentsComponentPack = _dereq_("./components/component-pack");
 
 var _componentsComponentPack2 = _interopRequireDefault(_componentsComponentPack);
 
-var _actions = _dereq_("./actions");
+var _apiSolrClient = _dereq_("./api/solr-client");
 
 exports["default"] = _componentsSolrFacetedSearch2["default"];
 exports.SolrFacetedSearch = _componentsSolrFacetedSearch2["default"];
 exports.defaultComponentPack = _componentsComponentPack2["default"];
-exports.SolrClient = _actions.SolrClient;
+exports.SolrClient = _apiSolrClient.SolrClient;
 
-},{"./actions":10,"./components/component-pack":13,"./components/solr-faceted-search":27}],31:[function(_dereq_,module,exports){
+},{"./api/solr-client":11,"./components/component-pack":13,"./components/solr-faceted-search":27}],31:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

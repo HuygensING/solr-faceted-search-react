@@ -1,27 +1,6 @@
-import server from "./server";
-import solrQuery from "./solr-query";
 import queryReducer from "../reducers/query";
 import resultReducer from "../reducers/results";
-
-const submitQuery = (query, dispatch) => {
-	dispatch({type: "SET_RESULTS_PENDING"});
-
-	server.performXhr({
-		url: query.url,
-		data: solrQuery(query),
-		method: "POST",
-		headers: {
-			"Content-type": "application/x-www-form-urlencoded"
-		}
-	}, (err, resp) => {
-		if (resp.statusCode >= 200 && resp.statusCode < 300) {
-			dispatch({type: "SET_RESULTS", data: JSON.parse(resp.body)});
-		} else {
-			console.log("Server error: ", resp.statusCode);
-		}
-	});
-};
-
+import { submitQuery } from "./server";
 
 class SolrClient {
 	constructor(settings) {
