@@ -454,7 +454,9 @@ var _solrQuery = _dereq_("./solr-query");
 
 var _solrQuery2 = _interopRequireDefault(_solrQuery);
 
-var performXhr = function performXhr(options, accept) {
+var server = {};
+
+server.performXhr = function (options, accept) {
 	var reject = arguments.length <= 2 || arguments[2] === undefined ? function () {
 		console.warn("Undefined reject callback! ");(console.trace || function () {})();
 	} : arguments[2];
@@ -462,10 +464,10 @@ var performXhr = function performXhr(options, accept) {
 	(0, _xhr2["default"])(options, accept, reject);
 };
 
-var submitQuery = function submitQuery(query, callback) {
+server.submitQuery = function (query, callback) {
 	callback({ type: "SET_RESULTS_PENDING" });
 
-	performXhr({
+	server.performXhr({
 		url: query.url,
 		data: (0, _solrQuery2["default"])(query),
 		method: "POST",
@@ -479,11 +481,6 @@ var submitQuery = function submitQuery(query, callback) {
 			console.log("Server error: ", resp.statusCode);
 		}
 	});
-};
-
-var server = {
-	performXhr: performXhr,
-	submitQuery: submitQuery
 };
 
 exports["default"] = server;

@@ -1,14 +1,16 @@
 import xhr from "xhr";
 import solrQuery from "./solr-query";
 
-const performXhr = function (options, accept, reject = () => { console.warn("Undefined reject callback! "); (console.trace || () => {})(); }) {
+let server = {};
+
+server.performXhr = function (options, accept, reject = () => { console.warn("Undefined reject callback! "); (console.trace || () => {})(); }) {
 	xhr(options, accept, reject);
 };
 
-const submitQuery = (query, callback) => {
+server.submitQuery = (query, callback) => {
 	callback({type: "SET_RESULTS_PENDING"});
 
-	performXhr({
+	server.performXhr({
 		url: query.url,
 		data: solrQuery(query),
 		method: "POST",
@@ -22,11 +24,6 @@ const submitQuery = (query, callback) => {
 			console.log("Server error: ", resp.statusCode);
 		}
 	});
-};
-
-const server = {
-	performXhr: performXhr,
-	submitQuery: submitQuery
 };
 
 export default server;
