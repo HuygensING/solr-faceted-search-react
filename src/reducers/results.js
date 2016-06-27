@@ -16,6 +16,14 @@ export default function(state=initialState, action) {
 				facets: action.data.facet_counts.facet_fields,
 				pending: false
 			};
+
+		case "SET_NEXT_RESULTS":
+			return {
+				...state,
+				docs: state.docs.concat(action.data.response.docs),
+				pending: false
+			};
+
 		case "SET_RESULTS_PENDING":
 			return {
 				...state, pending: true

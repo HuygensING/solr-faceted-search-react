@@ -29,6 +29,8 @@ export default function(state=initialState, action) {
 			return {...state, sortFields: action.newSortFields, start: state.pageStrategy === "paginate" ? 0 : null};
 		case "SET_START":
 			return {...state, start: action.newStart};
+		case "SET_RESULTS":
+			return action.data.nextCursorMark ? {...state, cursorMark: action.data.nextCursorMark } : state;
 	}
 
 	return state;

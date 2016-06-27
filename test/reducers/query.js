@@ -99,4 +99,25 @@ describe("queryReducer", () => { //eslint-disable-line no-undef
 			start: 10
 		});
 	});
+
+	it("should set the cursorMark on SET_RESULTS if present", () => {  //eslint-disable-line no-undef
+		expect(queryReducer({
+			initial: "x"
+		}, {
+			type: "SET_RESULTS",
+			data: { nextCursorMark: "confirm-cursor-mark" }
+		})).toEqual({
+			initial: "x",
+			cursorMark: "confirm-cursor-mark"
+		});
+
+				expect(queryReducer({
+			initial: "x"
+		}, {
+			type: "SET_RESULTS",
+			data: { }
+		})).toEqual({
+			initial: "x"
+		});
+	});
 });

@@ -22,13 +22,16 @@ class SolrFacetedSearch extends React.Component {
 		const ResultListComponent = customComponents.results.list;
 		const ResultPendingComponent = customComponents.results.pending;
 		const PaginateComponent = customComponents.results.paginate;
-
+		const PreloadComponent = customComponents.results.preloadIndicator;
 		const SortComponent = customComponents.sortFields.menu;
 		const resultPending = results.pending ? (<ResultPendingComponent bootstrapCss={bootstrapCss} />) : null;
 
 		const pagination = query.pageStrategy === "paginate" ?
 			<PaginateComponent {...this.props} bootstrapCss={bootstrapCss} onChange={onPageChange} /> :
 			null;
+
+		const preloadListItem = query.pageStrategy === "cursor" && results.docs.length < results.numFound ?
+			<PreloadComponent {...this.props} /> : null;
 
 		return (
 			<div className={cx("solr-faceted-search", {"container": bootstrapCss, "col-md-12": bootstrapCss})}>
@@ -61,6 +64,7 @@ class SolrFacetedSearch extends React.Component {
 								key={i}
 								onSelect={this.props.onSelectDoc} />
 						))}
+						{preloadListItem}
 					</ResultListComponent>
 					{pagination}
 				</ResultContainerComponent>

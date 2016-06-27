@@ -20,6 +20,10 @@ class SolrClient {
 
 		if (!this.state.query.pageStrategy) { this.state.query.pageStrategy = "paginate"; }
 		if (!this.state.query.rows) { this.state.query.rows = 20; }
+
+		if (this.state.query.pageStrategy === "cursor" && !this.state.query.idField) {
+			throw new Error("Pagination strategy 'cursor' requires a unique 'idField' to be passed.");
+		}
 	}
 
 	initialize() {
@@ -35,9 +39,22 @@ class SolrClient {
 	}
 
 	sendQuery(query = this.state.query) {
+		delete query.cursorMark;
 		this.state.query = query;
 		submitQuery(query, (action) => {
 			this.state.results = resultReducer(this.state.results, action);
+			this.state.query = queryReducer(this.state.query, action);
+			this.onChange(this.state, this.getHandlers());
+		});
+	}
+
+	sendNextCursorQuery() {
+		submitQuery(this.state.query, (action) => {
+			this.state.results = resultReducer(this.state.results, {
+				...action,
+				type: action.type === "SET_RESULTS" ? "SET_NEXT_RESULTS" : action.type
+			});
+			this.state.query = queryReducer(this.state.query, action);
 			this.onChange(this.state, this.getHandlers());
 		});
 	}
@@ -88,7 +105,8 @@ class SolrClient {
 			onSortFieldChange: this.setSortFieldValue.bind(this),
 			onSearchFieldChange: this.setSearchFieldValue.bind(this),
 			onFacetSortChange: this.setFacetSort.bind(this),
-			onPageChange: this.setCurrentPage.bind(this)
+			onPageChange: this.setCurrentPage.bind(this),
+			onNextCursorQuery: this.sendNextCursorQuery.bind(this)
 		};
 	}
 }

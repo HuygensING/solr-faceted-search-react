@@ -58,14 +58,33 @@ const buildSort = (sortFields) => sortFields
 	.join(",");
 
 const solrQuery = (query) => {
-	const { searchFields, sortFields, rows, start, facetLimit, facetSort } = query;
+	const {
+			searchFields,
+			sortFields,
+			rows,
+			start,
+			facetLimit,
+			facetSort,
+			pageStrategy,
+			cursorMark,
+			idField
+		} = query;
+
 	const filters = (query.filters || []).map((filter) => ({...filter, type: filter.type || "text"}));
 	const queryParams = buildQuery(searchFields.concat(filters));
-	const sortParam = buildSort(sortFields);
+
 	const facetFieldParam = facetFields(searchFields);
 	const facetSortParams = facetSorts(searchFields);
 	const facetLimitParam = `facet.limit=${facetLimit || -1}`;
 	const facetSortParam = `facet.sort=${facetSort || "index"}`;
+
+	const cursorMarkParam = pageStrategy === "cursor" ? `cursorMark=${cursorMark || "*"}` : "";
+	const idSort = pageStrategy === "cursor" ? [{field: idField, value: "asc"}] : [];
+
+	const sortParam = buildSort(sortFields.concat(idSort));
+
+
+
 	return `q=*:*&${queryParams.length > 0 ? queryParams : ""}` +
 		`${sortParam.length > 0 ? `&sort=${sortParam}` : ""}` +
 		`${facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}` +
@@ -73,6 +92,7 @@ const solrQuery = (query) => {
 		`&rows=${rows}` +
 		`&${facetLimitParam}` +
 		`&${facetSortParam}` +
+		`&${cursorMarkParam}` +
 		(start === null ? "" : `&start=${start}`) +
 		"&facet=on&wt=json";
 };

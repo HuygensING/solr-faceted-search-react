@@ -452,5 +452,17 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 			};
 			expect(solrQuery(query).split("&").indexOf("facet.sort=index") > -1).toEqual(true);
 		});
+
+		it("should set the cursorMark parameter to * when pageStrategy is 'cursor' and cursor is not passed", () => { //eslint-disable-line no-undef
+			const query = {
+				searchFields: [],
+				sortFields: [],
+				rows: 10,
+				start: null,
+				facetSort: "index",
+				pageStrategy: "cursor"
+			};
+			expect(solrQuery(query).split("&").indexOf("cursorMark=*") > -1).toEqual(true);
+		});
 	});
 });
