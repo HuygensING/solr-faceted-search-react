@@ -667,7 +667,7 @@ var rangeFacetToQueryFilter = function rangeFacetToQueryFilter(field) {
 		return null;
 	}
 
-	return "(" + field.field + ":[" + filters[0] + " TO " + filters[1] + "])";
+	return encodeURIComponent("(" + field.field + ":[" + filters[0] + " TO " + filters[1] + "])");
 };
 
 var listFacetFieldToQueryFilter = function listFacetFieldToQueryFilter(field) {
@@ -679,7 +679,7 @@ var listFacetFieldToQueryFilter = function listFacetFieldToQueryFilter(field) {
 	var filterQ = filters.map(function (f) {
 		return "\"" + f + "\"";
 	}).join(" OR ");
-	return field.field + ":(" + filterQ + ")";
+	return encodeURIComponent(field.field + ":(" + filterQ + ")");
 };
 
 var textFieldToQueryFilter = function textFieldToQueryFilter(field) {
@@ -687,7 +687,7 @@ var textFieldToQueryFilter = function textFieldToQueryFilter(field) {
 		return null;
 	}
 
-	return field.field === "*" ? field.value : field.field + ":" + field.value;
+	return encodeURIComponent(field.field === "*" ? field.value : field.field + ":" + field.value);
 };
 
 var fieldToQueryFilter = function fieldToQueryFilter(field) {
@@ -713,7 +713,7 @@ var facetFields = function facetFields(fields) {
 	return fields.filter(function (field) {
 		return field.type === "list-facet" || field.type === "range-facet";
 	}).map(function (field) {
-		return "facet.field=" + field.field;
+		return "facet.field=" + encodeURIComponent(field.field);
 	}).join("&");
 };
 
@@ -721,7 +721,7 @@ var facetSorts = function facetSorts(fields) {
 	return fields.filter(function (field) {
 		return field.facetSort;
 	}).map(function (field) {
-		return "f." + field.field + ".facet.sort=" + field.facetSort;
+		return "f." + encodeURIComponent(field.field) + ".facet.sort=" + field.facetSort;
 	}).join("&");
 };
 
@@ -729,7 +729,7 @@ var buildSort = function buildSort(sortFields) {
 	return sortFields.filter(function (sortField) {
 		return sortField.value;
 	}).map(function (sortField) {
-		return sortField.field + " " + sortField.value;
+		return encodeURIComponent(sortField.field + " " + sortField.value);
 	}).join(",");
 };
 

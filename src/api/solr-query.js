@@ -4,7 +4,7 @@ const rangeFacetToQueryFilter = (field) => {
 		return null;
 	}
 
-	return `(${field.field}:[${filters[0]} TO ${filters[1]}])`;
+	return encodeURIComponent(`(${field.field}:[${filters[0]} TO ${filters[1]}])`);
 };
 
 const listFacetFieldToQueryFilter = (field) => {
@@ -14,7 +14,7 @@ const listFacetFieldToQueryFilter = (field) => {
 	}
 
 	const filterQ = filters.map((f) => `"${f}"`).join(" OR ");
-	return `${field.field}:(${filterQ})`;
+	return encodeURIComponent(`${field.field}:(${filterQ})`);
 };
 
 const textFieldToQueryFilter = (field) => {
@@ -22,7 +22,7 @@ const textFieldToQueryFilter = (field) => {
 		return null;
 	}
 
-	return field.field === "*" ? field.value : `${field.field}:${field.value}`;
+	return encodeURIComponent(field.field === "*" ? field.value : `${field.field}:${field.value}`);
 };
 
 const fieldToQueryFilter = (field) => {
@@ -44,17 +44,17 @@ const buildQuery = (fields) => fields
 
 const facetFields = (fields) => fields
 	.filter((field) => field.type === "list-facet" || field.type === "range-facet")
-	.map((field) => `facet.field=${field.field}`)
+	.map((field) => `facet.field=${encodeURIComponent(field.field)}`)
 	.join("&");
 
 const facetSorts = (fields) => fields
 	.filter((field) => field.facetSort)
-	.map((field) => `f.${field.field}.facet.sort=${field.facetSort}`)
+	.map((field) => `f.${encodeURIComponent(field.field)}.facet.sort=${field.facetSort}`)
 	.join("&");
 
 const buildSort = (sortFields) => sortFields
 	.filter((sortField) => sortField.value)
-	.map((sortField) => `${sortField.field} ${sortField.value}`)
+	.map((sortField) => encodeURIComponent(`${sortField.field} ${sortField.value}`))
 	.join(",");
 
 const solrQuery = (query) => {
