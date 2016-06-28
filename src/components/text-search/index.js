@@ -1,5 +1,7 @@
 import React from "react";
 import cx from "classnames";
+import SearchIcon from "../icons/search";
+
 
 class TextSearch extends React.Component {
 	constructor(props) {
@@ -42,8 +44,9 @@ class TextSearch extends React.Component {
 					onChange={this.handleInputChange.bind(this)}
 					onKeyDown={this.handleInputKeyDown.bind(this)}
 					value={this.state.value || ""} />
-				<button onClick={this.handleSubmit.bind(this)}>
-					Search
+				&nbsp;
+				<button className={cx({"btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-sm": bootstrapCss})} onClick={this.handleSubmit.bind(this)}>
+					<SearchIcon />
 				</button>
 			</li>
 		);

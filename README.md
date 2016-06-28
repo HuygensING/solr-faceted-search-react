@@ -575,6 +575,11 @@ Load this index.html in a browser
 			list-style: none;
 			padding: 0;
 		}
+
+		svg.search-icon {
+			stroke: white;
+			fill: white;
+		}
 	</style>
 </head>
 <body>

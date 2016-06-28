@@ -652,7 +652,7 @@ var SolrClient = (function () {
 
 exports.SolrClient = SolrClient;
 
-},{"../reducers/query":33,"../reducers/results":34,"./server":10}],12:[function(_dereq_,module,exports){
+},{"../reducers/query":34,"../reducers/results":35,"./server":10}],12:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -862,7 +862,7 @@ exports["default"] = {
 };
 module.exports = exports["default"];
 
-},{"./current-query":14,"./list-facet":17,"./range-facet":18,"./results/container":20,"./results/count-label":21,"./results/header":22,"./results/list":23,"./results/pagination":24,"./results/pending":25,"./results/preload-indicator":26,"./results/result":27,"./search-field-container":28,"./sort-menu":30,"./text-search":31}],14:[function(_dereq_,module,exports){
+},{"./current-query":14,"./list-facet":18,"./range-facet":19,"./results/container":21,"./results/count-label":22,"./results/header":23,"./results/list":24,"./results/pagination":25,"./results/pending":26,"./results/preload-indicator":27,"./results/result":28,"./search-field-container":29,"./sort-menu":31,"./text-search":32}],14:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1087,6 +1087,53 @@ var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
 
+var Search = (function (_React$Component) {
+	_inherits(Search, _React$Component);
+
+	function Search() {
+		_classCallCheck(this, Search);
+
+		_get(Object.getPrototypeOf(Search.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(Search, [{
+		key: "render",
+		value: function render() {
+			return _react2["default"].createElement(
+				"svg",
+				{ className: "search-icon", viewBox: "0 0 250.313 250.313", width: "10" },
+				_react2["default"].createElement("path", { d: "M244.186,214.604l-54.379-54.378c-0.289-0.289-0.628-0.491-0.93-0.76 c10.7-16.231,16.945-35.66,16.945-56.554C205.822,46.075,159.747,0,102.911,0S0,46.075,0,102.911 c0,56.835,46.074,102.911,102.91,102.911c20.895,0,40.323-6.245,56.554-16.945c0.269,0.301,0.47,0.64,0.759,0.929l54.38,54.38 c8.169,8.168,21.413,8.168,29.583,0C252.354,236.017,252.354,222.773,244.186,214.604z M102.911,170.146 c-37.134,0-67.236-30.102-67.236-67.235c0-37.134,30.103-67.236,67.236-67.236c37.132,0,67.235,30.103,67.235,67.236 C170.146,140.044,140.043,170.146,102.911,170.146z" })
+			);
+		}
+	}]);
+
+	return Search;
+})(_react2["default"].Component);
+
+exports["default"] = Search;
+module.exports = exports["default"];
+
+},{"react":"react"}],17:[function(_dereq_,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = _dereq_("react");
+
+var _react2 = _interopRequireDefault(_react);
+
 var UncheckedIcon = (function (_React$Component) {
 	_inherits(UncheckedIcon, _React$Component);
 
@@ -1125,7 +1172,7 @@ UncheckedIcon.propTypes = {
 exports["default"] = UncheckedIcon;
 module.exports = exports["default"];
 
-},{"react":"react"}],17:[function(_dereq_,module,exports){
+},{"react":"react"}],18:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1295,7 +1342,7 @@ ListFacet.propTypes = {
 exports["default"] = ListFacet;
 module.exports = exports["default"];
 
-},{"../icons/checked":15,"../icons/unchecked":16,"classnames":1,"react":"react"}],18:[function(_dereq_,module,exports){
+},{"../icons/checked":15,"../icons/unchecked":17,"classnames":1,"react":"react"}],19:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1454,7 +1501,7 @@ RangeFacet.propTypes = {
 exports["default"] = RangeFacet;
 module.exports = exports["default"];
 
-},{"./range-slider":19,"classnames":1,"react":"react"}],19:[function(_dereq_,module,exports){
+},{"./range-slider":20,"classnames":1,"react":"react"}],20:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1678,7 +1725,7 @@ RangeSlider.propTypes = {
 exports["default"] = RangeSlider;
 module.exports = exports["default"];
 
-},{"react":"react","react-dom":"react-dom"}],20:[function(_dereq_,module,exports){
+},{"react":"react","react-dom":"react-dom"}],21:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1740,7 +1787,7 @@ ResultContainer.propTypes = {
 exports["default"] = ResultContainer;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],21:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],22:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1801,7 +1848,7 @@ Result.propTypes = {
 exports["default"] = Result;
 module.exports = exports["default"];
 
-},{"react":"react"}],22:[function(_dereq_,module,exports){
+},{"react":"react"}],23:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1859,7 +1906,7 @@ ResultHeader.propTypes = {
 exports["default"] = ResultHeader;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],23:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],24:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1917,7 +1964,7 @@ ResultList.propTypes = {
 exports["default"] = ResultList;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],24:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],25:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2068,7 +2115,7 @@ Pagination.propTypes = {
 exports["default"] = Pagination;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],25:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],26:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2119,7 +2166,7 @@ Pending.propTypes = {
 exports["default"] = Pending;
 module.exports = exports["default"];
 
-},{"react":"react"}],26:[function(_dereq_,module,exports){
+},{"react":"react"}],27:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2218,7 +2265,7 @@ PreloadIndicator.propTypes = {
 exports["default"] = PreloadIndicator;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react","react-dom":"react-dom"}],27:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react","react-dom":"react-dom"}],28:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2311,7 +2358,7 @@ Result.propTypes = {
 exports["default"] = Result;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],28:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],29:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2386,7 +2433,7 @@ SearchFieldContainer.propTypes = {
 exports["default"] = SearchFieldContainer;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],29:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],30:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2534,7 +2581,7 @@ SolrFacetedSearch.propTypes = {
 exports["default"] = SolrFacetedSearch;
 module.exports = exports["default"];
 
-},{"./component-pack":13,"classnames":1,"react":"react"}],30:[function(_dereq_,module,exports){
+},{"./component-pack":13,"classnames":1,"react":"react"}],31:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2713,7 +2760,7 @@ SortMenu.propTypes = {
 exports["default"] = SortMenu;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react","react-dom":"react-dom"}],31:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react","react-dom":"react-dom"}],32:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2737,6 +2784,10 @@ var _react2 = _interopRequireDefault(_react);
 var _classnames = _dereq_("classnames");
 
 var _classnames2 = _interopRequireDefault(_classnames);
+
+var _iconsSearch = _dereq_("../icons/search");
+
+var _iconsSearch2 = _interopRequireDefault(_iconsSearch);
 
 var TextSearch = (function (_React$Component) {
 	_inherits(TextSearch, _React$Component);
@@ -2800,10 +2851,11 @@ var TextSearch = (function (_React$Component) {
 					onChange: this.handleInputChange.bind(this),
 					onKeyDown: this.handleInputKeyDown.bind(this),
 					value: this.state.value || "" }),
+				" ",
 				_react2["default"].createElement(
 					"button",
-					{ onClick: this.handleSubmit.bind(this) },
-					"Search"
+					{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-sm": bootstrapCss }), onClick: this.handleSubmit.bind(this) },
+					_react2["default"].createElement(_iconsSearch2["default"], null)
 				)
 			);
 		}
@@ -2826,7 +2878,7 @@ TextSearch.propTypes = {
 exports["default"] = TextSearch;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],32:[function(_dereq_,module,exports){
+},{"../icons/search":16,"classnames":1,"react":"react"}],33:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2850,7 +2902,7 @@ exports.SolrFacetedSearch = _componentsSolrFacetedSearch2["default"];
 exports.defaultComponentPack = _componentsComponentPack2["default"];
 exports.SolrClient = _apiSolrClient.SolrClient;
 
-},{"./api/solr-client":11,"./components/component-pack":13,"./components/solr-faceted-search":29}],33:[function(_dereq_,module,exports){
+},{"./api/solr-client":11,"./components/component-pack":13,"./components/solr-faceted-search":30}],34:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2900,7 +2952,7 @@ exports["default"] = function (state, action) {
 
 module.exports = exports["default"];
 
-},{}],34:[function(_dereq_,module,exports){
+},{}],35:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2944,5 +2996,5 @@ exports["default"] = function (state, action) {
 
 module.exports = exports["default"];
 
-},{}]},{},[32])(32)
+},{}]},{},[33])(33)
 });
