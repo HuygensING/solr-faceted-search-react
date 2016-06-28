@@ -586,6 +586,22 @@ Load this index.html in a browser
 			stroke: white;
 			fill: white;
 		}
+
+		.current-query .label {
+			display: inline-block;
+			padding: 4px;
+			cursor: pointer;
+			margin-left: 4px;
+		}
+
+		.current-query .label:hover a {
+			color: red;
+		}
+
+		.current-query .label a {
+			color: white;
+			margin-left: 4px;
+		}
 	</style>
 </head>
 <body>

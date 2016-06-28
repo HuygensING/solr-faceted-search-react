@@ -887,8 +887,6 @@ var _classnames = _dereq_("classnames");
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var labelStyle = {};
-
 var CurrentQuery = (function (_React$Component) {
 	_inherits(CurrentQuery, _React$Component);
 
@@ -899,9 +897,113 @@ var CurrentQuery = (function (_React$Component) {
 	}
 
 	_createClass(CurrentQuery, [{
+		key: "removeListFacetValue",
+		value: function removeListFacetValue(field, values, value) {
+			var foundIdx = values.indexOf(value);
+			if (foundIdx > -1) {
+				this.props.onChange(field, values.filter(function (v, i) {
+					return i !== foundIdx;
+				}));
+			}
+		}
+	}, {
+		key: "removeRangeFacetValue",
+		value: function removeRangeFacetValue(field) {
+			this.props.onChange(field, []);
+		}
+	}, {
+		key: "removeTextValue",
+		value: function removeTextValue(field) {
+			this.props.onChange(field, "");
+		}
+	}, {
+		key: "renderFieldValues",
+		value: function renderFieldValues(searchField) {
+			var _this = this;
+
+			var bootstrapCss = this.props.bootstrapCss;
+
+			switch (searchField.type) {
+				case "list-facet":
+					return searchField.value.map(function (val, i) {
+						return _react2["default"].createElement(
+							"span",
+							{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }), key: i,
+								onClick: function () {
+									return _this.removeListFacetValue(searchField.field, searchField.value, val);
+								} },
+							val,
+							_react2["default"].createElement(
+								"a",
+								null,
+								"❌"
+							)
+						);
+					});
+
+				case "range-facet":
+					return _react2["default"].createElement(
+						"span",
+						{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }),
+							onClick: function () {
+								return _this.removeRangeFacetValue(searchField.field);
+							} },
+						searchField.value[0],
+						" - ",
+						searchField.value[1],
+						_react2["default"].createElement(
+							"a",
+							null,
+							"❌"
+						)
+					);
+
+				case "text":
+					return _react2["default"].createElement(
+						"span",
+						{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }),
+							onClick: function () {
+								return _this.removeTextValue(searchField.field);
+							} },
+						searchField.value,
+						_react2["default"].createElement(
+							"a",
+							null,
+							"❌"
+						)
+					);
+			}
+			return null;
+		}
+	}, {
 		key: "render",
 		value: function render() {
-			var bootstrapCss = this.props.bootstrapCss;
+			var _this2 = this;
+
+			var _props = this.props;
+			var bootstrapCss = _props.bootstrapCss;
+			var query = _props.query;
+
+			var splitFields = query.searchFields.filter(function (searchField) {
+				return searchField.value && searchField.value.length > 0;
+			}).map(function (searchField, i) {
+				return i % 2 === 0 ? { type: "odds", searchField: searchField } : { type: "evens", searchField: searchField };
+			});
+
+			var odds = splitFields.filter(function (sf) {
+				return sf.type === "evens";
+			}).map(function (sf) {
+				return sf.searchField;
+			});
+			var evens = splitFields.filter(function (sf) {
+				return sf.type === "odds";
+			}).map(function (sf) {
+				return sf.searchField;
+			});
+
+			if (odds.length === 0 && evens.length === 0) {
+				return null;
+			}
 
 			return _react2["default"].createElement(
 				"div",
@@ -912,81 +1014,34 @@ var CurrentQuery = (function (_React$Component) {
 					_react2["default"].createElement(
 						"ul",
 						{ className: (0, _classnames2["default"])({ "col-md-6": bootstrapCss }) },
-						_react2["default"].createElement(
-							"li",
-							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }) },
-							_react2["default"].createElement(
-								"label",
-								{ style: labelStyle },
-								"Characteristics"
-							),
-							_react2["default"].createElement(
-								"span",
-								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
-								"asd  ",
+						evens.map(function (searchField, i) {
+							return _react2["default"].createElement(
+								"li",
+								{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }), key: i },
 								_react2["default"].createElement(
-									"a",
+									"label",
 									null,
-									"❌"
-								)
-							)
-						),
-						_react2["default"].createElement(
-							"li",
-							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }) },
-							_react2["default"].createElement(
-								"label",
-								{ style: labelStyle },
-								"All text fields"
-							),
-							_react2["default"].createElement(
-								"span",
-								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
-								"asd"
-							),
-							_react2["default"].createElement(
-								"span",
-								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
-								"asdasd"
-							)
-						)
+									searchField.label
+								),
+								_this2.renderFieldValues(searchField)
+							);
+						})
 					),
 					_react2["default"].createElement(
 						"ul",
 						{ className: (0, _classnames2["default"])({ "col-md-6": bootstrapCss }) },
-						_react2["default"].createElement(
-							"li",
-							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }) },
-							_react2["default"].createElement(
-								"label",
-								{ style: labelStyle },
-								"Date of birth as dasdasdsas"
-							),
-							_react2["default"].createElement(
-								"span",
-								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
-								"asd"
-							)
-						),
-						_react2["default"].createElement(
-							"li",
-							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }) },
-							_react2["default"].createElement(
-								"label",
-								{ style: labelStyle },
-								"test"
-							),
-							_react2["default"].createElement(
-								"span",
-								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
-								"asd"
-							),
-							_react2["default"].createElement(
-								"span",
-								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
-								"asdasd"
-							)
-						)
+						odds.map(function (searchField, i) {
+							return _react2["default"].createElement(
+								"li",
+								{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }), key: i },
+								_react2["default"].createElement(
+									"label",
+									null,
+									searchField.label
+								),
+								_this2.renderFieldValues(searchField)
+							);
+						})
 					)
 				)
 			);
@@ -2500,6 +2555,7 @@ var SolrFacetedSearch = (function (_React$Component) {
 			var ResultPendingComponent = customComponents.results.pending;
 			var PaginateComponent = customComponents.results.paginate;
 			var PreloadComponent = customComponents.results.preloadIndicator;
+			var CurrentQueryComponent = customComponents.searchFields.currentQuery;
 			var SortComponent = customComponents.sortFields.menu;
 			var resultPending = results.pending ? _react2["default"].createElement(ResultPendingComponent, { bootstrapCss: bootstrapCss }) : null;
 
@@ -2536,6 +2592,7 @@ var SolrFacetedSearch = (function (_React$Component) {
 						resultPending,
 						_react2["default"].createElement(SortComponent, { bootstrapCss: bootstrapCss, onChange: onSortFieldChange, sortFields: sortFields })
 					),
+					_react2["default"].createElement(CurrentQueryComponent, _extends({}, this.props, { onChange: onSearchFieldChange })),
 					pagination,
 					_react2["default"].createElement(
 						ResultListComponent,

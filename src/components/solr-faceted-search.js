@@ -23,6 +23,7 @@ class SolrFacetedSearch extends React.Component {
 		const ResultPendingComponent = customComponents.results.pending;
 		const PaginateComponent = customComponents.results.paginate;
 		const PreloadComponent = customComponents.results.preloadIndicator;
+		const CurrentQueryComponent = customComponents.searchFields.currentQuery;
 		const SortComponent = customComponents.sortFields.menu;
 		const resultPending = results.pending ? (<ResultPendingComponent bootstrapCss={bootstrapCss} />) : null;
 
@@ -55,6 +56,7 @@ class SolrFacetedSearch extends React.Component {
 						{resultPending}
 						<SortComponent bootstrapCss={bootstrapCss} onChange={onSortFieldChange} sortFields={sortFields} />
 					</ResultHeaderComponent>
+					<CurrentQueryComponent {...this.props} onChange={onSearchFieldChange} />
 					{pagination}
 					<ResultListComponent bootstrapCss={bootstrapCss}>
 						{results.docs.map((doc, i) => (
