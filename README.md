@@ -205,7 +205,8 @@ The default components are exposed through the defaultComponentPack, which has t
 		text: TextSearch, // src/components/text-search/index.js
 		"list-facet": ListFacet, // src/components/list-facet/index.js
 		"range-facet": RangeFacet,  // src/components/range-facet/index.js
-		container: SearchFieldContainer //  src/components/search-field-container.js
+		container: SearchFieldContainer, //  src/components/search-field-container.js
+		currentQuery: CurrentQuery //  src/components/current-query/index.js
 	},
 	results: {
 		result: Result, // src/components/results/result.js
