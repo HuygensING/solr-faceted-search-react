@@ -17,6 +17,10 @@ Appendix A: [Setting up Solr](#setting-up-solr)
 
 Appendix B: [Building the example webapp](#building-the-example-webapp)
 
+## Screenshot
+
+![Screenshot](https://raw.githubusercontent.com/HuygensING/solr-faceted-search-react/master/screen.png "Screenshot")
+
 
 ## Quick Start
 
