@@ -1,6 +1,6 @@
 {
   "name": "solr-faceted-search-react",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "build/index.js",
   "author": {
     "name": "René van der Ark",
