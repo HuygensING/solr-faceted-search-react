@@ -1,6 +1,6 @@
 {
   "name": "solr-faceted-search-react",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "build/index.js",
   "author": {
     "name": "René van der Ark",
@@ -15,6 +15,7 @@
     "test": "mocha --compilers js:babel/register --recursive test",
     "test:watch": "nodemon -x \"mocha --compilers js:babel/register --recursive --watch test\" -w test -w build"
   },
+  "license": "MIT",
   "peerDependencies": {
     "react": ">= 0.14.7 < 16",
     "react-dom": ">= 0.14.7 < 16"
