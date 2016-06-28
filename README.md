@@ -1,5 +1,7 @@
 # Solr faceted search client and react component pack 
 
+Solr faceted search client and react component pack
+
 [![Build Status](https://travis-ci.org/HuygensING/solr-faceted-search-react.svg?branch=master)](https://travis-ci.org/HuygensING/solr-faceted-search-react)
 
 ## Table of Contents
