@@ -514,6 +514,68 @@ Load this index.html in a browser
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<script src="web.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+	<style type="text/css">
+		.list-facet ul {
+			overflow-y: auto;
+			max-height: 200px;
+		}
+
+		.list-facet ul li {
+			cursor: pointer
+		}
+
+		.list-facet ul li:hover {
+			text-decoration: underline;
+		}
+
+		.facet-range-slider {
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none; 
+			user-select: none; 
+			-webkit-user-drag: none;
+			user-drag: none;
+			cursor: pointer;
+			width: 100%;
+			stroke: #f1ebe6;
+			fill: #f1ebe6;
+		}
+
+		.facet-range-slider .range-line {
+			stroke-width: 8;
+		}
+
+		.facet-range-slider .range-line circle {
+			stroke-width: 0;
+		}
+
+		.facet-range-slider .range-line circle.hovering,
+		.facet-range-slider .range-line circle:hover {
+			fill: #bda47e;
+		}
+
+		.facet-range-slider .range-line path.hovering,
+		.facet-range-slider .range-line path:hover {
+			stroke: #bda47e;
+		}
+
+		.current-query label,
+		.solr-search-results ul label {
+			display: inline-block;
+			margin: 0 20px 0 0;
+			width: 120px;
+			color: #666;
+			overflow: hidden;
+			white-space: nowrap;
+			vertical-align: bottom;
+			text-overflow: ellipsis
+		}
+
+		.solr-search-results ul li ul {
+			list-style: none;
+			padding: 0;
+		}
+	</style>
 </head>
 <body>
 	<div id="app"></div>

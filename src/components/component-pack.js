@@ -11,14 +11,15 @@ import SearchFieldContainer from "./search-field-container";
 import RangeFacet from "./range-facet";
 import CountLabel from "./results/count-label";
 import SortMenu from "./sort-menu";
-
+import CurrentQuery from "./current-query";
 
 export default {
 	searchFields: {
 		text: TextSearch,
 		"list-facet": ListFacet,
 		"range-facet": RangeFacet,
-		container: SearchFieldContainer
+		container: SearchFieldContainer,
+		currentQuery: CurrentQuery
 	},
 	results: {
 		result: Result,

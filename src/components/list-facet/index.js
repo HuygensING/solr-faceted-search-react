@@ -57,10 +57,10 @@ class ListFacet extends React.Component {
 					</span>
 				</header>
 
-				<ul className={cx({"list-group": bootstrapCss})} style={{overflowY: "auto", maxHeight: "200px"}}>
+				<ul className={cx({"list-group": bootstrapCss})}>
 					{facetValues.map((facetValue, i) =>
 						this.state.filter.length === 0 || facetValue.toLowerCase().indexOf(this.state.filter.toLowerCase()) > -1 ? (
-						<li className={cx({"list-group-item": bootstrapCss})} key={i} onClick={() => this.handleClick(facetValue)} style={{cursor: "pointer"}}>
+						<li className={cx({"list-group-item": bootstrapCss})} key={i} onClick={() => this.handleClick(facetValue)}>
 							{value.indexOf(facetValue) > -1 ? <CheckedIcon /> : <UncheckedIcon />} {facetValue} ({facetCounts[i]})
 						</li>) : null
 					)}

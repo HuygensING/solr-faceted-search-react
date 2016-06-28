@@ -652,7 +652,7 @@ var SolrClient = (function () {
 
 exports.SolrClient = SolrClient;
 
-},{"../reducers/query":32,"../reducers/results":33,"./server":10}],12:[function(_dereq_,module,exports){
+},{"../reducers/query":33,"../reducers/results":34,"./server":10}],12:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -834,12 +834,17 @@ var _sortMenu = _dereq_("./sort-menu");
 
 var _sortMenu2 = _interopRequireDefault(_sortMenu);
 
+var _currentQuery = _dereq_("./current-query");
+
+var _currentQuery2 = _interopRequireDefault(_currentQuery);
+
 exports["default"] = {
 	searchFields: {
 		text: _textSearch2["default"],
 		"list-facet": _listFacet2["default"],
 		"range-facet": _rangeFacet2["default"],
-		container: _searchFieldContainer2["default"]
+		container: _searchFieldContainer2["default"],
+		currentQuery: _currentQuery2["default"]
 	},
 	results: {
 		result: _resultsResult2["default"],
@@ -857,7 +862,150 @@ exports["default"] = {
 };
 module.exports = exports["default"];
 
-},{"./list-facet":16,"./range-facet":17,"./results/container":19,"./results/count-label":20,"./results/header":21,"./results/list":22,"./results/pagination":23,"./results/pending":24,"./results/preload-indicator":25,"./results/result":26,"./search-field-container":27,"./sort-menu":29,"./text-search":30}],14:[function(_dereq_,module,exports){
+},{"./current-query":14,"./list-facet":17,"./range-facet":18,"./results/container":20,"./results/count-label":21,"./results/header":22,"./results/list":23,"./results/pagination":24,"./results/pending":25,"./results/preload-indicator":26,"./results/result":27,"./search-field-container":28,"./sort-menu":30,"./text-search":31}],14:[function(_dereq_,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = _dereq_("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _classnames = _dereq_("classnames");
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var labelStyle = {};
+
+var CurrentQuery = (function (_React$Component) {
+	_inherits(CurrentQuery, _React$Component);
+
+	function CurrentQuery() {
+		_classCallCheck(this, CurrentQuery);
+
+		_get(Object.getPrototypeOf(CurrentQuery.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(CurrentQuery, [{
+		key: "render",
+		value: function render() {
+			var bootstrapCss = this.props.bootstrapCss;
+
+			return _react2["default"].createElement(
+				"div",
+				{ className: (0, _classnames2["default"])("current-query", { "panel-body": bootstrapCss }) },
+				_react2["default"].createElement(
+					"div",
+					{ className: (0, _classnames2["default"])({ "row": bootstrapCss }) },
+					_react2["default"].createElement(
+						"ul",
+						{ className: (0, _classnames2["default"])({ "col-md-6": bootstrapCss }) },
+						_react2["default"].createElement(
+							"li",
+							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }) },
+							_react2["default"].createElement(
+								"label",
+								{ style: labelStyle },
+								"Characteristics"
+							),
+							_react2["default"].createElement(
+								"span",
+								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
+								"asd  ",
+								_react2["default"].createElement(
+									"a",
+									null,
+									"❌"
+								)
+							)
+						),
+						_react2["default"].createElement(
+							"li",
+							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }) },
+							_react2["default"].createElement(
+								"label",
+								{ style: labelStyle },
+								"All text fields"
+							),
+							_react2["default"].createElement(
+								"span",
+								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
+								"asd"
+							),
+							_react2["default"].createElement(
+								"span",
+								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
+								"asdasd"
+							)
+						)
+					),
+					_react2["default"].createElement(
+						"ul",
+						{ className: (0, _classnames2["default"])({ "col-md-6": bootstrapCss }) },
+						_react2["default"].createElement(
+							"li",
+							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }) },
+							_react2["default"].createElement(
+								"label",
+								{ style: labelStyle },
+								"Date of birth as dasdasdsas"
+							),
+							_react2["default"].createElement(
+								"span",
+								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
+								"asd"
+							)
+						),
+						_react2["default"].createElement(
+							"li",
+							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }) },
+							_react2["default"].createElement(
+								"label",
+								{ style: labelStyle },
+								"test"
+							),
+							_react2["default"].createElement(
+								"span",
+								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
+								"asd"
+							),
+							_react2["default"].createElement(
+								"span",
+								{ className: (0, _classnames2["default"])({ "label": bootstrapCss, "label-default": bootstrapCss }) },
+								"asdasd"
+							)
+						)
+					)
+				)
+			);
+		}
+	}]);
+
+	return CurrentQuery;
+})(_react2["default"].Component);
+
+CurrentQuery.propTypes = {
+	bootstrapCss: _react2["default"].PropTypes.bool,
+	onChange: _react2["default"].PropTypes.func,
+	query: _react2["default"].PropTypes.object
+};
+
+exports["default"] = CurrentQuery;
+module.exports = exports["default"];
+
+},{"classnames":1,"react":"react"}],15:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -918,7 +1066,7 @@ CheckedIcon.propTypes = {
 exports["default"] = CheckedIcon;
 module.exports = exports["default"];
 
-},{"react":"react"}],15:[function(_dereq_,module,exports){
+},{"react":"react"}],16:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -977,7 +1125,7 @@ UncheckedIcon.propTypes = {
 exports["default"] = UncheckedIcon;
 module.exports = exports["default"];
 
-},{"react":"react"}],16:[function(_dereq_,module,exports){
+},{"react":"react"}],17:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1104,13 +1252,13 @@ var ListFacet = (function (_React$Component) {
 				),
 				_react2["default"].createElement(
 					"ul",
-					{ className: (0, _classnames2["default"])({ "list-group": bootstrapCss }), style: { overflowY: "auto", maxHeight: "200px" } },
+					{ className: (0, _classnames2["default"])({ "list-group": bootstrapCss }) },
 					facetValues.map(function (facetValue, i) {
 						return _this.state.filter.length === 0 || facetValue.toLowerCase().indexOf(_this.state.filter.toLowerCase()) > -1 ? _react2["default"].createElement(
 							"li",
 							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }), key: i, onClick: function () {
 									return _this.handleClick(facetValue);
-								}, style: { cursor: "pointer" } },
+								} },
 							value.indexOf(facetValue) > -1 ? _react2["default"].createElement(_iconsChecked2["default"], null) : _react2["default"].createElement(_iconsUnchecked2["default"], null),
 							" ",
 							facetValue,
@@ -1147,7 +1295,7 @@ ListFacet.propTypes = {
 exports["default"] = ListFacet;
 module.exports = exports["default"];
 
-},{"../icons/checked":14,"../icons/unchecked":15,"classnames":1,"react":"react"}],17:[function(_dereq_,module,exports){
+},{"../icons/checked":15,"../icons/unchecked":16,"classnames":1,"react":"react"}],18:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1306,7 +1454,7 @@ RangeFacet.propTypes = {
 exports["default"] = RangeFacet;
 module.exports = exports["default"];
 
-},{"./range-slider":18,"classnames":1,"react":"react"}],18:[function(_dereq_,module,exports){
+},{"./range-slider":19,"classnames":1,"react":"react"}],19:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1498,8 +1646,7 @@ var RangeSlider = (function (_React$Component) {
 			var keys = this.state.hoverState === "lowerLimit" ? ["upperLimit", "lowerLimit"] : ["lowerLimit", "upperLimit"];
 			return _react2["default"].createElement(
 				"svg",
-				{ className: "facet-range-slider", style: styles.slider,
-					viewBox: "0 0 400 26" },
+				{ className: "facet-range-slider", viewBox: "0 0 400 26" },
 				_react2["default"].createElement("path", { d: "M0 0 L 0 26 Z", fill: "transparent" }),
 				_react2["default"].createElement("path", { d: "M400 0 L 400 26 Z", fill: "transparent" }),
 				_react2["default"].createElement("path", { d: "M0 13 L 400 13 Z", fill: "transparent" }),
@@ -1531,7 +1678,7 @@ RangeSlider.propTypes = {
 exports["default"] = RangeSlider;
 module.exports = exports["default"];
 
-},{"react":"react","react-dom":"react-dom"}],19:[function(_dereq_,module,exports){
+},{"react":"react","react-dom":"react-dom"}],20:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1593,7 +1740,7 @@ ResultContainer.propTypes = {
 exports["default"] = ResultContainer;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],20:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],21:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1654,7 +1801,7 @@ Result.propTypes = {
 exports["default"] = Result;
 module.exports = exports["default"];
 
-},{"react":"react"}],21:[function(_dereq_,module,exports){
+},{"react":"react"}],22:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1712,7 +1859,7 @@ ResultHeader.propTypes = {
 exports["default"] = ResultHeader;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],22:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],23:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1770,7 +1917,7 @@ ResultList.propTypes = {
 exports["default"] = ResultList;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],23:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],24:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1921,7 +2068,7 @@ Pagination.propTypes = {
 exports["default"] = Pagination;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],24:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],25:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1972,7 +2119,7 @@ Pending.propTypes = {
 exports["default"] = Pending;
 module.exports = exports["default"];
 
-},{"react":"react"}],25:[function(_dereq_,module,exports){
+},{"react":"react"}],26:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2071,7 +2218,7 @@ PreloadIndicator.propTypes = {
 exports["default"] = PreloadIndicator;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react","react-dom":"react-dom"}],26:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react","react-dom":"react-dom"}],27:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2164,7 +2311,7 @@ Result.propTypes = {
 exports["default"] = Result;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],27:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],28:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2239,7 +2386,7 @@ SearchFieldContainer.propTypes = {
 exports["default"] = SearchFieldContainer;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],28:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],29:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2387,7 +2534,7 @@ SolrFacetedSearch.propTypes = {
 exports["default"] = SolrFacetedSearch;
 module.exports = exports["default"];
 
-},{"./component-pack":13,"classnames":1,"react":"react"}],29:[function(_dereq_,module,exports){
+},{"./component-pack":13,"classnames":1,"react":"react"}],30:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2566,7 +2713,7 @@ SortMenu.propTypes = {
 exports["default"] = SortMenu;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react","react-dom":"react-dom"}],30:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react","react-dom":"react-dom"}],31:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2679,7 +2826,7 @@ TextSearch.propTypes = {
 exports["default"] = TextSearch;
 module.exports = exports["default"];
 
-},{"classnames":1,"react":"react"}],31:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],32:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2703,7 +2850,7 @@ exports.SolrFacetedSearch = _componentsSolrFacetedSearch2["default"];
 exports.defaultComponentPack = _componentsComponentPack2["default"];
 exports.SolrClient = _apiSolrClient.SolrClient;
 
-},{"./api/solr-client":11,"./components/component-pack":13,"./components/solr-faceted-search":28}],32:[function(_dereq_,module,exports){
+},{"./api/solr-client":11,"./components/component-pack":13,"./components/solr-faceted-search":29}],33:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2753,7 +2900,7 @@ exports["default"] = function (state, action) {
 
 module.exports = exports["default"];
 
-},{}],33:[function(_dereq_,module,exports){
+},{}],34:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2797,5 +2944,5 @@ exports["default"] = function (state, action) {
 
 module.exports = exports["default"];
 
-},{}]},{},[31])(31)
+},{}]},{},[32])(32)
 });

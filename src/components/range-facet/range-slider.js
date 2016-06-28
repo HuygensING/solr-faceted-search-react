@@ -147,8 +147,7 @@ class RangeSlider extends React.Component {
 	render() {
 		let keys = this.state.hoverState === "lowerLimit" ? ["upperLimit", "lowerLimit"] : ["lowerLimit", "upperLimit"];
 		return (
-			<svg className="facet-range-slider" style={styles.slider}
-				viewBox="0 0 400 26">
+			<svg className="facet-range-slider" viewBox="0 0 400 26">
 
 				<path d="M0 0 L 0 26 Z" fill="transparent" />
 				<path d="M400 0 L 400 26 Z" fill="transparent" />
