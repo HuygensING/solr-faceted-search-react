@@ -27,6 +27,8 @@ export default function(state=initialState, action) {
 			return {...state, searchFields: action.newFields, start: state.pageStrategy === "paginate" ? 0 : null};
 		case "SET_SORT_FIELDS":
 			return {...state, sortFields: action.newSortFields, start: state.pageStrategy === "paginate" ? 0 : null};
+		case "SET_FILTERS":
+			return {...state, filters: action.newFilters, start: state.pageStrategy === "paginate" ? 0 : null};
 		case "SET_START":
 			return {...state, start: action.newStart};
 		case "SET_RESULTS":

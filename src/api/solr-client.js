@@ -100,6 +100,11 @@ class SolrClient {
 		this.sendQuery(queryReducer(this.state.query, payload));
 	}
 
+	setFilters(filters) {
+		const payload = {type: "SET_FILTERS", newFilters: filters};
+		this.sendQuery(queryReducer(this.state.query, payload));
+	}
+
 	getHandlers() {
 		return {
 			onSortFieldChange: this.setSortFieldValue.bind(this),

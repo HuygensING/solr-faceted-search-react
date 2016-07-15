@@ -100,6 +100,19 @@ describe("queryReducer", () => { //eslint-disable-line no-undef
 		});
 	});
 
+	it("should SET_FILTERS", () => {  //eslint-disable-line no-undef
+		expect(queryReducer({
+			initial: "x"
+		}, {
+			type: "SET_FILTERS",
+			newFilters: [{x: "y"}]
+		})).toEqual({
+			initial: "x",
+			filters: [{x: "y"}],
+			start: null
+		});
+	});
+
 	it("should set the cursorMark on SET_RESULTS if present", () => {  //eslint-disable-line no-undef
 		expect(queryReducer({
 			initial: "x"

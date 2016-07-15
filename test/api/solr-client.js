@@ -95,6 +95,30 @@ describe("SolrClient", () => { //eslint-disable-line no-undef
 		});
 	});
 
+	describe("setFilters", () => { // eslint-disable-line no-undef
+		it("should set the filters", (done) => { // eslint-disable-line no-undef
+			const underTest = new SolrClient({
+				onChange: () => {},
+				searchFields: "searchFields",
+				sortFields: "sortFields",
+				url: "url"
+			});
+			const filters = [{a: "b"}];
+			sinon.stub(underTest, "sendQuery", (queryState) => {
+				underTest.sendQuery.restore();
+				try {
+					expect(queryState.filters).toEqual([{a: "b"}]);
+					done();
+				} catch (e) {
+					done(e);
+				}
+			});
+
+			underTest.setFilters(filters);
+		});
+	});
+
+
 	describe("setSearchFieldValue", () => { //eslint-disable-line no-undef
 		it("should update the filter value for the given searchField key", (done) => { //eslint-disable-line no-undef
 			const underTest = new SolrClient({

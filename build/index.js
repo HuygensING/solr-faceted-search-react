@@ -635,6 +635,12 @@ var SolrClient = (function () {
 			this.sendQuery((0, _reducersQuery2["default"])(this.state.query, payload));
 		}
 	}, {
+		key: "setFilters",
+		value: function setFilters(filters) {
+			var payload = { type: "SET_FILTERS", newFilters: filters };
+			this.sendQuery((0, _reducersQuery2["default"])(this.state.query, payload));
+		}
+	}, {
 		key: "getHandlers",
 		value: function getHandlers() {
 			return {
@@ -2998,6 +3004,8 @@ exports["default"] = function (state, action) {
 			return _extends({}, state, { searchFields: action.newFields, start: state.pageStrategy === "paginate" ? 0 : null });
 		case "SET_SORT_FIELDS":
 			return _extends({}, state, { sortFields: action.newSortFields, start: state.pageStrategy === "paginate" ? 0 : null });
+		case "SET_FILTERS":
+			return _extends({}, state, { filters: action.newFilters, start: state.pageStrategy === "paginate" ? 0 : null });
 		case "SET_START":
 			return _extends({}, state, { start: action.newStart });
 		case "SET_RESULTS":
