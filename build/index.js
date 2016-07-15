@@ -673,7 +673,7 @@ var rangeFacetToQueryFilter = function rangeFacetToQueryFilter(field) {
 		return null;
 	}
 
-	return encodeURIComponent("(" + field.field + ":[" + filters[0] + " TO " + filters[1] + "])");
+	return encodeURIComponent(field.field + ":[" + filters[0] + " TO " + filters[1] + "]");
 };
 
 var listFacetFieldToQueryFilter = function listFacetFieldToQueryFilter(field) {

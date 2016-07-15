@@ -31,7 +31,7 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 			expect(rangeFacetToQueryFilter({
 				field: "field_name",
 				value: [123, 456]
-			})).toEqual(encodeURIComponent("(field_name:[123 TO 456])"));
+			})).toEqual(encodeURIComponent("field_name:[123 TO 456]"));
 		});
 	});
 
@@ -116,7 +116,7 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				type: "range-facet",
 				value: [10, 30],
 				field: "field_name"
-			})).toEqual(encodeURIComponent("(field_name:[10 TO 30])"));
+			})).toEqual(encodeURIComponent("field_name:[10 TO 30]"));
 		});
 
 		it("should return a list filter when the field.type is 'list-facet'", () => { //eslint-disable-line no-undef
@@ -155,7 +155,7 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				type: "range-facet",
 				value: [10, 30],
 				field: "field_name"
-			}])).toEqual("fq=" + encodeURIComponent("(field_name:[10 TO 30])"));
+			}])).toEqual("fq=" + encodeURIComponent("field_name:[10 TO 30]"));
 		});
 
 		it("should ignore unsupported field types", () => {  //eslint-disable-line no-undef
@@ -212,7 +212,7 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 			const parts = query.split("&");
 
 			expect(parts.length).toEqual(3);
-			expect(parts.indexOf("fq=" + encodeURIComponent("(field_name:[10 TO 30])")) > -1).toEqual(true);
+			expect(parts.indexOf("fq=" + encodeURIComponent("field_name:[10 TO 30]")) > -1).toEqual(true);
 			expect(parts.indexOf("fq=" + encodeURIComponent("field_name:(\"10\" OR \"30\")")) > -1).toEqual(true);
 			expect(parts.indexOf("fq=" + encodeURIComponent("field_name:val")) > -1).toEqual(true);
 		});

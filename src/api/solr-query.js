@@ -4,7 +4,7 @@ const rangeFacetToQueryFilter = (field) => {
 		return null;
 	}
 
-	return encodeURIComponent(`(${field.field}:[${filters[0]} TO ${filters[1]}])`);
+	return encodeURIComponent(`${field.field}:[${filters[0]} TO ${filters[1]}]`);
 };
 
 const listFacetFieldToQueryFilter = (field) => {
