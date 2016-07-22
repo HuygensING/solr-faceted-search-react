@@ -25,7 +25,7 @@ class RangeFacet extends React.Component {
 		return facets
 			.filter((facet, i) => i % 2 === 0)
 			.map((v) => parseInt(v))
-			.sort((a, b) => a > b)
+			.sort((a, b) => a > b ? 1 : -1)
 			.filter((a, i, me) => i === 0 || i === me.length - 1);
 	}
 

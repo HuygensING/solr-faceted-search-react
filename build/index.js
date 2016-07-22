@@ -1460,7 +1460,7 @@ var RangeFacet = (function (_React$Component) {
 			}).map(function (v) {
 				return parseInt(v);
 			}).sort(function (a, b) {
-				return a > b;
+				return a > b ? 1 : -1;
 			}).filter(function (a, i, me) {
 				return i === 0 || i === me.length - 1;
 			});
