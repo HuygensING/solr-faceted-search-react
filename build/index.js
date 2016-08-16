@@ -1744,6 +1744,7 @@ var RangeSlider = (function (_React$Component) {
 			if (this.mouseState === MOUSE_DOWN) {
 				this.props.onChange(_extends({}, this.state, { refresh: true }));
 			}
+			this.mouseState = MOUSE_UP;
 		}
 	}, {
 		key: "getRangePath",
