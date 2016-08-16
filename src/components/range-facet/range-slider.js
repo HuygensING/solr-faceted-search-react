@@ -124,6 +124,7 @@ class RangeSlider extends React.Component {
 		if(this.mouseState === MOUSE_DOWN) {
 			this.props.onChange({...this.state, refresh: true});
 		}
+		this.setState({ hoverState: null });
 		this.mouseState = MOUSE_UP;
 	}
 
