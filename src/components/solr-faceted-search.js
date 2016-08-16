@@ -7,7 +7,7 @@ import componentPack from "./component-pack";
 class SolrFacetedSearch extends React.Component {
 
 	render() {
-		const { customComponents, bootstrapCss, query, results } = this.props;
+		const { customComponents, bootstrapCss, query, results, truncateFacetListsAt } = this.props;
 		const { onSearchFieldChange, onSortFieldChange, onPageChange } = this.props;
 
 		const { searchFields, sortFields } = query;
@@ -45,6 +45,7 @@ class SolrFacetedSearch extends React.Component {
 							key={i} {...this.props} {...searchField}
 							bootstrapCss={bootstrapCss}
 							facets={facets}
+							truncateFacetListsAt={truncateFacetListsAt}
 							onChange={onSearchFieldChange} />
 						);
 					})}
@@ -63,7 +64,7 @@ class SolrFacetedSearch extends React.Component {
 							<ResultComponent bootstrapCss={bootstrapCss}
 								doc={doc}
 								fields={searchFields}
-								key={i}
+								key={doc.id || i}
 								onSelect={this.props.onSelectDoc} />
 						))}
 						{preloadListItem}
@@ -83,7 +84,8 @@ SolrFacetedSearch.defaultProps = {
 	searchFields: [
 		{type: "text", field: "*"}
 	],
-	sortFields: []
+	sortFields: [],
+	truncateFacetListsAt: -1
 };
 
 SolrFacetedSearch.propTypes = {
@@ -94,7 +96,8 @@ SolrFacetedSearch.propTypes = {
 	onSelectDoc: React.PropTypes.func.isRequired,
 	onSortFieldChange: React.PropTypes.func.isRequired,
 	query: React.PropTypes.object,
-	results: React.PropTypes.object
+	results: React.PropTypes.object,
+	truncateFacetListsAt: React.PropTypes.number
 };
 
 export default SolrFacetedSearch;

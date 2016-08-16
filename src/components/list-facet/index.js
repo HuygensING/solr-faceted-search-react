@@ -10,7 +10,8 @@ class ListFacet extends React.Component {
 		super(props);
 
 		this.state = {
-			filter: ""
+			filter: "",
+			truncateFacetListsAt: props.truncateFacetListsAt
 		};
 	}
 
@@ -23,9 +24,9 @@ class ListFacet extends React.Component {
 		}
 	}
 
-
 	render() {
 		const { query, label, facets, field, value, bootstrapCss, facetSort } = this.props;
+		const { truncateFacetListsAt } = this.state;
 
 		const facetCounts = facets.filter((facet, i) => i % 2 === 1);
 		const facetValues = facets.filter((facet, i) => i % 2 === 0);
@@ -33,6 +34,11 @@ class ListFacet extends React.Component {
 		const facetSortValue = facetSort ? facetSort :
 			query.facetSort ? query.facetSort :
 			(query.facetLimit && query.facetLimit > -1 ? "count" : "index");
+
+		const showMoreLink = truncateFacetListsAt > -1 && truncateFacetListsAt < facetValues.length ?
+			<li className={cx({"list-group-item": bootstrapCss})} onClick={() => this.setState({truncateFacetListsAt: -1})}>
+				Show all ({facetValues.length})
+			</li> : null;
 
 		return (
 			<li className={cx("list-facet", {"list-group-item": bootstrapCss})} id={`solr-list-facet-${field}`}>
@@ -58,12 +64,13 @@ class ListFacet extends React.Component {
 				</header>
 
 				<ul className={cx({"list-group": bootstrapCss})}>
-					{facetValues.map((facetValue, i) =>
+					{facetValues.filter((facetValue, i) => truncateFacetListsAt < 0 || i < truncateFacetListsAt).map((facetValue, i) =>
 						this.state.filter.length === 0 || facetValue.toLowerCase().indexOf(this.state.filter.toLowerCase()) > -1 ? (
-						<li className={cx({"list-group-item": bootstrapCss})} key={i} onClick={() => this.handleClick(facetValue)}>
+						<li className={cx({"list-group-item": bootstrapCss})} key={`${facetValue}_${facetCounts[i]}`} onClick={() => this.handleClick(facetValue)}>
 							{value.indexOf(facetValue) > -1 ? <CheckedIcon /> : <UncheckedIcon />} {facetValue} ({facetCounts[i]})
 						</li>) : null
 					)}
+					{showMoreLink}
 				</ul>
 			</li>
 		);
@@ -84,6 +91,7 @@ ListFacet.propTypes = {
 	onChange: React.PropTypes.func,
 	onFacetSortChange: React.PropTypes.func,
 	query: React.PropTypes.object,
+	truncateFacetListsAt: React.PropTypes.number,
 	value: React.PropTypes.array
 };
 
