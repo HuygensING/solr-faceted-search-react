@@ -22,7 +22,6 @@ const styles = {
 class RangeSlider extends React.Component {
 	constructor(props) {
 		super(props);
-
 		this.mouseState = MOUSE_UP;
 		this.mouseUpListener = this.onMouseUp.bind(this);
 		this.mouseMoveListener = this.onMouseMove.bind(this);
@@ -124,8 +123,6 @@ class RangeSlider extends React.Component {
 		if(this.mouseState === MOUSE_DOWN) {
 			this.props.onChange({...this.state, refresh: true});
 		}
-		this.setState({hoverState: null});
-		this.mouseState = MOUSE_UP;
 	}
 
 	getRangePath() {

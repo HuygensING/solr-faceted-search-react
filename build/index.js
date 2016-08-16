@@ -1630,7 +1630,6 @@ var RangeSlider = (function (_React$Component) {
 		_classCallCheck(this, RangeSlider);
 
 		_get(Object.getPrototypeOf(RangeSlider.prototype), "constructor", this).call(this, props);
-
 		this.mouseState = MOUSE_UP;
 		this.mouseUpListener = this.onMouseUp.bind(this);
 		this.mouseMoveListener = this.onMouseMove.bind(this);
@@ -1745,8 +1744,6 @@ var RangeSlider = (function (_React$Component) {
 			if (this.mouseState === MOUSE_DOWN) {
 				this.props.onChange(_extends({}, this.state, { refresh: true }));
 			}
-			this.setState({ hoverState: null });
-			this.mouseState = MOUSE_UP;
 		}
 	}, {
 		key: "getRangePath",
