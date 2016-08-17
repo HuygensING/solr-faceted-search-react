@@ -2,6 +2,7 @@
   "name": "solr-faceted-search-react",
   "version": "0.4.3",
   "main": "build/index.js",
+  "typings": "src/index.d.ts",
   "author": {
     "name": "René van der Ark",
     "email": "rene.van.der.ark@huygens.knaw.nl"
@@ -25,6 +26,7 @@
     "xhr": "^2.2.0"
   },
   "devDependencies": {
+    "@types/react": "^0.14.30",
     "babel": "^5.8.38",
     "babel-core": "^5.8.38",
     "babel-eslint": "^4.1.8",
