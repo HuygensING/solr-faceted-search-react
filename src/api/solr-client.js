@@ -2,6 +2,7 @@ import queryReducer from "../reducers/query";
 import resultReducer from "../reducers/results";
 import { submitQuery } from "./server";
 
+
 class SolrClient {
 	constructor(settings) {
 		const { onChange } = settings;
@@ -24,6 +25,23 @@ class SolrClient {
 		if (this.state.query.pageStrategy === "cursor" && !this.state.query.idField) {
 			throw new Error("Pagination strategy 'cursor' requires a unique 'idField' to be passed.");
 		}
+	}
+
+
+	setInitalQuery(queryToMerge) {
+
+		const searchFieldsToMerge = queryToMerge.searchFields || [];
+		const sortFieldsToMerge = queryToMerge.sortFields || [];
+
+		this.state.query.searchFields = this.state.query.searchFields
+			.map((sf) => searchFieldsToMerge.map((sfm) => sfm.field).indexOf(sf.field) > -1
+				? {...sf, value: searchFieldsToMerge.find((sfm) => sfm.field === sf.field).value}
+				: sf);
+
+		this.state.query.sortFields = this.state.query.sortFields
+			.map((sf) => sortFieldsToMerge.map((sfm) => sfm.field).indexOf(sf.field) > -1
+				? {...sf, value: sortFieldsToMerge.find((sfm) => sfm.field === sf.field).value}
+				: sf);
 	}
 
 	initialize() {

@@ -542,6 +542,29 @@ var SolrClient = (function () {
 	}
 
 	_createClass(SolrClient, [{
+		key: "setInitalQuery",
+		value: function setInitalQuery(queryToMerge) {
+
+			var searchFieldsToMerge = queryToMerge.searchFields || [];
+			var sortFieldsToMerge = queryToMerge.sortFields || [];
+
+			this.state.query.searchFields = this.state.query.searchFields.map(function (sf) {
+				return searchFieldsToMerge.map(function (sfm) {
+					return sfm.field;
+				}).indexOf(sf.field) > -1 ? _extends({}, sf, { value: searchFieldsToMerge.find(function (sfm) {
+						return sfm.field === sf.field;
+					}).value }) : sf;
+			});
+
+			this.state.query.sortFields = this.state.query.sortFields.map(function (sf) {
+				return sortFieldsToMerge.map(function (sfm) {
+					return sfm.field;
+				}).indexOf(sf.field) > -1 ? _extends({}, sf, { value: sortFieldsToMerge.find(function (sfm) {
+						return sfm.field === sf.field;
+					}).value }) : sf;
+			});
+		}
+	}, {
 		key: "initialize",
 		value: function initialize() {
 			var query = this.state.query;
