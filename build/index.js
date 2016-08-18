@@ -542,8 +542,8 @@ var SolrClient = (function () {
 	}
 
 	_createClass(SolrClient, [{
-		key: "setInitalQuery",
-		value: function setInitalQuery(queryToMerge) {
+		key: "setInitialQuery",
+		value: function setInitialQuery(queryToMerge) {
 
 			var searchFieldsToMerge = queryToMerge.searchFields || [];
 			var sortFieldsToMerge = queryToMerge.sortFields || [];

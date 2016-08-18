@@ -28,7 +28,7 @@ class SolrClient {
 	}
 
 
-	setInitalQuery(queryToMerge) {
+	setInitialQuery(queryToMerge) {
 
 		const searchFieldsToMerge = queryToMerge.searchFields || [];
 		const sortFieldsToMerge = queryToMerge.sortFields || [];
