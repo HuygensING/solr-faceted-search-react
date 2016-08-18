@@ -1275,7 +1275,8 @@ var ListFacet = (function (_React$Component) {
 		_get(Object.getPrototypeOf(ListFacet.prototype), "constructor", this).call(this, props);
 
 		this.state = {
-			filter: ""
+			filter: "",
+			truncateFacetListsAt: props.truncateFacetListsAt
 		};
 	}
 
@@ -1304,6 +1305,7 @@ var ListFacet = (function (_React$Component) {
 			var value = _props.value;
 			var bootstrapCss = _props.bootstrapCss;
 			var facetSort = _props.facetSort;
+			var truncateFacetListsAt = this.state.truncateFacetListsAt;
 
 			var facetCounts = facets.filter(function (facet, i) {
 				return i % 2 === 1;
@@ -1313,6 +1315,16 @@ var ListFacet = (function (_React$Component) {
 			});
 
 			var facetSortValue = facetSort ? facetSort : query.facetSort ? query.facetSort : query.facetLimit && query.facetLimit > -1 ? "count" : "index";
+
+			var showMoreLink = truncateFacetListsAt > -1 && truncateFacetListsAt < facetValues.length ? _react2["default"].createElement(
+				"li",
+				{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }), onClick: function () {
+						return _this.setState({ truncateFacetListsAt: -1 });
+					} },
+				"Show all (",
+				facetValues.length,
+				")"
+			) : null;
 
 			return _react2["default"].createElement(
 				"li",
@@ -1361,10 +1373,12 @@ var ListFacet = (function (_React$Component) {
 				_react2["default"].createElement(
 					"ul",
 					{ className: (0, _classnames2["default"])({ "list-group": bootstrapCss }) },
-					facetValues.map(function (facetValue, i) {
+					facetValues.filter(function (facetValue, i) {
+						return truncateFacetListsAt < 0 || i < truncateFacetListsAt;
+					}).map(function (facetValue, i) {
 						return _this.state.filter.length === 0 || facetValue.toLowerCase().indexOf(_this.state.filter.toLowerCase()) > -1 ? _react2["default"].createElement(
 							"li",
-							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }), key: i, onClick: function () {
+							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }), key: facetValue + "_" + facetCounts[i], onClick: function () {
 									return _this.handleClick(facetValue);
 								} },
 							value.indexOf(facetValue) > -1 ? _react2["default"].createElement(_iconsChecked2["default"], null) : _react2["default"].createElement(_iconsUnchecked2["default"], null),
@@ -1374,7 +1388,8 @@ var ListFacet = (function (_React$Component) {
 							facetCounts[i],
 							")"
 						) : null;
-					})
+					}),
+					showMoreLink
 				)
 			);
 		}
@@ -1397,6 +1412,7 @@ ListFacet.propTypes = {
 	onChange: _react2["default"].PropTypes.func,
 	onFacetSortChange: _react2["default"].PropTypes.func,
 	query: _react2["default"].PropTypes.object,
+	truncateFacetListsAt: _react2["default"].PropTypes.number,
 	value: _react2["default"].PropTypes.array
 };
 
@@ -1614,7 +1630,6 @@ var RangeSlider = (function (_React$Component) {
 		_classCallCheck(this, RangeSlider);
 
 		_get(Object.getPrototypeOf(RangeSlider.prototype), "constructor", this).call(this, props);
-
 		this.mouseState = MOUSE_UP;
 		this.mouseUpListener = this.onMouseUp.bind(this);
 		this.mouseMoveListener = this.onMouseMove.bind(this);
@@ -2544,6 +2559,7 @@ var SolrFacetedSearch = (function (_React$Component) {
 			var bootstrapCss = _props.bootstrapCss;
 			var query = _props.query;
 			var results = _props.results;
+			var truncateFacetListsAt = _props.truncateFacetListsAt;
 			var _props2 = this.props;
 			var onSearchFieldChange = _props2.onSearchFieldChange;
 			var onSortFieldChange = _props2.onSortFieldChange;
@@ -2585,6 +2601,7 @@ var SolrFacetedSearch = (function (_React$Component) {
 							key: i }, _this.props, searchField, {
 							bootstrapCss: bootstrapCss,
 							facets: facets,
+							truncateFacetListsAt: truncateFacetListsAt,
 							onChange: onSearchFieldChange }));
 					})
 				),
@@ -2607,7 +2624,7 @@ var SolrFacetedSearch = (function (_React$Component) {
 							return _react2["default"].createElement(ResultComponent, { bootstrapCss: bootstrapCss,
 								doc: doc,
 								fields: searchFields,
-								key: i,
+								key: doc.id || i,
 								onSelect: _this.props.onSelectDoc });
 						}),
 						preloadListItem
@@ -2627,7 +2644,8 @@ SolrFacetedSearch.defaultProps = {
 	pageStrategy: "paginate",
 	rows: 20,
 	searchFields: [{ type: "text", field: "*" }],
-	sortFields: []
+	sortFields: [],
+	truncateFacetListsAt: -1
 };
 
 SolrFacetedSearch.propTypes = {
@@ -2638,7 +2656,8 @@ SolrFacetedSearch.propTypes = {
 	onSelectDoc: _react2["default"].PropTypes.func.isRequired,
 	onSortFieldChange: _react2["default"].PropTypes.func.isRequired,
 	query: _react2["default"].PropTypes.object,
-	results: _react2["default"].PropTypes.object
+	results: _react2["default"].PropTypes.object,
+	truncateFacetListsAt: _react2["default"].PropTypes.number
 };
 
 exports["default"] = SolrFacetedSearch;

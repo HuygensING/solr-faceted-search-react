@@ -22,7 +22,6 @@ const styles = {
 class RangeSlider extends React.Component {
 	constructor(props) {
 		super(props);
-
 		this.mouseState = MOUSE_UP;
 		this.mouseUpListener = this.onMouseUp.bind(this);
 		this.mouseMoveListener = this.onMouseMove.bind(this);
@@ -120,13 +119,15 @@ class RangeSlider extends React.Component {
 		}
 	}
 
+
 	onMouseUp() {
 		if(this.mouseState === MOUSE_DOWN) {
 			this.props.onChange({...this.state, refresh: true});
 		}
-		this.setState({hoverState: null});
+		this.setState({ hoverState: null });
 		this.mouseState = MOUSE_UP;
 	}
+
 
 	getRangePath() {
 		return "M" + (8 + Math.floor(this.state.lowerLimit * 400)) + " 13 L " + (Math.ceil(this.state.upperLimit * 400) - 8) + " 13 Z";
