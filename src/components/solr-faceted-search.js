@@ -10,7 +10,7 @@ class SolrFacetedSearch extends React.Component {
 		const { customComponents, bootstrapCss, query, results, truncateFacetListsAt } = this.props;
 		const { onSearchFieldChange, onSortFieldChange, onPageChange } = this.props;
 
-		const { searchFields, sortFields } = query;
+		const { searchFields, sortFields, start, rows } = query;
 
 
 		const SearchFieldContainerComponent = customComponents.searchFields.container;
@@ -65,7 +65,11 @@ class SolrFacetedSearch extends React.Component {
 								doc={doc}
 								fields={searchFields}
 								key={doc.id || i}
-								onSelect={this.props.onSelectDoc} />
+								onSelect={this.props.onSelectDoc}
+								resultIndex={i}
+								rows={rows}
+								start={start}
+							/>
 						))}
 						{preloadListItem}
 					</ResultListComponent>
@@ -93,7 +97,7 @@ SolrFacetedSearch.propTypes = {
 	customComponents: React.PropTypes.object,
 	onPageChange: React.PropTypes.func,
 	onSearchFieldChange: React.PropTypes.func.isRequired,
-	onSelectDoc: React.PropTypes.func.isRequired,
+	onSelectDoc: React.PropTypes.func,
 	onSortFieldChange: React.PropTypes.func.isRequired,
 	query: React.PropTypes.object,
 	results: React.PropTypes.object,

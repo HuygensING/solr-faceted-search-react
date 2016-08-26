@@ -2589,6 +2589,8 @@ var SolrFacetedSearch = (function (_React$Component) {
 			var onPageChange = _props2.onPageChange;
 			var searchFields = query.searchFields;
 			var sortFields = query.sortFields;
+			var start = query.start;
+			var rows = query.rows;
 
 			var SearchFieldContainerComponent = customComponents.searchFields.container;
 			var ResultContainerComponent = customComponents.results.container;
@@ -2648,7 +2650,11 @@ var SolrFacetedSearch = (function (_React$Component) {
 								doc: doc,
 								fields: searchFields,
 								key: doc.id || i,
-								onSelect: _this.props.onSelectDoc });
+								onSelect: _this.props.onSelectDoc,
+								resultIndex: i,
+								rows: rows,
+								start: start
+							});
 						}),
 						preloadListItem
 					),
@@ -2676,7 +2682,7 @@ SolrFacetedSearch.propTypes = {
 	customComponents: _react2["default"].PropTypes.object,
 	onPageChange: _react2["default"].PropTypes.func,
 	onSearchFieldChange: _react2["default"].PropTypes.func.isRequired,
-	onSelectDoc: _react2["default"].PropTypes.func.isRequired,
+	onSelectDoc: _react2["default"].PropTypes.func,
 	onSortFieldChange: _react2["default"].PropTypes.func.isRequired,
 	query: _react2["default"].PropTypes.object,
 	results: _react2["default"].PropTypes.object,
