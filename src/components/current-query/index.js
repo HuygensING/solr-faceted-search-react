@@ -28,7 +28,7 @@ class CurrentQuery extends React.Component {
 					<span className={cx({"label": bootstrapCss, "label-default": bootstrapCss})} key={i}
 						onClick={() => this.removeListFacetValue(searchField.field, searchField.value, val)}>
 						{val}
-						<a>❌</a>
+						<a>{bootstrapCss ? <span className="glyphicon glyphicon-remove-sign"></span> : "❌"}</a>
 					</span>
 				));
 
@@ -36,7 +36,7 @@ class CurrentQuery extends React.Component {
 				<span className={cx({"label": bootstrapCss, "label-default": bootstrapCss})}
 					onClick={() => this.removeRangeFacetValue(searchField.field)}>
 					{searchField.value[0]} - {searchField.value[1]}
-					<a>❌</a>
+					<a>{bootstrapCss ? <span className="glyphicon glyphicon-remove-sign"></span> : "❌"}</a>
 				</span>
 			);
 
@@ -44,7 +44,7 @@ class CurrentQuery extends React.Component {
 				<span className={cx({"label": bootstrapCss, "label-default": bootstrapCss})}
 					onClick={() => this.removeTextValue(searchField.field)}>
 					{searchField.value}
-					<a>❌</a>
+					<a>{bootstrapCss ? <span className="glyphicon glyphicon-remove-sign"></span> : "❌"}</a>
 				</span>
 			);
 		}

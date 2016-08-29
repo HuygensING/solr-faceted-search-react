@@ -39,13 +39,13 @@ class TextSearch extends React.Component {
 
 		return (
 			<li className={cx({"list-group-item": bootstrapCss})}>
-				<header><h3>{label}</h3></header>
+				<header><h5>{label}</h5></header>
 				<input
 					onChange={this.handleInputChange.bind(this)}
 					onKeyDown={this.handleInputKeyDown.bind(this)}
 					value={this.state.value || ""} />
 				&nbsp;
-				<button className={cx({"btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-sm": bootstrapCss})} onClick={this.handleSubmit.bind(this)}>
+				<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-sm": bootstrapCss})} onClick={this.handleSubmit.bind(this)}>
 					<SearchIcon />
 				</button>
 			</li>

@@ -522,6 +522,10 @@ Load this index.html in a browser
 	<script src="web.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
 	<style type="text/css">
+		a {
+			cursor: pointer;
+		}
+
 		.list-facet ul {
 			overflow-y: auto;
 			max-height: 200px;
@@ -538,8 +542,8 @@ Load this index.html in a browser
 		.facet-range-slider {
 			-moz-user-select: none;
 			-webkit-user-select: none;
-			-ms-user-select: none; 
-			user-select: none; 
+			-ms-user-select: none;
+			user-select: none;
 			-webkit-user-drag: none;
 			user-drag: none;
 			cursor: pointer;
@@ -584,8 +588,8 @@ Load this index.html in a browser
 		}
 
 		svg.search-icon {
-			stroke: white;
-			fill: white;
+			stroke: #595959;
+			fill: #595959;
 		}
 
 		.current-query .label {
@@ -596,12 +600,33 @@ Load this index.html in a browser
 		}
 
 		.current-query .label:hover a {
-			color: red;
+			color: #d08989;
 		}
-
 		.current-query .label a {
 			color: white;
 			margin-left: 4px;
+		}
+
+		.range-facet header h5 {
+			max-width: calc(100% - 75px)
+
+		}
+
+		.facet-item-amount {
+			display:inline-block;
+			float:right;
+			color: #aaa;
+		}
+
+		.list-facet > .list-group {
+			box-shadow: none;
+		}
+		.list-facet > .list-group > .list-group-item {
+			border: none;
+		}
+
+		.list-facet > input {
+			width: calc(100% - 125px)
 		}
 	</style>
 </head>
@@ -622,13 +647,7 @@ To run the redux integration example install redux:
 
 And rebuild like this:
 ```bash
-	$ ./node_modules/.bin/browserify index.js \
-		--require react \
-		--require react-dom \
-		--require redux \
-		--transform [ babelify --presets [ react es2015 stage-2 ] ] \
-		--standalone FacetedSearch \
-		-o web.js
+	$
 ```
 
 Back to the [redux example](#redux-integration)

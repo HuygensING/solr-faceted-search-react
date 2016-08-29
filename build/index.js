@@ -965,7 +965,7 @@ var CurrentQuery = (function (_React$Component) {
 							_react2["default"].createElement(
 								"a",
 								null,
-								"❌"
+								bootstrapCss ? _react2["default"].createElement("span", { className: "glyphicon glyphicon-remove-sign" }) : "❌"
 							)
 						);
 					});
@@ -983,7 +983,7 @@ var CurrentQuery = (function (_React$Component) {
 						_react2["default"].createElement(
 							"a",
 							null,
-							"❌"
+							bootstrapCss ? _react2["default"].createElement("span", { className: "glyphicon glyphicon-remove-sign" }) : "❌"
 						)
 					);
 
@@ -998,7 +998,7 @@ var CurrentQuery = (function (_React$Component) {
 						_react2["default"].createElement(
 							"a",
 							null,
-							"❌"
+							bootstrapCss ? _react2["default"].createElement("span", { className: "glyphicon glyphicon-remove-sign" }) : "❌"
 						)
 					);
 			}
@@ -1356,41 +1356,9 @@ var ListFacet = (function (_React$Component) {
 					"header",
 					null,
 					_react2["default"].createElement(
-						"h3",
+						"h5",
 						null,
-						label,
-						_react2["default"].createElement(
-							"button",
-							{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss }),
-								onClick: function () {
-									return _this.props.onChange(field, []);
-								} },
-							"❌"
-						)
-					),
-					_react2["default"].createElement("input", { onChange: function (ev) {
-							return _this.setState({ filter: ev.target.value });
-						}, placeholder: "Filter... ", type: "text", value: this.state.filter }),
-					" ",
-					_react2["default"].createElement(
-						"span",
-						{ className: (0, _classnames2["default"])({ "btn-group": bootstrapCss }) },
-						_react2["default"].createElement(
-							"button",
-							{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "index" }),
-								onClick: function () {
-									return _this.props.onFacetSortChange(field, "index");
-								} },
-							"a-z"
-						),
-						_react2["default"].createElement(
-							"button",
-							{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "count" }),
-								onClick: function () {
-									return _this.props.onFacetSortChange(field, "count");
-								} },
-							"0-9"
-						)
+						label
 					)
 				),
 				_react2["default"].createElement(
@@ -1401,18 +1369,56 @@ var ListFacet = (function (_React$Component) {
 					}).map(function (facetValue, i) {
 						return _this.state.filter.length === 0 || facetValue.toLowerCase().indexOf(_this.state.filter.toLowerCase()) > -1 ? _react2["default"].createElement(
 							"li",
-							{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }), key: facetValue + "_" + facetCounts[i], onClick: function () {
+							{ className: (0, _classnames2["default"])("facet-item-type-" + field, { "list-group-item": bootstrapCss }), key: facetValue + "_" + facetCounts[i], onClick: function () {
 									return _this.handleClick(facetValue);
 								} },
 							value.indexOf(facetValue) > -1 ? _react2["default"].createElement(_iconsChecked2["default"], null) : _react2["default"].createElement(_iconsUnchecked2["default"], null),
 							" ",
 							facetValue,
-							" (",
-							facetCounts[i],
-							")"
+							_react2["default"].createElement(
+								"span",
+								{ className: "facet-item-amount" },
+								facetCounts[i]
+							)
 						) : null;
 					}),
 					showMoreLink
+				),
+				_react2["default"].createElement("input", { onChange: function (ev) {
+						return _this.setState({ filter: ev.target.value });
+					}, placeholder: "Filter... ", type: "text", value: this.state.filter }),
+				" ",
+				_react2["default"].createElement(
+					"span",
+					{ className: (0, _classnames2["default"])({ "btn-group": bootstrapCss }) },
+					_react2["default"].createElement(
+						"button",
+						{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "index" }),
+							onClick: function () {
+								return _this.props.onFacetSortChange(field, "index");
+							} },
+						"a-z"
+					),
+					_react2["default"].createElement(
+						"button",
+						{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "count" }),
+							onClick: function () {
+								return _this.props.onFacetSortChange(field, "count");
+							} },
+						"0-9"
+					)
+				),
+				_react2["default"].createElement(
+					"span",
+					{ className: (0, _classnames2["default"])({ "btn-group": bootstrapCss, "pull-right": bootstrapCss }) },
+					_react2["default"].createElement(
+						"button",
+						{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss }),
+							onClick: function () {
+								return _this.props.onChange(field, []);
+							} },
+						"clear"
+					)
 				)
 			);
 		}
@@ -1554,17 +1560,17 @@ var RangeFacet = (function (_React$Component) {
 					"header",
 					null,
 					_react2["default"].createElement(
-						"h3",
-						null,
-						label,
-						_react2["default"].createElement(
-							"button",
-							{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss }),
-								onClick: function () {
-									return _this.props.onChange(field, []);
-								} },
-							"❌"
-						)
+						"h5",
+						{ className: (0, _classnames2["default"])({ "pull-left": bootstrapCss }) },
+						label
+					),
+					_react2["default"].createElement(
+						"button",
+						{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss }),
+							onClick: function () {
+								return _this.props.onChange(field, []);
+							} },
+						"clear"
 					)
 				),
 				_react2["default"].createElement(_rangeSlider2["default"], { lowerLimit: this.getPercentage(range, filterRange[0]), onChange: this.onRangeChange.bind(this), upperLimit: this.getPercentage(range, filterRange[1]) }),
@@ -2953,7 +2959,7 @@ var TextSearch = (function (_React$Component) {
 					"header",
 					null,
 					_react2["default"].createElement(
-						"h3",
+						"h5",
 						null,
 						label
 					)
@@ -2965,7 +2971,7 @@ var TextSearch = (function (_React$Component) {
 				" ",
 				_react2["default"].createElement(
 					"button",
-					{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-primary": bootstrapCss, "btn-sm": bootstrapCss }), onClick: this.handleSubmit.bind(this) },
+					{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-sm": bootstrapCss }), onClick: this.handleSubmit.bind(this) },
 					_react2["default"].createElement(_iconsSearch2["default"], null)
 				)
 			);

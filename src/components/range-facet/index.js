@@ -73,13 +73,13 @@ class RangeFacet extends React.Component {
 		return (
 			<li className={cx("range-facet", {"list-group-item": bootstrapCss})} id={`solr-range-facet-${field}`}>
 				<header>
-					<h3>
+					<h5 className={cx({"pull-left": bootstrapCss})}>
 						{label}
-						<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss})}
+					</h5>
+					<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss})}
 							onClick={() => this.props.onChange(field, [])}>
-							&#x274c;
-						</button>
-					</h3>
+						clear
+					</button>
 				</header>
 				<RangeSlider lowerLimit={this.getPercentage(range, filterRange[0])} onChange={this.onRangeChange.bind(this)} upperLimit={this.getPercentage(range, filterRange[1])} />
 				<label>{filterRange[0]}</label>
