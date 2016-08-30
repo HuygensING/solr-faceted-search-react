@@ -10,8 +10,7 @@ class RangeFacet extends React.Component {
 		super(props);
 
 		this.state = {
-			value: props.value,
-			expanded: props.collapse ? false : true
+			value: props.value
 		};
 	}
 
@@ -63,13 +62,13 @@ class RangeFacet extends React.Component {
 
 	toggleExpand(ev) {
 		if(ev.target.className.indexOf("clear-button") < 0) {
-			this.setState({expanded: !this.state.expanded});
+			this.props.onSetCollapse(this.props.field, !(this.props.collapse || false));
 		}
 	}
 
 
 	render() {
-		const { label, field, bootstrapCss } = this.props;
+		const { label, field, bootstrapCss, collapse } = this.props;
 		const { value } = this.state;
 
 
@@ -94,8 +93,8 @@ class RangeFacet extends React.Component {
 					<h5>
 						{bootstrapCss ? (<span>
 						<span className={cx("glyphicon", {
-							"glyphicon-collapse-down": this.state.expanded,
-							"glyphicon-collapse-up": !this.state.expanded
+							"glyphicon-collapse-down": !collapse,
+							"glyphicon-collapse-up": collapse
 						})} />{" "}
 						</span>) : null }
 						{label}
@@ -103,7 +102,7 @@ class RangeFacet extends React.Component {
 
 				</header>
 
-				<div style={{display: this.state.expanded ? "block" : "none"}}>
+				<div style={{display: collapse ? "none" : "block"}}>
 					<RangeSlider lowerLimit={this.getPercentage(range, filterRange[0])} onChange={this.onRangeChange.bind(this)} upperLimit={this.getPercentage(range, filterRange[1])} />
 					<label>{filterRange[0]}</label>
 					<label className={cx({"pull-right": bootstrapCss})}>{filterRange[1]}</label>
@@ -119,10 +118,12 @@ RangeFacet.defaultProps = {
 
 RangeFacet.propTypes = {
 	bootstrapCss: React.PropTypes.bool,
+	collapse: React.PropTypes.bool,
 	facets: React.PropTypes.array.isRequired,
 	field: React.PropTypes.string.isRequired,
 	label: React.PropTypes.string,
 	onChange: React.PropTypes.func,
+	onSetCollapse: React.PropTypes.func,
 	value: React.PropTypes.array
 };
 

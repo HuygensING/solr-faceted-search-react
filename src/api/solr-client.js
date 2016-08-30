@@ -123,13 +123,24 @@ class SolrClient {
 		this.sendQuery(queryReducer(this.state.query, payload));
 	}
 
+	setCollapse(field, value) {
+		const { query } = this.state;
+		const { searchFields } = query;
+		const newFields = searchFields
+			.map((searchField) => searchField.field === field ? {...searchField, collapse: value} : searchField);
+		const payload = {type: "SET_SEARCH_FIELDS", newFields: newFields};
+		this.state.query = queryReducer(this.state.query, payload);
+		this.onChange(this.state, this.getHandlers());
+	}
+
 	getHandlers() {
 		return {
 			onSortFieldChange: this.setSortFieldValue.bind(this),
 			onSearchFieldChange: this.setSearchFieldValue.bind(this),
 			onFacetSortChange: this.setFacetSort.bind(this),
 			onPageChange: this.setCurrentPage.bind(this),
-			onNextCursorQuery: this.sendNextCursorQuery.bind(this)
+			onNextCursorQuery: this.sendNextCursorQuery.bind(this),
+			onSetCollapse: this.setCollapse.bind(this)
 		};
 	}
 }

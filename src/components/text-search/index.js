@@ -8,8 +8,7 @@ class TextSearch extends React.Component {
 		super(props);
 
 		this.state = {
-			value: "",
-			expanded: props.collapse ? false : true
+			value: ""
 		};
 	}
 
@@ -36,11 +35,11 @@ class TextSearch extends React.Component {
 	}
 
 	toggleExpand() {
-		this.setState({expanded: !this.state.expanded});
+		this.props.onSetCollapse(this.props.field, !(this.props.collapse || false));
 	}
 
 	render() {
-		const { label, bootstrapCss } = this.props;
+		const { label, bootstrapCss, collapse } = this.props;
 
 		return (
 			<li className={cx({"list-group-item": bootstrapCss})}>
@@ -48,14 +47,14 @@ class TextSearch extends React.Component {
 					<h5>
 						{bootstrapCss ? (<span>
 							<span className={cx("glyphicon", {
-								"glyphicon-collapse-down": this.state.expanded,
-								"glyphicon-collapse-up": !this.state.expanded
+								"glyphicon-collapse-down": !collapse,
+								"glyphicon-collapse-up": collapse
 							})} />{" "}
 						</span>) : null }
 						{label}
 					</h5>
 				</header>
-				<div style={{display: this.state.expanded ? "block" : "none"}}>
+				<div style={{display: collapse ? "none" : "block"}}>
 					<input
 						onChange={this.handleInputChange.bind(this)}
 						onKeyDown={this.handleInputKeyDown.bind(this)}
@@ -76,9 +75,11 @@ TextSearch.defaultProps = {
 
 TextSearch.propTypes = {
 	bootstrapCss: React.PropTypes.bool,
+	collapse: React.PropTypes.bool,
 	field: React.PropTypes.string.isRequired,
 	label: React.PropTypes.string,
-	onChange: React.PropTypes.func
+	onChange: React.PropTypes.func,
+	onSetCollapse: React.PropTypes.func
 };
 
 export default TextSearch;

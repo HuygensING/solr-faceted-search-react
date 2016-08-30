@@ -664,6 +664,19 @@ var SolrClient = (function () {
 			this.sendQuery((0, _reducersQuery2["default"])(this.state.query, payload));
 		}
 	}, {
+		key: "setCollapse",
+		value: function setCollapse(field, value) {
+			var query = this.state.query;
+			var searchFields = query.searchFields;
+
+			var newFields = searchFields.map(function (searchField) {
+				return searchField.field === field ? _extends({}, searchField, { collapse: value }) : searchField;
+			});
+			var payload = { type: "SET_SEARCH_FIELDS", newFields: newFields };
+			this.state.query = (0, _reducersQuery2["default"])(this.state.query, payload);
+			this.onChange(this.state, this.getHandlers());
+		}
+	}, {
 		key: "getHandlers",
 		value: function getHandlers() {
 			return {
@@ -671,7 +684,8 @@ var SolrClient = (function () {
 				onSearchFieldChange: this.setSearchFieldValue.bind(this),
 				onFacetSortChange: this.setFacetSort.bind(this),
 				onPageChange: this.setCurrentPage.bind(this),
-				onNextCursorQuery: this.sendNextCursorQuery.bind(this)
+				onNextCursorQuery: this.sendNextCursorQuery.bind(this),
+				onSetCollapse: this.setCollapse.bind(this)
 			};
 		}
 	}]);
@@ -1299,8 +1313,7 @@ var ListFacet = (function (_React$Component) {
 
 		this.state = {
 			filter: "",
-			truncateFacetListsAt: props.truncateFacetListsAt,
-			expanded: props.collapse ? false : true
+			truncateFacetListsAt: props.truncateFacetListsAt
 		};
 	}
 
@@ -1319,7 +1332,7 @@ var ListFacet = (function (_React$Component) {
 	}, {
 		key: "toggleExpand",
 		value: function toggleExpand() {
-			this.setState({ expanded: !this.state.expanded });
+			this.props.onSetCollapse(this.props.field, !(this.props.collapse || false));
 		}
 	}, {
 		key: "render",
@@ -1334,6 +1347,7 @@ var ListFacet = (function (_React$Component) {
 			var value = _props.value;
 			var bootstrapCss = _props.bootstrapCss;
 			var facetSort = _props.facetSort;
+			var collapse = _props.collapse;
 			var truncateFacetListsAt = this.state.truncateFacetListsAt;
 
 			var facetCounts = facets.filter(function (facet, i) {
@@ -1344,6 +1358,8 @@ var ListFacet = (function (_React$Component) {
 			});
 
 			var facetSortValue = facetSort ? facetSort : query.facetSort ? query.facetSort : query.facetLimit && query.facetLimit > -1 ? "count" : "index";
+
+			var expanded = !(collapse || false);
 
 			var showMoreLink = truncateFacetListsAt > -1 && truncateFacetListsAt < facetValues.length ? _react2["default"].createElement(
 				"li",
@@ -1368,17 +1384,17 @@ var ListFacet = (function (_React$Component) {
 							"span",
 							null,
 							_react2["default"].createElement("span", { className: (0, _classnames2["default"])("glyphicon", {
-									"glyphicon-collapse-down": this.state.expanded,
-									"glyphicon-collapse-up": !this.state.expanded
+									"glyphicon-collapse-down": expanded,
+									"glyphicon-collapse-up": !expanded
 								}) }),
 							" "
 						) : null,
 						label
 					)
 				),
-				_react2["default"].createElement(
+				expanded ? _react2["default"].createElement(
 					"div",
-					{ style: { display: this.state.expanded ? "block" : "none" } },
+					null,
 					_react2["default"].createElement(
 						"ul",
 						{ className: (0, _classnames2["default"])({ "list-group": bootstrapCss }) },
@@ -1442,7 +1458,7 @@ var ListFacet = (function (_React$Component) {
 							)
 						)
 					) : null
-				)
+				) : null
 			);
 		}
 	}]);
@@ -1457,12 +1473,14 @@ ListFacet.defaultProps = {
 ListFacet.propTypes = {
 	bootstrapCss: _react2["default"].PropTypes.bool,
 	children: _react2["default"].PropTypes.array,
+	collapse: _react2["default"].PropTypes.bool,
 	facetSort: _react2["default"].PropTypes.string,
 	facets: _react2["default"].PropTypes.array.isRequired,
 	field: _react2["default"].PropTypes.string.isRequired,
 	label: _react2["default"].PropTypes.string,
 	onChange: _react2["default"].PropTypes.func,
 	onFacetSortChange: _react2["default"].PropTypes.func,
+	onSetCollapse: _react2["default"].PropTypes.func,
 	query: _react2["default"].PropTypes.object,
 	truncateFacetListsAt: _react2["default"].PropTypes.number,
 	value: _react2["default"].PropTypes.array
@@ -1509,8 +1527,7 @@ var RangeFacet = (function (_React$Component) {
 		_get(Object.getPrototypeOf(RangeFacet.prototype), "constructor", this).call(this, props);
 
 		this.state = {
-			value: props.value,
-			expanded: props.collapse ? false : true
+			value: props.value
 		};
 	}
 
@@ -1566,7 +1583,7 @@ var RangeFacet = (function (_React$Component) {
 		key: "toggleExpand",
 		value: function toggleExpand(ev) {
 			if (ev.target.className.indexOf("clear-button") < 0) {
-				this.setState({ expanded: !this.state.expanded });
+				this.props.onSetCollapse(this.props.field, !(this.props.collapse || false));
 			}
 		}
 	}, {
@@ -1578,6 +1595,7 @@ var RangeFacet = (function (_React$Component) {
 			var label = _props.label;
 			var field = _props.field;
 			var bootstrapCss = _props.bootstrapCss;
+			var collapse = _props.collapse;
 			var value = this.state.value;
 
 			var range = this.facetsToRange();
@@ -1610,8 +1628,8 @@ var RangeFacet = (function (_React$Component) {
 							"span",
 							null,
 							_react2["default"].createElement("span", { className: (0, _classnames2["default"])("glyphicon", {
-									"glyphicon-collapse-down": this.state.expanded,
-									"glyphicon-collapse-up": !this.state.expanded
+									"glyphicon-collapse-down": !collapse,
+									"glyphicon-collapse-up": collapse
 								}) }),
 							" "
 						) : null,
@@ -1620,7 +1638,7 @@ var RangeFacet = (function (_React$Component) {
 				),
 				_react2["default"].createElement(
 					"div",
-					{ style: { display: this.state.expanded ? "block" : "none" } },
+					{ style: { display: collapse ? "none" : "block" } },
 					_react2["default"].createElement(_rangeSlider2["default"], { lowerLimit: this.getPercentage(range, filterRange[0]), onChange: this.onRangeChange.bind(this), upperLimit: this.getPercentage(range, filterRange[1]) }),
 					_react2["default"].createElement(
 						"label",
@@ -1646,10 +1664,12 @@ RangeFacet.defaultProps = {
 
 RangeFacet.propTypes = {
 	bootstrapCss: _react2["default"].PropTypes.bool,
+	collapse: _react2["default"].PropTypes.bool,
 	facets: _react2["default"].PropTypes.array.isRequired,
 	field: _react2["default"].PropTypes.string.isRequired,
 	label: _react2["default"].PropTypes.string,
 	onChange: _react2["default"].PropTypes.func,
+	onSetCollapse: _react2["default"].PropTypes.func,
 	value: _react2["default"].PropTypes.array
 };
 
@@ -2964,8 +2984,7 @@ var TextSearch = (function (_React$Component) {
 		_get(Object.getPrototypeOf(TextSearch.prototype), "constructor", this).call(this, props);
 
 		this.state = {
-			value: "",
-			expanded: props.collapse ? false : true
+			value: ""
 		};
 	}
 
@@ -2998,7 +3017,7 @@ var TextSearch = (function (_React$Component) {
 	}, {
 		key: "toggleExpand",
 		value: function toggleExpand() {
-			this.setState({ expanded: !this.state.expanded });
+			this.props.onSetCollapse(this.props.field, !(this.props.collapse || false));
 		}
 	}, {
 		key: "render",
@@ -3006,6 +3025,7 @@ var TextSearch = (function (_React$Component) {
 			var _props = this.props;
 			var label = _props.label;
 			var bootstrapCss = _props.bootstrapCss;
+			var collapse = _props.collapse;
 
 			return _react2["default"].createElement(
 				"li",
@@ -3020,8 +3040,8 @@ var TextSearch = (function (_React$Component) {
 							"span",
 							null,
 							_react2["default"].createElement("span", { className: (0, _classnames2["default"])("glyphicon", {
-									"glyphicon-collapse-down": this.state.expanded,
-									"glyphicon-collapse-up": !this.state.expanded
+									"glyphicon-collapse-down": !collapse,
+									"glyphicon-collapse-up": collapse
 								}) }),
 							" "
 						) : null,
@@ -3030,7 +3050,7 @@ var TextSearch = (function (_React$Component) {
 				),
 				_react2["default"].createElement(
 					"div",
-					{ style: { display: this.state.expanded ? "block" : "none" } },
+					{ style: { display: collapse ? "none" : "block" } },
 					_react2["default"].createElement("input", {
 						onChange: this.handleInputChange.bind(this),
 						onKeyDown: this.handleInputKeyDown.bind(this),
@@ -3055,9 +3075,11 @@ TextSearch.defaultProps = {
 
 TextSearch.propTypes = {
 	bootstrapCss: _react2["default"].PropTypes.bool,
+	collapse: _react2["default"].PropTypes.bool,
 	field: _react2["default"].PropTypes.string.isRequired,
 	label: _react2["default"].PropTypes.string,
-	onChange: _react2["default"].PropTypes.func
+	onChange: _react2["default"].PropTypes.func,
+	onSetCollapse: _react2["default"].PropTypes.func
 };
 
 exports["default"] = TextSearch;

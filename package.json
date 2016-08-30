@@ -1,6 +1,6 @@
 {
   "name": "solr-faceted-search-react",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "main": "build/index.js",
   "typings": "src/index.d.ts",
   "author": {
