@@ -1299,7 +1299,8 @@ var ListFacet = (function (_React$Component) {
 
 		this.state = {
 			filter: "",
-			truncateFacetListsAt: props.truncateFacetListsAt
+			truncateFacetListsAt: props.truncateFacetListsAt,
+			expanded: props.collapse ? false : true
 		};
 	}
 
@@ -1314,6 +1315,11 @@ var ListFacet = (function (_React$Component) {
 					return i !== foundIdx;
 				}));
 			}
+		}
+	}, {
+		key: "toggleExpand",
+		value: function toggleExpand() {
+			this.setState({ expanded: !this.state.expanded });
 		}
 	}, {
 		key: "render",
@@ -1354,71 +1360,88 @@ var ListFacet = (function (_React$Component) {
 				{ className: (0, _classnames2["default"])("list-facet", { "list-group-item": bootstrapCss }), id: "solr-list-facet-" + field },
 				_react2["default"].createElement(
 					"header",
-					null,
+					{ onClick: this.toggleExpand.bind(this) },
 					_react2["default"].createElement(
 						"h5",
 						null,
+						bootstrapCss ? _react2["default"].createElement(
+							"span",
+							null,
+							_react2["default"].createElement("span", { className: (0, _classnames2["default"])("glyphicon", {
+									"glyphicon-collapse-down": this.state.expanded,
+									"glyphicon-collapse-up": !this.state.expanded
+								}) }),
+							" "
+						) : null,
 						label
 					)
 				),
 				_react2["default"].createElement(
-					"ul",
-					{ className: (0, _classnames2["default"])({ "list-group": bootstrapCss }) },
-					facetValues.filter(function (facetValue, i) {
-						return truncateFacetListsAt < 0 || i < truncateFacetListsAt;
-					}).map(function (facetValue, i) {
-						return _this.state.filter.length === 0 || facetValue.toLowerCase().indexOf(_this.state.filter.toLowerCase()) > -1 ? _react2["default"].createElement(
-							"li",
-							{ className: (0, _classnames2["default"])("facet-item-type-" + field, { "list-group-item": bootstrapCss }), key: facetValue + "_" + facetCounts[i], onClick: function () {
-									return _this.handleClick(facetValue);
-								} },
-							value.indexOf(facetValue) > -1 ? _react2["default"].createElement(_iconsChecked2["default"], null) : _react2["default"].createElement(_iconsUnchecked2["default"], null),
-							" ",
-							facetValue,
-							_react2["default"].createElement(
-								"span",
-								{ className: "facet-item-amount" },
-								facetCounts[i]
-							)
-						) : null;
-					}),
-					showMoreLink
-				),
-				_react2["default"].createElement("input", { onChange: function (ev) {
-						return _this.setState({ filter: ev.target.value });
-					}, placeholder: "Filter... ", type: "text", value: this.state.filter }),
-				" ",
-				_react2["default"].createElement(
-					"span",
-					{ className: (0, _classnames2["default"])({ "btn-group": bootstrapCss }) },
+					"div",
+					{ style: { display: this.state.expanded ? "block" : "none" } },
 					_react2["default"].createElement(
-						"button",
-						{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "index" }),
-							onClick: function () {
-								return _this.props.onFacetSortChange(field, "index");
-							} },
-						"a-z"
+						"ul",
+						{ className: (0, _classnames2["default"])({ "list-group": bootstrapCss }) },
+						facetValues.filter(function (facetValue, i) {
+							return truncateFacetListsAt < 0 || i < truncateFacetListsAt;
+						}).map(function (facetValue, i) {
+							return _this.state.filter.length === 0 || facetValue.toLowerCase().indexOf(_this.state.filter.toLowerCase()) > -1 ? _react2["default"].createElement(
+								"li",
+								{ className: (0, _classnames2["default"])("facet-item-type-" + field, { "list-group-item": bootstrapCss }), key: facetValue + "_" + facetCounts[i], onClick: function () {
+										return _this.handleClick(facetValue);
+									} },
+								value.indexOf(facetValue) > -1 ? _react2["default"].createElement(_iconsChecked2["default"], null) : _react2["default"].createElement(_iconsUnchecked2["default"], null),
+								" ",
+								facetValue,
+								_react2["default"].createElement(
+									"span",
+									{ className: "facet-item-amount" },
+									facetCounts[i]
+								)
+							) : null;
+						}),
+						showMoreLink
 					),
-					_react2["default"].createElement(
-						"button",
-						{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "count" }),
-							onClick: function () {
-								return _this.props.onFacetSortChange(field, "count");
-							} },
-						"0-9"
-					)
-				),
-				_react2["default"].createElement(
-					"span",
-					{ className: (0, _classnames2["default"])({ "btn-group": bootstrapCss, "pull-right": bootstrapCss }) },
-					_react2["default"].createElement(
-						"button",
-						{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss }),
-							onClick: function () {
-								return _this.props.onChange(field, []);
-							} },
-						"clear"
-					)
+					facetValues.length > 4 ? _react2["default"].createElement(
+						"div",
+						null,
+						_react2["default"].createElement("input", { onChange: function (ev) {
+								return _this.setState({ filter: ev.target.value });
+							}, placeholder: "Filter... ", type: "text", value: this.state.filter }),
+						" ",
+						_react2["default"].createElement(
+							"span",
+							{ className: (0, _classnames2["default"])({ "btn-group": bootstrapCss }) },
+							_react2["default"].createElement(
+								"button",
+								{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "index" }),
+									onClick: function () {
+										return _this.props.onFacetSortChange(field, "index");
+									} },
+								"a-z"
+							),
+							_react2["default"].createElement(
+								"button",
+								{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "count" }),
+									onClick: function () {
+										return _this.props.onFacetSortChange(field, "count");
+									} },
+								"0-9"
+							)
+						),
+						_react2["default"].createElement(
+							"span",
+							{ className: (0, _classnames2["default"])({ "btn-group": bootstrapCss, "pull-right": bootstrapCss }) },
+							_react2["default"].createElement(
+								"button",
+								{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss }),
+									onClick: function () {
+										return _this.props.onChange(field, []);
+									} },
+								"clear"
+							)
+						)
+					) : null
 				)
 			);
 		}
@@ -1486,7 +1509,8 @@ var RangeFacet = (function (_React$Component) {
 		_get(Object.getPrototypeOf(RangeFacet.prototype), "constructor", this).call(this, props);
 
 		this.state = {
-			value: props.value
+			value: props.value,
+			expanded: props.collapse ? false : true
 		};
 	}
 
@@ -1539,6 +1563,13 @@ var RangeFacet = (function (_React$Component) {
 			return atRange / realRange;
 		}
 	}, {
+		key: "toggleExpand",
+		value: function toggleExpand(ev) {
+			if (ev.target.className.indexOf("clear-button") < 0) {
+				this.setState({ expanded: !this.state.expanded });
+			}
+		}
+	}, {
 		key: "render",
 		value: function render() {
 			var _this = this;
@@ -1558,31 +1589,49 @@ var RangeFacet = (function (_React$Component) {
 				{ className: (0, _classnames2["default"])("range-facet", { "list-group-item": bootstrapCss }), id: "solr-range-facet-" + field },
 				_react2["default"].createElement(
 					"header",
-					null,
-					_react2["default"].createElement(
-						"h5",
-						{ className: (0, _classnames2["default"])({ "pull-left": bootstrapCss }) },
-						label
-					),
+					{ onClick: this.toggleExpand.bind(this) },
 					_react2["default"].createElement(
 						"button",
-						{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss }),
+						{ style: { display: this.state.expanded ? "block" : "none" },
+							className: (0, _classnames2["default"])("clear-button", {
+								"btn": bootstrapCss,
+								"btn-default": bootstrapCss,
+								"btn-xs": bootstrapCss,
+								"pull-right": bootstrapCss }),
 							onClick: function () {
 								return _this.props.onChange(field, []);
 							} },
 						"clear"
+					),
+					_react2["default"].createElement(
+						"h5",
+						null,
+						bootstrapCss ? _react2["default"].createElement(
+							"span",
+							null,
+							_react2["default"].createElement("span", { className: (0, _classnames2["default"])("glyphicon", {
+									"glyphicon-collapse-down": this.state.expanded,
+									"glyphicon-collapse-up": !this.state.expanded
+								}) }),
+							" "
+						) : null,
+						label
 					)
 				),
-				_react2["default"].createElement(_rangeSlider2["default"], { lowerLimit: this.getPercentage(range, filterRange[0]), onChange: this.onRangeChange.bind(this), upperLimit: this.getPercentage(range, filterRange[1]) }),
 				_react2["default"].createElement(
-					"label",
-					null,
-					filterRange[0]
-				),
-				_react2["default"].createElement(
-					"label",
-					{ className: (0, _classnames2["default"])({ "pull-right": bootstrapCss }) },
-					filterRange[1]
+					"div",
+					{ style: { display: this.state.expanded ? "block" : "none" } },
+					_react2["default"].createElement(_rangeSlider2["default"], { lowerLimit: this.getPercentage(range, filterRange[0]), onChange: this.onRangeChange.bind(this), upperLimit: this.getPercentage(range, filterRange[1]) }),
+					_react2["default"].createElement(
+						"label",
+						null,
+						filterRange[0]
+					),
+					_react2["default"].createElement(
+						"label",
+						{ className: (0, _classnames2["default"])({ "pull-right": bootstrapCss }) },
+						filterRange[1]
+					)
 				)
 			);
 		}
@@ -2915,7 +2964,8 @@ var TextSearch = (function (_React$Component) {
 		_get(Object.getPrototypeOf(TextSearch.prototype), "constructor", this).call(this, props);
 
 		this.state = {
-			value: ""
+			value: "",
+			expanded: props.collapse ? false : true
 		};
 	}
 
@@ -2946,6 +2996,11 @@ var TextSearch = (function (_React$Component) {
 			this.props.onChange(this.props.field, this.state.value);
 		}
 	}, {
+		key: "toggleExpand",
+		value: function toggleExpand() {
+			this.setState({ expanded: !this.state.expanded });
+		}
+	}, {
 		key: "render",
 		value: function render() {
 			var _props = this.props;
@@ -2957,22 +3012,35 @@ var TextSearch = (function (_React$Component) {
 				{ className: (0, _classnames2["default"])({ "list-group-item": bootstrapCss }) },
 				_react2["default"].createElement(
 					"header",
-					null,
+					{ onClick: this.toggleExpand.bind(this) },
 					_react2["default"].createElement(
 						"h5",
 						null,
+						bootstrapCss ? _react2["default"].createElement(
+							"span",
+							null,
+							_react2["default"].createElement("span", { className: (0, _classnames2["default"])("glyphicon", {
+									"glyphicon-collapse-down": this.state.expanded,
+									"glyphicon-collapse-up": !this.state.expanded
+								}) }),
+							" "
+						) : null,
 						label
 					)
 				),
-				_react2["default"].createElement("input", {
-					onChange: this.handleInputChange.bind(this),
-					onKeyDown: this.handleInputKeyDown.bind(this),
-					value: this.state.value || "" }),
-				" ",
 				_react2["default"].createElement(
-					"button",
-					{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-sm": bootstrapCss }), onClick: this.handleSubmit.bind(this) },
-					_react2["default"].createElement(_iconsSearch2["default"], null)
+					"div",
+					{ style: { display: this.state.expanded ? "block" : "none" } },
+					_react2["default"].createElement("input", {
+						onChange: this.handleInputChange.bind(this),
+						onKeyDown: this.handleInputKeyDown.bind(this),
+						value: this.state.value || "" }),
+					" ",
+					_react2["default"].createElement(
+						"button",
+						{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-sm": bootstrapCss }), onClick: this.handleSubmit.bind(this) },
+						_react2["default"].createElement(_iconsSearch2["default"], null)
+					)
 				)
 			);
 		}

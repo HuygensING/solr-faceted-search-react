@@ -11,7 +11,8 @@ class ListFacet extends React.Component {
 
 		this.state = {
 			filter: "",
-			truncateFacetListsAt: props.truncateFacetListsAt
+			truncateFacetListsAt: props.truncateFacetListsAt,
+			expanded: props.collapse ? false : true
 		};
 	}
 
@@ -22,6 +23,10 @@ class ListFacet extends React.Component {
 		} else {
 			this.props.onChange(this.props.field, this.props.value.filter((v, i) => i !== foundIdx));
 		}
+	}
+
+	toggleExpand() {
+		this.setState({expanded: !this.state.expanded});
 	}
 
 	render() {
@@ -42,39 +47,50 @@ class ListFacet extends React.Component {
 
 		return (
 			<li className={cx("list-facet", {"list-group-item": bootstrapCss})} id={`solr-list-facet-${field}`}>
-				<header>
+				<header onClick={this.toggleExpand.bind(this)}>
 					<h5>
+						{bootstrapCss ? (<span>
+							<span className={cx("glyphicon", {
+								"glyphicon-collapse-down": this.state.expanded,
+								"glyphicon-collapse-up": !this.state.expanded
+							})} />{" "}
+						</span>) : null }
 						{label}
 					</h5>
 				</header>
-
-				<ul className={cx({"list-group": bootstrapCss})}>
-					{facetValues.filter((facetValue, i) => truncateFacetListsAt < 0 || i < truncateFacetListsAt).map((facetValue, i) =>
-						this.state.filter.length === 0 || facetValue.toLowerCase().indexOf(this.state.filter.toLowerCase()) > -1 ? (
-						<li className={cx(`facet-item-type-${field}`, {"list-group-item": bootstrapCss})} key={`${facetValue}_${facetCounts[i]}`} onClick={() => this.handleClick(facetValue)}>
-							{value.indexOf(facetValue) > -1 ? <CheckedIcon /> : <UncheckedIcon />} {facetValue}
-							<span className="facet-item-amount">{facetCounts[i]}</span>
-						</li>) : null
-					)}
-					{showMoreLink}
-				</ul>
-				<input onChange={(ev) => this.setState({filter: ev.target.value})} placeholder="Filter... " type="text" value={this.state.filter} />&nbsp;
-				<span className={cx({"btn-group": bootstrapCss})}>
-					<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "index"})}
-							onClick={() => this.props.onFacetSortChange(field, "index") }>
-						a-z
-					</button>
-					<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "count"})}
-							onClick={() => this.props.onFacetSortChange(field, "count")}>
-						0-9
-					</button>
-				</span>
-				<span className={cx({"btn-group": bootstrapCss, "pull-right": bootstrapCss})}>
-					<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss})}
-						onClick={() => this.props.onChange(field, [])}>
-						clear
-					</button>
-				</span>
+				<div style={{display: this.state.expanded ? "block" : "none"}}>
+					<ul className={cx({"list-group": bootstrapCss})}>
+						{facetValues.filter((facetValue, i) => truncateFacetListsAt < 0 || i < truncateFacetListsAt).map((facetValue, i) =>
+							this.state.filter.length === 0 || facetValue.toLowerCase().indexOf(this.state.filter.toLowerCase()) > -1 ? (
+							<li className={cx(`facet-item-type-${field}`, {"list-group-item": bootstrapCss})} key={`${facetValue}_${facetCounts[i]}`} onClick={() => this.handleClick(facetValue)}>
+								{value.indexOf(facetValue) > -1 ? <CheckedIcon /> : <UncheckedIcon />} {facetValue}
+								<span className="facet-item-amount">{facetCounts[i]}</span>
+							</li>) : null
+						)}
+						{showMoreLink}
+					</ul>
+					{ facetValues.length > 4 ? (
+						<div>
+							<input onChange={(ev) => this.setState({filter: ev.target.value})} placeholder="Filter... " type="text" value={this.state.filter} />&nbsp;
+							<span className={cx({"btn-group": bootstrapCss})}>
+								<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "index"})}
+										onClick={() => this.props.onFacetSortChange(field, "index") }>
+									a-z
+								</button>
+								<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, active: facetSortValue === "count"})}
+										onClick={() => this.props.onFacetSortChange(field, "count")}>
+									0-9
+								</button>
+							</span>
+							<span className={cx({"btn-group": bootstrapCss, "pull-right": bootstrapCss})}>
+								<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss})}
+									onClick={() => this.props.onChange(field, [])}>
+									clear
+								</button>
+							</span>
+						</div>
+					) : null }
+				</div>
 			</li>
 		);
 	}

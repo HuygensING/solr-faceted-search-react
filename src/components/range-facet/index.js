@@ -10,7 +10,8 @@ class RangeFacet extends React.Component {
 		super(props);
 
 		this.state = {
-			value: props.value
+			value: props.value,
+			expanded: props.collapse ? false : true
 		};
 	}
 
@@ -60,6 +61,13 @@ class RangeFacet extends React.Component {
 		return atRange / realRange;
 	}
 
+	toggleExpand(ev) {
+		if(ev.target.className.indexOf("clear-button") < 0) {
+			this.setState({expanded: !this.state.expanded});
+		}
+	}
+
+
 	render() {
 		const { label, field, bootstrapCss } = this.props;
 		const { value } = this.state;
@@ -72,18 +80,34 @@ class RangeFacet extends React.Component {
 
 		return (
 			<li className={cx("range-facet", {"list-group-item": bootstrapCss})} id={`solr-range-facet-${field}`}>
-				<header>
-					<h5 className={cx({"pull-left": bootstrapCss})}>
-						{label}
-					</h5>
-					<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss})}
+				<header onClick={this.toggleExpand.bind(this)}>
+					<button style={{display: this.state.expanded ? "block" : "none"}}
+							className={cx("clear-button", {
+								"btn": bootstrapCss,
+								"btn-default": bootstrapCss,
+								"btn-xs": bootstrapCss,
+								"pull-right": bootstrapCss}
+							)}
 							onClick={() => this.props.onChange(field, [])}>
 						clear
 					</button>
+					<h5>
+						{bootstrapCss ? (<span>
+						<span className={cx("glyphicon", {
+							"glyphicon-collapse-down": this.state.expanded,
+							"glyphicon-collapse-up": !this.state.expanded
+						})} />{" "}
+						</span>) : null }
+						{label}
+					</h5>
+
 				</header>
-				<RangeSlider lowerLimit={this.getPercentage(range, filterRange[0])} onChange={this.onRangeChange.bind(this)} upperLimit={this.getPercentage(range, filterRange[1])} />
-				<label>{filterRange[0]}</label>
-				<label className={cx({"pull-right": bootstrapCss})}>{filterRange[1]}</label>
+
+				<div style={{display: this.state.expanded ? "block" : "none"}}>
+					<RangeSlider lowerLimit={this.getPercentage(range, filterRange[0])} onChange={this.onRangeChange.bind(this)} upperLimit={this.getPercentage(range, filterRange[1])} />
+					<label>{filterRange[0]}</label>
+					<label className={cx({"pull-right": bootstrapCss})}>{filterRange[1]}</label>
+				</div>
 			</li>
 		);
 	}

@@ -8,7 +8,8 @@ class TextSearch extends React.Component {
 		super(props);
 
 		this.state = {
-			value: ""
+			value: "",
+			expanded: props.collapse ? false : true
 		};
 	}
 
@@ -34,20 +35,36 @@ class TextSearch extends React.Component {
 		this.props.onChange(this.props.field, this.state.value);
 	}
 
+	toggleExpand() {
+		this.setState({expanded: !this.state.expanded});
+	}
+
 	render() {
 		const { label, bootstrapCss } = this.props;
 
 		return (
 			<li className={cx({"list-group-item": bootstrapCss})}>
-				<header><h5>{label}</h5></header>
-				<input
-					onChange={this.handleInputChange.bind(this)}
-					onKeyDown={this.handleInputKeyDown.bind(this)}
-					value={this.state.value || ""} />
-				&nbsp;
-				<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-sm": bootstrapCss})} onClick={this.handleSubmit.bind(this)}>
-					<SearchIcon />
-				</button>
+				<header onClick={this.toggleExpand.bind(this)}>
+					<h5>
+						{bootstrapCss ? (<span>
+							<span className={cx("glyphicon", {
+								"glyphicon-collapse-down": this.state.expanded,
+								"glyphicon-collapse-up": !this.state.expanded
+							})} />{" "}
+						</span>) : null }
+						{label}
+					</h5>
+				</header>
+				<div style={{display: this.state.expanded ? "block" : "none"}}>
+					<input
+						onChange={this.handleInputChange.bind(this)}
+						onKeyDown={this.handleInputKeyDown.bind(this)}
+						value={this.state.value || ""} />
+					&nbsp;
+					<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-sm": bootstrapCss})} onClick={this.handleSubmit.bind(this)}>
+						<SearchIcon />
+					</button>
+				</div>
 			</li>
 		);
 	}
