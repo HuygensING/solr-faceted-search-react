@@ -36,7 +36,7 @@ class SolrFacetedSearch extends React.Component {
 
 		return (
 			<div className={cx("solr-faceted-search", {"container": bootstrapCss, "col-md-12": bootstrapCss})}>
-				<SearchFieldContainerComponent bootstrapCss={bootstrapCss}>
+				<SearchFieldContainerComponent bootstrapCss={bootstrapCss} onNewSearch={this.props.onNewSearch}>
 					{searchFields.map((searchField, i) => {
 						const { type, field } = searchField;
 						const SearchComponent = customComponents.searchFields[type];
@@ -95,6 +95,7 @@ SolrFacetedSearch.defaultProps = {
 SolrFacetedSearch.propTypes = {
 	bootstrapCss: React.PropTypes.bool,
 	customComponents: React.PropTypes.object,
+	onNewSearch: React.PropTypes.func,
 	onPageChange: React.PropTypes.func,
 	onSearchFieldChange: React.PropTypes.func.isRequired,
 	onSelectDoc: React.PropTypes.func,

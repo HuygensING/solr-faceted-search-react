@@ -528,6 +528,7 @@ var SolrClient = (function () {
 				numFound: 0
 			}
 		};
+		this.settings = _extends({}, settings);
 
 		if (!this.state.query.pageStrategy) {
 			this.state.query.pageStrategy = "paginate";
@@ -577,6 +578,17 @@ var SolrClient = (function () {
 			this.sendQuery((0, _reducersQuery2["default"])(this.state.query, payload));
 
 			return this;
+		}
+	}, {
+		key: "resetSearchFields",
+		value: function resetSearchFields() {
+			var query = this.state.query;
+			var pageStrategy = query.pageStrategy;
+
+			var payload = _extends({ type: "SET_QUERY_FIELDS"
+			}, this.settings, { start: pageStrategy === "paginate" ? 0 : null
+			});
+			this.sendQuery((0, _reducersQuery2["default"])(this.state.query, payload));
 		}
 	}, {
 		key: "sendQuery",
@@ -685,7 +697,8 @@ var SolrClient = (function () {
 				onFacetSortChange: this.setFacetSort.bind(this),
 				onPageChange: this.setCurrentPage.bind(this),
 				onNextCursorQuery: this.sendNextCursorQuery.bind(this),
-				onSetCollapse: this.setCollapse.bind(this)
+				onSetCollapse: this.setCollapse.bind(this),
+				onNewSearch: this.resetSearchFields.bind(this)
 			};
 		}
 	}]);
@@ -2569,7 +2582,9 @@ var SearchFieldContainer = (function (_React$Component) {
 	_createClass(SearchFieldContainer, [{
 		key: "render",
 		value: function render() {
-			var bootstrapCss = this.props.bootstrapCss;
+			var _props = this.props;
+			var bootstrapCss = _props.bootstrapCss;
+			var onNewSearch = _props.onNewSearch;
 
 			return _react2["default"].createElement(
 				"div",
@@ -2580,6 +2595,12 @@ var SearchFieldContainer = (function (_React$Component) {
 					_react2["default"].createElement(
 						"header",
 						{ className: (0, _classnames2["default"])({ "panel-heading": bootstrapCss }) },
+						_react2["default"].createElement(
+							"button",
+							{ className: (0, _classnames2["default"])({ "btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss }),
+								onClick: onNewSearch },
+							"New search"
+						),
 						_react2["default"].createElement(
 							"label",
 							null,
@@ -2601,7 +2622,8 @@ var SearchFieldContainer = (function (_React$Component) {
 
 SearchFieldContainer.propTypes = {
 	bootstrapCss: _react2["default"].PropTypes.bool,
-	children: _react2["default"].PropTypes.array
+	children: _react2["default"].PropTypes.array,
+	onNewSearch: _react2["default"].PropTypes.func
 };
 
 exports["default"] = SearchFieldContainer;
@@ -2690,7 +2712,7 @@ var SolrFacetedSearch = (function (_React$Component) {
 				{ className: (0, _classnames2["default"])("solr-faceted-search", { "container": bootstrapCss, "col-md-12": bootstrapCss }) },
 				_react2["default"].createElement(
 					SearchFieldContainerComponent,
-					{ bootstrapCss: bootstrapCss },
+					{ bootstrapCss: bootstrapCss, onNewSearch: this.props.onNewSearch },
 					searchFields.map(function (searchField, i) {
 						var type = searchField.type;
 						var field = searchField.field;
@@ -2755,6 +2777,7 @@ SolrFacetedSearch.defaultProps = {
 SolrFacetedSearch.propTypes = {
 	bootstrapCss: _react2["default"].PropTypes.bool,
 	customComponents: _react2["default"].PropTypes.object,
+	onNewSearch: _react2["default"].PropTypes.func,
 	onPageChange: _react2["default"].PropTypes.func,
 	onSearchFieldChange: _react2["default"].PropTypes.func.isRequired,
 	onSelectDoc: _react2["default"].PropTypes.func,

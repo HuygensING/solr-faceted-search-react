@@ -18,6 +18,7 @@ class SolrClient {
 				numFound: 0
 			}
 		};
+		this.settings = {...settings};
 
 		if (!this.state.query.pageStrategy) { this.state.query.pageStrategy = "paginate"; }
 		if (!this.state.query.rows) { this.state.query.rows = 20; }
@@ -54,6 +55,15 @@ class SolrClient {
 		this.sendQuery(queryReducer(this.state.query, payload));
 
 		return this;
+	}
+
+	resetSearchFields() {
+		const { query } = this.state;
+		const { pageStrategy } = query;
+		const payload = {type: "SET_QUERY_FIELDS",
+			...this.settings, start: pageStrategy === "paginate" ? 0 : null
+		};
+		this.sendQuery(queryReducer(this.state.query, payload));
 	}
 
 	sendQuery(query = this.state.query) {
@@ -140,7 +150,8 @@ class SolrClient {
 			onFacetSortChange: this.setFacetSort.bind(this),
 			onPageChange: this.setCurrentPage.bind(this),
 			onNextCursorQuery: this.sendNextCursorQuery.bind(this),
-			onSetCollapse: this.setCollapse.bind(this)
+			onSetCollapse: this.setCollapse.bind(this),
+			onNewSearch: this.resetSearchFields.bind(this)
 		};
 	}
 }

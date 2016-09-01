@@ -4,11 +4,15 @@ import cx from "classnames";
 class SearchFieldContainer extends React.Component {
 
 	render() {
-		const { bootstrapCss } = this.props;
+		const { bootstrapCss, onNewSearch } = this.props;
 		return (
 			<div className={cx({"col-md-3": bootstrapCss})}>
 				<div className={cx({"panel": bootstrapCss, "panel-default": bootstrapCss})}>
 					<header className={cx({"panel-heading": bootstrapCss})}>
+						<button className={cx({"btn": bootstrapCss, "btn-default": bootstrapCss, "btn-xs": bootstrapCss, "pull-right": bootstrapCss})}
+							onClick={onNewSearch}>
+							New search
+						</button>
 						<label>Search</label>
 					</header>
 
@@ -23,7 +27,8 @@ class SearchFieldContainer extends React.Component {
 
 SearchFieldContainer.propTypes = {
 	bootstrapCss: React.PropTypes.bool,
-	children: React.PropTypes.array
+	children: React.PropTypes.array,
+	onNewSearch: React.PropTypes.func
 };
 
 export default SearchFieldContainer;
