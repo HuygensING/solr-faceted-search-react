@@ -8,7 +8,7 @@ class SolrFacetedSearch extends React.Component {
 
 	render() {
 		const { customComponents, bootstrapCss, query, results, truncateFacetListsAt } = this.props;
-		const { onSearchFieldChange, onSortFieldChange, onPageChange } = this.props;
+		const { onSearchFieldChange, onSortFieldChange, onPageChange, onCsvExport } = this.props;
 
 		const { searchFields, sortFields, start, rows } = query;
 
@@ -23,6 +23,7 @@ class SolrFacetedSearch extends React.Component {
 		const ResultPendingComponent = customComponents.results.pending;
 		const PaginateComponent = customComponents.results.paginate;
 		const PreloadComponent = customComponents.results.preloadIndicator;
+		const CsvExportComponent = customComponents.results.csvExport;
 		const CurrentQueryComponent = customComponents.searchFields.currentQuery;
 		const SortComponent = customComponents.sortFields.menu;
 		const resultPending = results.pending ? (<ResultPendingComponent bootstrapCss={bootstrapCss} />) : null;
@@ -56,6 +57,9 @@ class SolrFacetedSearch extends React.Component {
 						<ResultCount bootstrapCss={bootstrapCss} numFound={results.numFound} />
 						{resultPending}
 						<SortComponent bootstrapCss={bootstrapCss} onChange={onSortFieldChange} sortFields={sortFields} />
+						{this.props.showCsvExport
+							? <CsvExportComponent bootstrapCss={bootstrapCss} onClick={onCsvExport} />
+							: null}
 					</ResultHeaderComponent>
 					<CurrentQueryComponent {...this.props} onChange={onSearchFieldChange} />
 					{pagination}
@@ -89,12 +93,14 @@ SolrFacetedSearch.defaultProps = {
 		{type: "text", field: "*"}
 	],
 	sortFields: [],
-	truncateFacetListsAt: -1
+	truncateFacetListsAt: -1,
+	showCsvExport: false
 };
 
 SolrFacetedSearch.propTypes = {
 	bootstrapCss: React.PropTypes.bool,
 	customComponents: React.PropTypes.object,
+	onCsvExport: React.PropTypes.func,
 	onNewSearch: React.PropTypes.func,
 	onPageChange: React.PropTypes.func,
 	onSearchFieldChange: React.PropTypes.func.isRequired,
@@ -102,6 +108,7 @@ SolrFacetedSearch.propTypes = {
 	onSortFieldChange: React.PropTypes.func.isRequired,
 	query: React.PropTypes.object,
 	results: React.PropTypes.object,
+	showCsvExport: React.PropTypes.bool,
 	truncateFacetListsAt: React.PropTypes.number
 };
 

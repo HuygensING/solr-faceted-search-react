@@ -57,7 +57,11 @@ const buildSort = (sortFields) => sortFields
 	.map((sortField) => encodeURIComponent(`${sortField.field} ${sortField.value}`))
 	.join(",");
 
-const solrQuery = (query) => {
+const buildFormat = (format) => Object.keys(format)
+	.map((key) => `${key}=${encodeURIComponent(format[key])}`)
+	.join("&");
+
+const solrQuery = (query, format = {wt: "json"}) => {
 	const {
 			searchFields,
 			sortFields,
@@ -94,10 +98,12 @@ const solrQuery = (query) => {
 		`&${facetSortParam}` +
 		`&${cursorMarkParam}` +
 		(start === null ? "" : `&start=${start}`) +
-		"&facet=on&wt=json";
+		"&facet=on" +
+		`&${buildFormat(format)}`;
 };
 
 export default solrQuery;
+
 
 export {
 	rangeFacetToQueryFilter,

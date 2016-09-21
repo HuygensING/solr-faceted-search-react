@@ -1,6 +1,6 @@
 import queryReducer from "../reducers/query";
 import resultReducer from "../reducers/results";
-import { submitQuery } from "./server";
+import { submitQuery, fetchCsv } from "./server";
 
 
 class SolrClient {
@@ -87,6 +87,21 @@ class SolrClient {
 		});
 	}
 
+	fetchCsv() {
+		fetchCsv(this.state.query, (data) =>  {
+			var element = document.createElement("a");
+			element.setAttribute("href", "data:application/csv;charset=utf-8," + encodeURIComponent(data));
+			element.setAttribute("download", "export.csv");
+
+			element.style.display = "none";
+			document.body.appendChild(element);
+
+			element.click();
+
+			document.body.removeChild(element);
+		});
+	}
+
 	setCurrentPage(page) {
 		const { query } = this.state;
 		const { rows } = query;
@@ -151,7 +166,8 @@ class SolrClient {
 			onPageChange: this.setCurrentPage.bind(this),
 			onNextCursorQuery: this.sendNextCursorQuery.bind(this),
 			onSetCollapse: this.setCollapse.bind(this),
-			onNewSearch: this.resetSearchFields.bind(this)
+			onNewSearch: this.resetSearchFields.bind(this),
+			onCsvExport: this.fetchCsv.bind(this)
 		};
 	}
 }
