@@ -5,7 +5,7 @@ const MAX_INT = 2147483647;
 
 let server = {};
 
-server.performXhr = function (options, accept, reject = () => { console.warn("Undefined reject callback! "); (console.trace || () => {})(); }) {
+server.performXhr = function (options, accept, reject = function() { console.warn("Undefined reject callback! "); (console.trace || function() {})(); }) {
 	xhr(options, accept, reject);
 };
 
