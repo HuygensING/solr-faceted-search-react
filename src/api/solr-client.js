@@ -1,6 +1,7 @@
 import queryReducer from "../reducers/query";
 import resultReducer from "../reducers/results";
-import { submitQuery, fetchCsv } from "./server";
+// import { submitQuery, fetchCsv } from "./server";
+import server from "./server";
 
 
 class SolrClient {
@@ -69,7 +70,7 @@ class SolrClient {
 	sendQuery(query = this.state.query) {
 		delete query.cursorMark;
 		this.state.query = query;
-		submitQuery(query, (action) => {
+		server.submitQuery(query, (action) => {
 			this.state.results = resultReducer(this.state.results, action);
 			this.state.query = queryReducer(this.state.query, action);
 			this.onChange(this.state, this.getHandlers());
@@ -77,7 +78,7 @@ class SolrClient {
 	}
 
 	sendNextCursorQuery() {
-		submitQuery(this.state.query, (action) => {
+		server.submitQuery(this.state.query, (action) => {
 			this.state.results = resultReducer(this.state.results, {
 				...action,
 				type: action.type === "SET_RESULTS" ? "SET_NEXT_RESULTS" : action.type
@@ -88,7 +89,7 @@ class SolrClient {
 	}
 
 	fetchCsv() {
-		fetchCsv(this.state.query, (data) =>  {
+		server.fetchCsv(this.state.query, (data) =>  {
 			var element = document.createElement("a");
 			element.setAttribute("href", "data:application/csv;charset=utf-8," + encodeURIComponent(data));
 			element.setAttribute("download", "export.csv");

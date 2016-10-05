@@ -516,6 +516,8 @@ exports.SolrClient = undefined;
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+// import { submitQuery, fetchCsv } from "./server";
+
 
 var _query = _dereq_("../reducers/query");
 
@@ -526,6 +528,8 @@ var _results = _dereq_("../reducers/results");
 var _results2 = _interopRequireDefault(_results);
 
 var _server = _dereq_("./server");
+
+var _server2 = _interopRequireDefault(_server);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -620,7 +624,7 @@ var SolrClient = function () {
 
 			delete query.cursorMark;
 			this.state.query = query;
-			(0, _server.submitQuery)(query, function (action) {
+			_server2.default.submitQuery(query, function (action) {
 				_this.state.results = (0, _results2.default)(_this.state.results, action);
 				_this.state.query = (0, _query2.default)(_this.state.query, action);
 				_this.onChange(_this.state, _this.getHandlers());
@@ -631,7 +635,7 @@ var SolrClient = function () {
 		value: function sendNextCursorQuery() {
 			var _this2 = this;
 
-			(0, _server.submitQuery)(this.state.query, function (action) {
+			_server2.default.submitQuery(this.state.query, function (action) {
 				_this2.state.results = (0, _results2.default)(_this2.state.results, _extends({}, action, {
 					type: action.type === "SET_RESULTS" ? "SET_NEXT_RESULTS" : action.type
 				}));
@@ -642,7 +646,7 @@ var SolrClient = function () {
 	}, {
 		key: "fetchCsv",
 		value: function fetchCsv() {
-			(0, _server.fetchCsv)(this.state.query, function (data) {
+			_server2.default.fetchCsv(this.state.query, function (data) {
 				var element = document.createElement("a");
 				element.setAttribute("href", "data:application/csv;charset=utf-8," + encodeURIComponent(data));
 				element.setAttribute("download", "export.csv");

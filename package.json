@@ -13,8 +13,8 @@
   },
   "scripts": {
     "start": "scripts/watch.sh",
-    "test": "mocha --compilers js:babel/register --recursive test",
-    "test:watch": "nodemon -x \"mocha --compilers js:babel/register --recursive --watch test\" -w test -w build"
+    "test": "mocha --compilers js:babel-core/register --recursive test",
+    "test:watch": "nodemon -x \"mocha --compilers js:babel-core/register --recursive --watch test\" -w test -w build"
   },
   "license": "MIT",
   "peerDependencies": {
@@ -44,6 +44,7 @@
     "file-loader": "^0.9.0",
     "mocha": "^2.4.5",
     "nodemon": "^1.8.1",
+    "sinon": "^1.17.6",
     "watchify": "^3.7.0"
   }
 }
