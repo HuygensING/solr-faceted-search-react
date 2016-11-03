@@ -2,6 +2,7 @@ import expect from "expect";
 
 import {
 	rangeFacetToQueryFilter,
+	periodRangeFacetToQueryFilter,
 	listFacetFieldToQueryFilter,
 	textFieldToQueryFilter,
 	fieldToQueryFilter,
@@ -32,6 +33,28 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				field: "field_name",
 				value: [123, 456]
 			})).toEqual(encodeURIComponent("field_name:[123 TO 456]"));
+		});
+	});
+
+	describe("periodRangeFacetToQueryFilter", () => { //eslint-disable-line no-undef
+		it("should return an empty string when field.value is null or empty", () => { //eslint-disable-line no-undef
+			expect(periodRangeFacetToQueryFilter({
+				field: "field_name",
+				value: null
+			})).toEqual(null);
+
+			expect(periodRangeFacetToQueryFilter({
+				field: "field_name",
+				value: []
+			})).toEqual(null);
+		});
+
+		it("should generate combined solr range query from a valid period-range-facet searchField", () => { //eslint-disable-line no-undef
+			expect(periodRangeFacetToQueryFilter({
+				lowerBound: "beginDate_i",
+				upperBound: "endDate_i",
+				value: [1700, 1750]
+			})).toEqual(encodeURIComponent("beginDate_i:[1700 TO 1750] OR endDate_i:[1700 TO 1750] OR (beginDate_i:[* TO 1700] AND endDate_i:[1750 TO *])"));
 		});
 	});
 
@@ -119,6 +142,16 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 			})).toEqual(encodeURIComponent("field_name:[10 TO 30]"));
 		});
 
+		it("should return a period range filter when the field.type is 'period-range-facet'", () => { //eslint-disable-line no-undef
+			expect(fieldToQueryFilter({
+				type: "period-range-facet",
+				value: [1700, 1750],
+				lowerBound: "beginDate_i",
+				upperBound: "endDate_i"
+			})).toEqual(encodeURIComponent("beginDate_i:[1700 TO 1750] OR endDate_i:[1700 TO 1750] OR (beginDate_i:[* TO 1700] AND endDate_i:[1750 TO *])"));
+		});
+
+
 		it("should return a list filter when the field.type is 'list-facet'", () => { //eslint-disable-line no-undef
 			expect(fieldToQueryFilter({
 				type: "list-facet",
@@ -156,6 +189,13 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				value: [10, 30],
 				field: "field_name"
 			}])).toEqual("fq=" + encodeURIComponent("field_name:[10 TO 30]"));
+
+			expect(buildQuery([{
+				type: "period-range-facet",
+				value: [1700, 1750],
+				lowerBound: "beginDate_i",
+				upperBound: "endDate_i"
+			}])).toEqual("fq=" + encodeURIComponent("beginDate_i:[1700 TO 1750] OR endDate_i:[1700 TO 1750] OR (beginDate_i:[* TO 1700] AND endDate_i:[1750 TO *])"));
 		});
 
 		it("should ignore unsupported field types", () => {  //eslint-disable-line no-undef
@@ -177,6 +217,14 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				value: null
 			}, {
 				type: "range-facet",
+				field: "field_name",
+				value: []
+			}, {
+				type: "period-range-facet",
+				field: "field_name",
+				value: null
+			}, {
+				type: "period-range-facet",
 				field: "field_name",
 				value: []
 			}, {
@@ -232,11 +280,17 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				type: "range-facet",
 				value: [10, 30],
 				field: "range_field"
+			}, {
+				type: "period-range-facet",
+				value: [1700, 1750],
+				lowerBound: "beginDate_i",
+				upperBound: "endDate_i"
 			}]);
 			expect(facetParam.indexOf("facet.field=text_field")).toEqual(-1);
 			expect(facetParam.indexOf("facet.field=list_field") > -1).toEqual(true);
 			expect(facetParam.indexOf("facet.field=range_field") > -1).toEqual(true);
-
+			expect(facetParam.indexOf("facet.field=beginDate_i") > -1).toEqual(true);
+			expect(facetParam.indexOf("facet.field=endDate_i") > -1).toEqual(true);
 		});
 
 		it("should join the facet.field params with ampersand", () => {  //eslint-disable-line no-undef
@@ -248,11 +302,18 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 				type: "range-facet",
 				value: [10, 30],
 				field: "range_field"
+			}, {
+				type: "period-range-facet",
+				value: [1700, 1750],
+				lowerBound: "beginDate_i",
+				upperBound: "endDate_i"
 			}]);
 
 			const parts = facetParam.split("&");
 			expect(parts.indexOf("facet.field=list_field") > -1).toEqual(true);
 			expect(parts.indexOf("facet.field=range_field") > -1).toEqual(true);
+			expect(parts.indexOf("facet.field=beginDate_i") > -1).toEqual(true);
+			expect(parts.indexOf("facet.field=endDate_i") > -1).toEqual(true);
 		});
 	});
 

@@ -330,7 +330,15 @@ ReactDOM.render(
 			type: "list-facet", // renders a facet list with checkboxes, sends a filter query
 			value: ["Publicist", "Bestuurslid vakvereniging"] // [optional: initial active filters]
 			facetSort: "index" // [optional: how to sort the list facet, options: "index" / "count"]
-		}
+		},
+		{
+			label: ...
+			field: "my-local-name",
+			lowerBound: "startDate_i",
+			upperBound: "endDate_i",
+			type: "period-range-facet", // renders a range slider, sends a range query over startDate_i and endDate_i
+			value: [1890, 1900] // [optional: initial range value of filter]
+		},
 	]
 ```
 Search fields are presented in order of configuration array.

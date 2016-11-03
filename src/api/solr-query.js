@@ -7,6 +7,19 @@ const rangeFacetToQueryFilter = (field) => {
 	return encodeURIComponent(`${field.field}:[${filters[0]} TO ${filters[1]}]`);
 };
 
+const periodRangeFacetToQueryFilter = (field) => {
+	const filters = field.value || [];
+	if (filters.length < 2) {
+		return null;
+	}
+
+	return encodeURIComponent(
+		`${field.lowerBound}:[${filters[0]} TO ${filters[1]}] OR ` +
+		`${field.upperBound}:[${filters[0]} TO ${filters[1]}] OR ` +
+		`(${field.lowerBound}:[* TO ${filters[0]}] AND ${field.upperBound}:[${filters[1]} TO *])`
+	);
+};
+
 const listFacetFieldToQueryFilter = (field) => {
 	const filters = field.value || [];
 	if (filters.length === 0) {
@@ -30,8 +43,10 @@ const fieldToQueryFilter = (field) => {
 		return textFieldToQueryFilter(field);
 	} else if (field.type === "list-facet") {
 		return listFacetFieldToQueryFilter(field);
-	} else if (field.type.indexOf("range") > -1) {
+	} else if (field.type === "range-facet" || field.type === "range") {
 		return rangeFacetToQueryFilter(field);
+	} else if (field.type === "period-range-facet" || field.type === "period-range") {
+		return periodRangeFacetToQueryFilter(field);
 	}
 	return null;
 };
@@ -45,6 +60,11 @@ const buildQuery = (fields) => fields
 const facetFields = (fields) => fields
 	.filter((field) => field.type === "list-facet" || field.type === "range-facet")
 	.map((field) => `facet.field=${encodeURIComponent(field.field)}`)
+	.concat(
+		fields
+			.filter((field) => field.type === "period-range-facet")
+			.map((field) => `facet.field=${encodeURIComponent(field.lowerBound)}&facet.field=${encodeURIComponent(field.upperBound)}`)
+	)
 	.join("&");
 
 const facetSorts = (fields) => fields
@@ -107,6 +127,7 @@ export default solrQuery;
 
 export {
 	rangeFacetToQueryFilter,
+	periodRangeFacetToQueryFilter,
 	listFacetFieldToQueryFilter,
 	textFieldToQueryFilter,
 	fieldToQueryFilter,

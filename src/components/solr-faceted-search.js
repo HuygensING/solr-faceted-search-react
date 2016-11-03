@@ -3,6 +3,10 @@ import cx from "classnames";
 
 import componentPack from "./component-pack";
 
+const getFacetValues = (type, results, field, lowerBound, upperBound) =>
+	type === "period-range-facet" ? (results.facets[lowerBound] || []).concat(results.facets[upperBound] || []) :
+		type === "list-facet" || type === "range-facet" ? results.facets[field] || [] : null;
+
 
 class SolrFacetedSearch extends React.Component {
 
@@ -39,9 +43,10 @@ class SolrFacetedSearch extends React.Component {
 			<div className={cx("solr-faceted-search", {"container": bootstrapCss, "col-md-12": bootstrapCss})}>
 				<SearchFieldContainerComponent bootstrapCss={bootstrapCss} onNewSearch={this.props.onNewSearch}>
 					{searchFields.map((searchField, i) => {
-						const { type, field } = searchField;
+						const { type, field, lowerBound, upperBound } = searchField;
 						const SearchComponent = customComponents.searchFields[type];
-						const facets = type === "list-facet" || type === "range-facet" ? results.facets[field] || [] : null;
+						const facets = getFacetValues(type, results, field, lowerBound, upperBound);
+
 						return (<SearchComponent
 							key={i} {...this.props} {...searchField}
 							bootstrapCss={bootstrapCss}

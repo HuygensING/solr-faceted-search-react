@@ -2,6 +2,8 @@ declare module "solr-faceted-search-react" {
     interface SearchField {
         field: string,
         type: string,
+        lowerBound?: string,
+        upperBound?: string,
         label?: string,
         value?: string | Array<string | number>
     }

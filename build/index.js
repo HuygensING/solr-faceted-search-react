@@ -127,6 +127,27 @@ function isFunction (fn) {
 };
 
 },{}],5:[function(_dereq_,module,exports){
+module.exports = once
+
+once.proto = once(function () {
+  Object.defineProperty(Function.prototype, 'once', {
+    value: function () {
+      return once(this)
+    },
+    configurable: true
+  })
+})
+
+function once (fn) {
+  var called = false
+  return function () {
+    if (called) return
+    called = true
+    return fn.apply(this, arguments)
+  }
+}
+
+},{}],6:[function(_dereq_,module,exports){
 var trim = _dereq_('trim')
   , forEach = _dereq_('for-each')
   , isArray = function(arg) {
@@ -158,7 +179,7 @@ module.exports = function (headers) {
 
   return result
 }
-},{"for-each":2,"trim":6}],6:[function(_dereq_,module,exports){
+},{"for-each":2,"trim":7}],7:[function(_dereq_,module,exports){
 
 exports = module.exports = trim;
 
@@ -174,9 +195,10 @@ exports.right = function(str){
   return str.replace(/\s*$/, '');
 };
 
-},{}],7:[function(_dereq_,module,exports){
+},{}],8:[function(_dereq_,module,exports){
 "use strict";
 var window = _dereq_("global/window")
+var once = _dereq_("once")
 var isFunction = _dereq_("is-function")
 var parseHeaders = _dereq_("parse-headers")
 var xtend = _dereq_("xtend")
@@ -228,17 +250,11 @@ function createXHR(uri, options, callback) {
 }
 
 function _createXHR(options) {
-    if(typeof options.callback === "undefined"){
+    var callback = options.callback
+    if(typeof callback === "undefined"){
         throw new Error("callback argument missing")
     }
-
-    var called = false
-    var callback = function cbOnce(err, response, body){
-        if(!called){
-            called = true
-            options.callback(err, response, body)
-        }
-    }
+    callback = once(callback)
 
     function readystatechange() {
         if (xhr.readyState === 4) {
@@ -252,8 +268,8 @@ function _createXHR(options) {
 
         if (xhr.response) {
             body = xhr.response
-        } else {
-            body = xhr.responseText || getXml(xhr)
+        } else if (xhr.responseType === "text" || !xhr.responseType) {
+            body = xhr.responseText || xhr.responseXML
         }
 
         if (isJson) {
@@ -280,7 +296,7 @@ function _createXHR(options) {
             evt = new Error("" + (evt || "Unknown XMLHttpRequest Error") )
         }
         evt.statusCode = 0
-        return callback(evt, failureResponse)
+        callback(evt, failureResponse)
     }
 
     // will load the data & process the response in a special response object
@@ -312,7 +328,8 @@ function _createXHR(options) {
         } else {
             err = new Error("Internal XMLHttpRequest Error")
         }
-        return callback(err, response, response.body)
+        callback(err, response, response.body)
+
     }
 
     var xhr = options.xhr || null
@@ -397,21 +414,9 @@ function _createXHR(options) {
 
 }
 
-function getXml(xhr) {
-    if (xhr.responseType === "document") {
-        return xhr.responseXML
-    }
-    var firefoxBugTakenEffect = xhr.status === 204 && xhr.responseXML && xhr.responseXML.documentElement.nodeName === "parsererror"
-    if (xhr.responseType === "" && !firefoxBugTakenEffect) {
-        return xhr.responseXML
-    }
-
-    return null
-}
-
 function noop() {}
 
-},{"global/window":3,"is-function":4,"parse-headers":5,"xtend":8}],8:[function(_dereq_,module,exports){
+},{"global/window":3,"is-function":4,"once":5,"parse-headers":6,"xtend":9}],9:[function(_dereq_,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -432,7 +437,7 @@ function extend() {
     return target
 }
 
-},{}],9:[function(_dereq_,module,exports){
+},{}],10:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -505,7 +510,7 @@ server.fetchCsv = function (query, callback) {
 
 exports.default = server;
 
-},{"./solr-query":11,"xhr":7}],10:[function(_dereq_,module,exports){
+},{"./solr-query":12,"xhr":8}],11:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -750,7 +755,7 @@ var SolrClient = function () {
 
 exports.SolrClient = SolrClient;
 
-},{"../reducers/query":34,"../reducers/results":35,"./server":9}],11:[function(_dereq_,module,exports){
+},{"../reducers/query":35,"../reducers/results":36,"./server":10}],12:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -766,6 +771,15 @@ var rangeFacetToQueryFilter = function rangeFacetToQueryFilter(field) {
 	}
 
 	return encodeURIComponent(field.field + ":[" + filters[0] + " TO " + filters[1] + "]");
+};
+
+var periodRangeFacetToQueryFilter = function periodRangeFacetToQueryFilter(field) {
+	var filters = field.value || [];
+	if (filters.length < 2) {
+		return null;
+	}
+
+	return encodeURIComponent(field.lowerBound + ":[" + filters[0] + " TO " + filters[1] + "] OR " + (field.upperBound + ":[" + filters[0] + " TO " + filters[1] + "] OR ") + ("(" + field.lowerBound + ":[* TO " + filters[0] + "] AND " + field.upperBound + ":[" + filters[1] + " TO *])"));
 };
 
 var listFacetFieldToQueryFilter = function listFacetFieldToQueryFilter(field) {
@@ -793,8 +807,10 @@ var fieldToQueryFilter = function fieldToQueryFilter(field) {
 		return textFieldToQueryFilter(field);
 	} else if (field.type === "list-facet") {
 		return listFacetFieldToQueryFilter(field);
-	} else if (field.type.indexOf("range") > -1) {
+	} else if (field.type === "range-facet" || field.type === "range") {
 		return rangeFacetToQueryFilter(field);
+	} else if (field.type === "period-range-facet" || field.type === "period-range") {
+		return periodRangeFacetToQueryFilter(field);
 	}
 	return null;
 };
@@ -812,7 +828,11 @@ var facetFields = function facetFields(fields) {
 		return field.type === "list-facet" || field.type === "range-facet";
 	}).map(function (field) {
 		return "facet.field=" + encodeURIComponent(field.field);
-	}).join("&");
+	}).concat(fields.filter(function (field) {
+		return field.type === "period-range-facet";
+	}).map(function (field) {
+		return "facet.field=" + encodeURIComponent(field.lowerBound) + "&facet.field=" + encodeURIComponent(field.upperBound);
+	})).join("&");
 };
 
 var facetSorts = function facetSorts(fields) {
@@ -839,15 +859,15 @@ var buildFormat = function buildFormat(format) {
 
 var solrQuery = function solrQuery(query) {
 	var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { wt: "json" };
-	var searchFields = query.searchFields;
-	var sortFields = query.sortFields;
-	var rows = query.rows;
-	var start = query.start;
-	var facetLimit = query.facetLimit;
-	var facetSort = query.facetSort;
-	var pageStrategy = query.pageStrategy;
-	var cursorMark = query.cursorMark;
-	var idField = query.idField;
+	var searchFields = query.searchFields,
+	    sortFields = query.sortFields,
+	    rows = query.rows,
+	    start = query.start,
+	    facetLimit = query.facetLimit,
+	    facetSort = query.facetSort,
+	    pageStrategy = query.pageStrategy,
+	    cursorMark = query.cursorMark,
+	    idField = query.idField;
 
 
 	var filters = (query.filters || []).map(function (filter) {
@@ -870,6 +890,7 @@ var solrQuery = function solrQuery(query) {
 
 exports.default = solrQuery;
 exports.rangeFacetToQueryFilter = rangeFacetToQueryFilter;
+exports.periodRangeFacetToQueryFilter = periodRangeFacetToQueryFilter;
 exports.listFacetFieldToQueryFilter = listFacetFieldToQueryFilter;
 exports.textFieldToQueryFilter = textFieldToQueryFilter;
 exports.fieldToQueryFilter = fieldToQueryFilter;
@@ -879,7 +900,7 @@ exports.facetSorts = facetSorts;
 exports.buildSort = buildSort;
 exports.solrQuery = solrQuery;
 
-},{}],12:[function(_dereq_,module,exports){
+},{}],13:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -953,6 +974,7 @@ exports.default = {
 		text: _textSearch2.default,
 		"list-facet": _listFacet2.default,
 		"range-facet": _rangeFacet2.default,
+		"period-range-facet": _rangeFacet2.default,
 		container: _searchFieldContainer2.default,
 		currentQuery: _currentQuery2.default
 	},
@@ -972,7 +994,7 @@ exports.default = {
 	}
 };
 
-},{"./current-query":13,"./list-facet":17,"./range-facet":18,"./results/container":20,"./results/count-label":21,"./results/csv-export":22,"./results/header":23,"./results/list":24,"./results/pagination":25,"./results/pending":26,"./results/preload-indicator":27,"./results/result":28,"./search-field-container":29,"./sort-menu":31,"./text-search":32}],13:[function(_dereq_,module,exports){
+},{"./current-query":14,"./list-facet":18,"./range-facet":19,"./results/container":21,"./results/count-label":22,"./results/csv-export":23,"./results/header":24,"./results/list":25,"./results/pagination":26,"./results/pending":27,"./results/preload-indicator":28,"./results/result":29,"./search-field-container":30,"./sort-menu":32,"./text-search":33}],14:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1091,9 +1113,9 @@ var CurrentQuery = function (_React$Component) {
 		value: function render() {
 			var _this3 = this;
 
-			var _props = this.props;
-			var bootstrapCss = _props.bootstrapCss;
-			var query = _props.query;
+			var _props = this.props,
+			    bootstrapCss = _props.bootstrapCss,
+			    query = _props.query;
 
 
 			var splitFields = query.searchFields.filter(function (searchField) {
@@ -1171,7 +1193,7 @@ CurrentQuery.propTypes = {
 
 exports.default = CurrentQuery;
 
-},{"classnames":1,"react":"react"}],14:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],15:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1231,7 +1253,7 @@ CheckedIcon.propTypes = {
 
 exports.default = CheckedIcon;
 
-},{"react":"react"}],15:[function(_dereq_,module,exports){
+},{"react":"react"}],16:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1277,7 +1299,7 @@ var Search = function (_React$Component) {
 
 exports.default = Search;
 
-},{"react":"react"}],16:[function(_dereq_,module,exports){
+},{"react":"react"}],17:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1335,7 +1357,7 @@ UncheckedIcon.propTypes = {
 
 exports.default = UncheckedIcon;
 
-},{"react":"react"}],17:[function(_dereq_,module,exports){
+},{"react":"react"}],18:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1405,15 +1427,15 @@ var ListFacet = function (_React$Component) {
 		value: function render() {
 			var _this2 = this;
 
-			var _props = this.props;
-			var query = _props.query;
-			var label = _props.label;
-			var facets = _props.facets;
-			var field = _props.field;
-			var value = _props.value;
-			var bootstrapCss = _props.bootstrapCss;
-			var facetSort = _props.facetSort;
-			var collapse = _props.collapse;
+			var _props = this.props,
+			    query = _props.query,
+			    label = _props.label,
+			    facets = _props.facets,
+			    field = _props.field,
+			    value = _props.value,
+			    bootstrapCss = _props.bootstrapCss,
+			    facetSort = _props.facetSort,
+			    collapse = _props.collapse;
 			var truncateFacetListsAt = this.state.truncateFacetListsAt;
 
 
@@ -1555,7 +1577,7 @@ ListFacet.propTypes = {
 
 exports.default = ListFacet;
 
-},{"../icons/checked":14,"../icons/unchecked":16,"classnames":1,"react":"react"}],18:[function(_dereq_,module,exports){
+},{"../icons/checked":15,"../icons/unchecked":17,"classnames":1,"react":"react"}],19:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1659,11 +1681,11 @@ var RangeFacet = function (_React$Component) {
 		value: function render() {
 			var _this2 = this;
 
-			var _props = this.props;
-			var label = _props.label;
-			var field = _props.field;
-			var bootstrapCss = _props.bootstrapCss;
-			var collapse = _props.collapse;
+			var _props = this.props,
+			    label = _props.label,
+			    field = _props.field,
+			    bootstrapCss = _props.bootstrapCss,
+			    collapse = _props.collapse;
 			var value = this.state.value;
 
 
@@ -1744,7 +1766,7 @@ RangeFacet.propTypes = {
 
 exports.default = RangeFacet;
 
-},{"./range-slider":19,"classnames":1,"react":"react"}],19:[function(_dereq_,module,exports){
+},{"./range-slider":20,"classnames":1,"react":"react"}],20:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1968,7 +1990,7 @@ RangeSlider.propTypes = {
 
 exports.default = RangeSlider;
 
-},{"react":"react","react-dom":"react-dom"}],20:[function(_dereq_,module,exports){
+},{"react":"react","react-dom":"react-dom"}],21:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2029,7 +2051,7 @@ ResultContainer.propTypes = {
 
 exports.default = ResultContainer;
 
-},{"classnames":1,"react":"react"}],21:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],22:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2089,7 +2111,7 @@ Result.propTypes = {
 
 exports.default = Result;
 
-},{"react":"react"}],22:[function(_dereq_,module,exports){
+},{"react":"react"}],23:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2097,8 +2119,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (props) {
-	var bootstrapCss = props.bootstrapCss;
-	var onClick = props.onClick;
+	var bootstrapCss = props.bootstrapCss,
+	    onClick = props.onClick;
 
 	return _react2.default.createElement(
 		"button",
@@ -2117,7 +2139,7 @@ var _classnames2 = _interopRequireDefault(_classnames);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"classnames":1,"react":"react"}],23:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],24:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2174,7 +2196,7 @@ ResultHeader.propTypes = {
 
 exports.default = ResultHeader;
 
-},{"classnames":1,"react":"react"}],24:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],25:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2231,7 +2253,7 @@ ResultList.propTypes = {
 
 exports.default = ResultList;
 
-},{"classnames":1,"react":"react"}],25:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],26:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2291,12 +2313,12 @@ var Pagination = function (_React$Component) {
 		value: function render() {
 			var _this2 = this;
 
-			var _props = this.props;
-			var bootstrapCss = _props.bootstrapCss;
-			var query = _props.query;
-			var results = _props.results;
-			var start = query.start;
-			var rows = query.rows;
+			var _props = this.props,
+			    bootstrapCss = _props.bootstrapCss,
+			    query = _props.query,
+			    results = _props.results;
+			var start = query.start,
+			    rows = query.rows;
 			var numFound = results.numFound;
 
 			var pageAmt = Math.ceil(numFound / rows);
@@ -2381,7 +2403,7 @@ Pagination.propTypes = {
 
 exports.default = Pagination;
 
-},{"classnames":1,"react":"react"}],26:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],27:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2431,7 +2453,7 @@ Pending.propTypes = {
 
 exports.default = Pending;
 
-},{"react":"react"}],27:[function(_dereq_,module,exports){
+},{"react":"react"}],28:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2498,10 +2520,8 @@ var PreloadIndicator = function (_React$Component) {
 				return;
 			}
 
-			var _domNode$getBoundingC = domNode.getBoundingClientRect();
-
-			var top = _domNode$getBoundingC.top;
-
+			var _domNode$getBoundingC = domNode.getBoundingClientRect(),
+			    top = _domNode$getBoundingC.top;
 
 			if (top < window.innerHeight) {
 				this.props.onNextCursorQuery();
@@ -2532,7 +2552,7 @@ PreloadIndicator.propTypes = {
 
 exports.default = PreloadIndicator;
 
-},{"classnames":1,"react":"react","react-dom":"react-dom"}],28:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react","react-dom":"react-dom"}],29:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2580,10 +2600,10 @@ var Result = function (_React$Component) {
 		value: function render() {
 			var _this2 = this;
 
-			var _props = this.props;
-			var bootstrapCss = _props.bootstrapCss;
-			var doc = _props.doc;
-			var fields = _props.fields;
+			var _props = this.props,
+			    bootstrapCss = _props.bootstrapCss,
+			    doc = _props.doc,
+			    fields = _props.fields;
 
 
 			return _react2.default.createElement(
@@ -2625,7 +2645,7 @@ Result.propTypes = {
 
 exports.default = Result;
 
-},{"classnames":1,"react":"react"}],29:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],30:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2662,9 +2682,9 @@ var SearchFieldContainer = function (_React$Component) {
 	_createClass(SearchFieldContainer, [{
 		key: "render",
 		value: function render() {
-			var _props = this.props;
-			var bootstrapCss = _props.bootstrapCss;
-			var onNewSearch = _props.onNewSearch;
+			var _props = this.props,
+			    bootstrapCss = _props.bootstrapCss,
+			    onNewSearch = _props.onNewSearch;
 
 			return _react2.default.createElement(
 				"div",
@@ -2708,7 +2728,7 @@ SearchFieldContainer.propTypes = {
 
 exports.default = SearchFieldContainer;
 
-},{"classnames":1,"react":"react"}],30:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],31:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2739,6 +2759,10 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var getFacetValues = function getFacetValues(type, results, field, lowerBound, upperBound) {
+	return type === "period-range-facet" ? (results.facets[lowerBound] || []).concat(results.facets[upperBound] || []) : type === "list-facet" || type === "range-facet" ? results.facets[field] || [] : null;
+};
+
 var SolrFacetedSearch = function (_React$Component) {
 	_inherits(SolrFacetedSearch, _React$Component);
 
@@ -2753,21 +2777,21 @@ var SolrFacetedSearch = function (_React$Component) {
 		value: function render() {
 			var _this2 = this;
 
-			var _props = this.props;
-			var customComponents = _props.customComponents;
-			var bootstrapCss = _props.bootstrapCss;
-			var query = _props.query;
-			var results = _props.results;
-			var truncateFacetListsAt = _props.truncateFacetListsAt;
-			var _props2 = this.props;
-			var onSearchFieldChange = _props2.onSearchFieldChange;
-			var onSortFieldChange = _props2.onSortFieldChange;
-			var onPageChange = _props2.onPageChange;
-			var onCsvExport = _props2.onCsvExport;
-			var searchFields = query.searchFields;
-			var sortFields = query.sortFields;
-			var start = query.start;
-			var rows = query.rows;
+			var _props = this.props,
+			    customComponents = _props.customComponents,
+			    bootstrapCss = _props.bootstrapCss,
+			    query = _props.query,
+			    results = _props.results,
+			    truncateFacetListsAt = _props.truncateFacetListsAt;
+			var _props2 = this.props,
+			    onSearchFieldChange = _props2.onSearchFieldChange,
+			    onSortFieldChange = _props2.onSortFieldChange,
+			    onPageChange = _props2.onPageChange,
+			    onCsvExport = _props2.onCsvExport;
+			var searchFields = query.searchFields,
+			    sortFields = query.sortFields,
+			    start = query.start,
+			    rows = query.rows;
 
 
 			var SearchFieldContainerComponent = customComponents.searchFields.container;
@@ -2796,11 +2820,14 @@ var SolrFacetedSearch = function (_React$Component) {
 					SearchFieldContainerComponent,
 					{ bootstrapCss: bootstrapCss, onNewSearch: this.props.onNewSearch },
 					searchFields.map(function (searchField, i) {
-						var type = searchField.type;
-						var field = searchField.field;
+						var type = searchField.type,
+						    field = searchField.field,
+						    lowerBound = searchField.lowerBound,
+						    upperBound = searchField.upperBound;
 
 						var SearchComponent = customComponents.searchFields[type];
-						var facets = type === "list-facet" || type === "range-facet" ? results.facets[field] || [] : null;
+						var facets = getFacetValues(type, results, field, lowerBound, upperBound);
+
 						return _react2.default.createElement(SearchComponent, _extends({
 							key: i }, _this2.props, searchField, {
 							bootstrapCss: bootstrapCss,
@@ -2875,7 +2902,7 @@ SolrFacetedSearch.propTypes = {
 
 exports.default = SolrFacetedSearch;
 
-},{"./component-pack":12,"classnames":1,"react":"react"}],31:[function(_dereq_,module,exports){
+},{"./component-pack":13,"classnames":1,"react":"react"}],32:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2964,9 +2991,9 @@ var SortMenu = function (_React$Component) {
 		value: function render() {
 			var _this2 = this;
 
-			var _props = this.props;
-			var bootstrapCss = _props.bootstrapCss;
-			var sortFields = _props.sortFields;
+			var _props = this.props,
+			    bootstrapCss = _props.bootstrapCss,
+			    sortFields = _props.sortFields;
 
 			if (sortFields.length === 0) {
 				return null;
@@ -3054,7 +3081,7 @@ SortMenu.propTypes = {
 
 exports.default = SortMenu;
 
-},{"classnames":1,"react":"react","react-dom":"react-dom"}],32:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react","react-dom":"react-dom"}],33:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3131,10 +3158,10 @@ var TextSearch = function (_React$Component) {
 	}, {
 		key: "render",
 		value: function render() {
-			var _props = this.props;
-			var label = _props.label;
-			var bootstrapCss = _props.bootstrapCss;
-			var collapse = _props.collapse;
+			var _props = this.props,
+			    label = _props.label,
+			    bootstrapCss = _props.bootstrapCss,
+			    collapse = _props.collapse;
 
 
 			return _react2.default.createElement(
@@ -3194,7 +3221,7 @@ TextSearch.propTypes = {
 
 exports.default = TextSearch;
 
-},{"../icons/search":15,"classnames":1,"react":"react"}],33:[function(_dereq_,module,exports){
+},{"../icons/search":16,"classnames":1,"react":"react"}],34:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3219,7 +3246,7 @@ exports.SolrFacetedSearch = _solrFacetedSearch2.default;
 exports.defaultComponentPack = _componentPack2.default;
 exports.SolrClient = _solrClient.SolrClient;
 
-},{"./api/solr-client":10,"./components/component-pack":12,"./components/solr-faceted-search":30}],34:[function(_dereq_,module,exports){
+},{"./api/solr-client":11,"./components/component-pack":13,"./components/solr-faceted-search":31}],35:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3270,7 +3297,7 @@ var setQueryFields = function setQueryFields(state, action) {
 	});
 };
 
-},{}],35:[function(_dereq_,module,exports){
+},{}],36:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3313,5 +3340,5 @@ var initialState = {
 	pending: false
 };
 
-},{}]},{},[33])(33)
+},{}]},{},[34])(34)
 });
