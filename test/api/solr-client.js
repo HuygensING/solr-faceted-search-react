@@ -325,7 +325,8 @@ describe("SolrClient", () => { //eslint-disable-line no-undef
 							docs: ["123"],
 							numFound: 123,
 							facets: ["123"],
-							pending: false
+							pending: false,
+							grouped: {}
 						});
 						finalize();
 					} catch (e) {
