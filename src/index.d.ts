@@ -33,6 +33,7 @@ declare module "solr-faceted-search-react" {
         start?: number,
         facetLimit?: number,
         facetSort?: "count" | "index",
+        group?: Object
     }
 
     interface FacetState {
@@ -56,7 +57,8 @@ declare module "solr-faceted-search-react" {
         onNextCursorQuery: Function,
         onPageChange: Function,
         onSearchFieldChange: Function,
-        onSortFieldChange: Function
+        onSortFieldChange: Function,
+        onGroupChange: Function
     }
 
     interface OnChange {
@@ -85,6 +87,7 @@ declare module "solr-faceted-search-react" {
         setSearchFieldValue(field: string, value: string | Array<string | number>): void
         setCurrentPage(page: number): void
         sendQuery(query: QueryState): void
+        setGroup(group: Object): void
         initialize(): void
         state: SearchState
     }

@@ -14,7 +14,8 @@ describe("queryReducer", () => { //eslint-disable-line no-undef
 			url: "z",
 			rows: 10,
 			pageStrategy: "paginate",
-			start: 0
+			start: 0,
+			group: { field: "grouped_field" }
 		})).toEqual({
 			init: "bar",
 			searchFields: ["x"],
@@ -22,7 +23,8 @@ describe("queryReducer", () => { //eslint-disable-line no-undef
 			url: "z",
 			rows: 10,
 			pageStrategy: "paginate",
-			start: 0
+			start: 0,
+			group: { field: "grouped_field" }
 		});
 	});
 
@@ -97,6 +99,19 @@ describe("queryReducer", () => { //eslint-disable-line no-undef
 		})).toEqual({
 			initial: "x",
 			start: 10
+		});
+	});
+
+	it("should SET_GROUP", () => {  //eslint-disable-line no-undef
+		expect(queryReducer({
+			initial: "x",
+			group: undefined
+		}, {
+			type: "SET_GROUP",
+			group: {field: "grouped_field"}
+		})).toEqual({
+			initial: "x",
+			group: {field: "grouped_field"}
 		});
 	});
 

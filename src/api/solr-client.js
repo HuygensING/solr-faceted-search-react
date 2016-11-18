@@ -107,10 +107,14 @@ class SolrClient {
 		const { query } = this.state;
 		const { rows } = query;
 		const payload = {type: "SET_START", newStart: page * rows};
-
 		this.sendQuery(queryReducer(this.state.query, payload));
-
 	}
+
+	setGroup(group) {
+		const payload = {type: "SET_GROUP", group: group};
+		this.sendQuery(queryReducer(this.state.query, payload));
+	}
+
 
 	setSearchFieldValue(field, value) {
 		const { query } = this.state;
@@ -168,7 +172,8 @@ class SolrClient {
 			onNextCursorQuery: this.sendNextCursorQuery.bind(this),
 			onSetCollapse: this.setCollapse.bind(this),
 			onNewSearch: this.resetSearchFields.bind(this),
-			onCsvExport: this.fetchCsv.bind(this)
+			onCsvExport: this.fetchCsv.bind(this),
+			onGroupChange: this.setGroup.bind(this)
 		};
 	}
 }

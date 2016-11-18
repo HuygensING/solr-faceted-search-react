@@ -58,7 +58,8 @@ describe("SolrClient", () => { //eslint-disable-line no-undef
 						searchFields: "searchFields",
 						sortFields: "sortFields",
 						url: "url",
-						rows: DEFAULT_ROWS
+						rows: DEFAULT_ROWS,
+						group: undefined
 					});
 					done();
 				} catch(e) {
@@ -92,6 +93,29 @@ describe("SolrClient", () => { //eslint-disable-line no-undef
 			});
 
 			underTest.setCurrentPage(setPage);
+		});
+	});
+
+	describe("setGroup", () => { // eslint-disable-line no-undef
+		it("should update the group parameter and sendQuery", (done) => { // eslint-disable-line no-undef
+			const underTest = new SolrClient({
+				onChange: () => {},
+				searchFields: "searchFields",
+				sortFields: "sortFields",
+				url: "url"
+			});
+			const groupParam = { field: "grouped_field"};
+			sinon.stub(underTest, "sendQuery", (queryState) => {
+				underTest.sendQuery.restore();
+				try {
+					expect(queryState.group).toEqual({field: "grouped_field"});
+					done();
+				} catch (e) {
+					done(e);
+				}
+			});
+
+			underTest.setGroup(groupParam);
 		});
 	});
 
@@ -301,7 +325,8 @@ describe("SolrClient", () => { //eslint-disable-line no-undef
 							docs: ["123"],
 							numFound: 123,
 							facets: ["123"],
-							pending: false
+							pending: false,
+							grouped: {}
 						});
 						finalize();
 					} catch (e) {
@@ -406,12 +431,13 @@ describe("SolrClient", () => { //eslint-disable-line no-undef
 			const underTest = new SolrClient({
 				onChange: (newState, handlers) => {
 					try {
-						const { onPageChange, onSortFieldChange, onSearchFieldChange, onFacetSortChange, onNextCursorQuery } = handlers;
+						const { onPageChange, onSortFieldChange, onSearchFieldChange, onFacetSortChange, onNextCursorQuery, onGroupChange } = handlers;
 						expect(onPageChange()).toEqual("confirm-current-page-handler");
 						expect(onSortFieldChange()).toEqual("confirm-sortfield-handler");
 						expect(onSearchFieldChange()).toEqual("confirm-searchfield-handler");
 						expect(onFacetSortChange()).toEqual("confirm-facet-sort-handler");
 						expect(onNextCursorQuery()).toEqual("confirm-next-cursor-query-handler");
+						expect(onGroupChange()).toEqual("confirm-group-handler");
 						finalize();
 					} catch (e) {
 						finalize(e);
@@ -424,6 +450,7 @@ describe("SolrClient", () => { //eslint-disable-line no-undef
 			underTest.setCurrentPage = () => "confirm-current-page-handler";
 			underTest.setFacetSort = () => "confirm-facet-sort-handler";
 			underTest.sendNextCursorQuery = () => "confirm-next-cursor-query-handler";
+			underTest.setGroup = () => "confirm-group-handler";
 			underTest.sendQuery();
 		});
 	});
@@ -437,15 +464,17 @@ describe("SolrClient", () => { //eslint-disable-line no-undef
 			underTest.setCurrentPage = () => "confirm-current-page-handler";
 			underTest.setFacetSort = () => "confirm-facet-sort-handler";
 			underTest.sendNextCursorQuery = () => "confirm-next-cursor-query-handler";
+			underTest.setGroup = () => "confirm-group-handler";
 
 
-			const { onPageChange, onSortFieldChange, onSearchFieldChange, onFacetSortChange, onNextCursorQuery } = underTest.getHandlers();
+			const { onPageChange, onSortFieldChange, onSearchFieldChange, onFacetSortChange, onNextCursorQuery, onGroupChange } = underTest.getHandlers();
 
 			expect(onPageChange()).toEqual("confirm-current-page-handler");
 			expect(onSortFieldChange()).toEqual("confirm-sortfield-handler");
 			expect(onSearchFieldChange()).toEqual("confirm-searchfield-handler");
 			expect(onFacetSortChange()).toEqual("confirm-facet-sort-handler");
 			expect(onNextCursorQuery()).toEqual("confirm-next-cursor-query-handler");
+			expect(onGroupChange()).toEqual("confirm-group-handler");
 
 		});
 	});

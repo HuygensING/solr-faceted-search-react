@@ -91,7 +91,8 @@ const solrQuery = (query, format = {wt: "json"}) => {
 			facetSort,
 			pageStrategy,
 			cursorMark,
-			idField
+			idField,
+			group
 		} = query;
 
 	const filters = (query.filters || []).map((filter) => ({...filter, type: filter.type || "text"}));
@@ -106,13 +107,14 @@ const solrQuery = (query, format = {wt: "json"}) => {
 	const idSort = pageStrategy === "cursor" ? [{field: idField, value: "asc"}] : [];
 
 	const sortParam = buildSort(sortFields.concat(idSort));
-
+	const groupParam = group && group.field ? `group=on&group.field=${encodeURIComponent(group.field)}` : "";
 
 
 	return `q=*:*&${queryParams.length > 0 ? queryParams : ""}` +
 		`${sortParam.length > 0 ? `&sort=${sortParam}` : ""}` +
 		`${facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}` +
 		`${facetSortParams.length > 0 ? `&${facetSortParams}` : ""}` +
+		`${groupParam.length > 0 ? `&${groupParam}` : ""}` +
 		`&rows=${rows}` +
 		`&${facetLimitParam}` +
 		`&${facetSortParam}` +
