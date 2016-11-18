@@ -127,27 +127,6 @@ function isFunction (fn) {
 };
 
 },{}],5:[function(_dereq_,module,exports){
-module.exports = once
-
-once.proto = once(function () {
-  Object.defineProperty(Function.prototype, 'once', {
-    value: function () {
-      return once(this)
-    },
-    configurable: true
-  })
-})
-
-function once (fn) {
-  var called = false
-  return function () {
-    if (called) return
-    called = true
-    return fn.apply(this, arguments)
-  }
-}
-
-},{}],6:[function(_dereq_,module,exports){
 var trim = _dereq_('trim')
   , forEach = _dereq_('for-each')
   , isArray = function(arg) {
@@ -179,7 +158,7 @@ module.exports = function (headers) {
 
   return result
 }
-},{"for-each":2,"trim":7}],7:[function(_dereq_,module,exports){
+},{"for-each":2,"trim":6}],6:[function(_dereq_,module,exports){
 
 exports = module.exports = trim;
 
@@ -195,10 +174,9 @@ exports.right = function(str){
   return str.replace(/\s*$/, '');
 };
 
-},{}],8:[function(_dereq_,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 "use strict";
 var window = _dereq_("global/window")
-var once = _dereq_("once")
 var isFunction = _dereq_("is-function")
 var parseHeaders = _dereq_("parse-headers")
 var xtend = _dereq_("xtend")
@@ -250,11 +228,17 @@ function createXHR(uri, options, callback) {
 }
 
 function _createXHR(options) {
-    var callback = options.callback
-    if(typeof callback === "undefined"){
+    if(typeof options.callback === "undefined"){
         throw new Error("callback argument missing")
     }
-    callback = once(callback)
+
+    var called = false
+    var callback = function cbOnce(err, response, body){
+        if(!called){
+            called = true
+            options.callback(err, response, body)
+        }
+    }
 
     function readystatechange() {
         if (xhr.readyState === 4) {
@@ -268,8 +252,8 @@ function _createXHR(options) {
 
         if (xhr.response) {
             body = xhr.response
-        } else if (xhr.responseType === "text" || !xhr.responseType) {
-            body = xhr.responseText || xhr.responseXML
+        } else {
+            body = xhr.responseText || getXml(xhr)
         }
 
         if (isJson) {
@@ -296,7 +280,7 @@ function _createXHR(options) {
             evt = new Error("" + (evt || "Unknown XMLHttpRequest Error") )
         }
         evt.statusCode = 0
-        callback(evt, failureResponse)
+        return callback(evt, failureResponse)
     }
 
     // will load the data & process the response in a special response object
@@ -328,8 +312,7 @@ function _createXHR(options) {
         } else {
             err = new Error("Internal XMLHttpRequest Error")
         }
-        callback(err, response, response.body)
-
+        return callback(err, response, response.body)
     }
 
     var xhr = options.xhr || null
@@ -414,9 +397,21 @@ function _createXHR(options) {
 
 }
 
+function getXml(xhr) {
+    if (xhr.responseType === "document") {
+        return xhr.responseXML
+    }
+    var firefoxBugTakenEffect = xhr.status === 204 && xhr.responseXML && xhr.responseXML.documentElement.nodeName === "parsererror"
+    if (xhr.responseType === "" && !firefoxBugTakenEffect) {
+        return xhr.responseXML
+    }
+
+    return null
+}
+
 function noop() {}
 
-},{"global/window":3,"is-function":4,"once":5,"parse-headers":6,"xtend":9}],9:[function(_dereq_,module,exports){
+},{"global/window":3,"is-function":4,"parse-headers":5,"xtend":8}],8:[function(_dereq_,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -437,7 +432,7 @@ function extend() {
     return target
 }
 
-},{}],10:[function(_dereq_,module,exports){
+},{}],9:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -510,7 +505,7 @@ server.fetchCsv = function (query, callback) {
 
 exports.default = server;
 
-},{"./solr-query":12,"xhr":8}],11:[function(_dereq_,module,exports){
+},{"./solr-query":11,"xhr":7}],10:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -755,7 +750,7 @@ var SolrClient = function () {
 
 exports.SolrClient = SolrClient;
 
-},{"../reducers/query":35,"../reducers/results":36,"./server":10}],12:[function(_dereq_,module,exports){
+},{"../reducers/query":34,"../reducers/results":35,"./server":9}],11:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -867,7 +862,8 @@ var solrQuery = function solrQuery(query) {
 	    facetSort = query.facetSort,
 	    pageStrategy = query.pageStrategy,
 	    cursorMark = query.cursorMark,
-	    idField = query.idField;
+	    idField = query.idField,
+	    group = query.group;
 
 
 	var filters = (query.filters || []).map(function (filter) {
@@ -884,8 +880,9 @@ var solrQuery = function solrQuery(query) {
 	var idSort = pageStrategy === "cursor" ? [{ field: idField, value: "asc" }] : [];
 
 	var sortParam = buildSort(sortFields.concat(idSort));
+	var groupParam = group && group.field ? "group=on&group.field=" + encodeURIComponent(group.field) : "";
 
-	return "q=*:*&" + (queryParams.length > 0 ? queryParams : "") + ("" + (sortParam.length > 0 ? "&sort=" + sortParam : "")) + ("" + (facetFieldParam.length > 0 ? "&" + facetFieldParam : "")) + ("" + (facetSortParams.length > 0 ? "&" + facetSortParams : "")) + ("&rows=" + rows) + ("&" + facetLimitParam) + ("&" + facetSortParam) + ("&" + cursorMarkParam) + (start === null ? "" : "&start=" + start) + "&facet=on" + ("&" + buildFormat(format));
+	return "q=*:*&" + (queryParams.length > 0 ? queryParams : "") + ("" + (sortParam.length > 0 ? "&sort=" + sortParam : "")) + ("" + (facetFieldParam.length > 0 ? "&" + facetFieldParam : "")) + ("" + (facetSortParams.length > 0 ? "&" + facetSortParams : "")) + ("" + (groupParam.length > 0 ? "&" + groupParam : "")) + ("&rows=" + rows) + ("&" + facetLimitParam) + ("&" + facetSortParam) + ("&" + cursorMarkParam) + (start === null ? "" : "&start=" + start) + "&facet=on" + ("&" + buildFormat(format));
 };
 
 exports.default = solrQuery;
@@ -900,7 +897,7 @@ exports.facetSorts = facetSorts;
 exports.buildSort = buildSort;
 exports.solrQuery = solrQuery;
 
-},{}],13:[function(_dereq_,module,exports){
+},{}],12:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -994,7 +991,7 @@ exports.default = {
 	}
 };
 
-},{"./current-query":14,"./list-facet":18,"./range-facet":19,"./results/container":21,"./results/count-label":22,"./results/csv-export":23,"./results/header":24,"./results/list":25,"./results/pagination":26,"./results/pending":27,"./results/preload-indicator":28,"./results/result":29,"./search-field-container":30,"./sort-menu":32,"./text-search":33}],14:[function(_dereq_,module,exports){
+},{"./current-query":13,"./list-facet":17,"./range-facet":18,"./results/container":20,"./results/count-label":21,"./results/csv-export":22,"./results/header":23,"./results/list":24,"./results/pagination":25,"./results/pending":26,"./results/preload-indicator":27,"./results/result":28,"./search-field-container":29,"./sort-menu":31,"./text-search":32}],13:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1193,7 +1190,7 @@ CurrentQuery.propTypes = {
 
 exports.default = CurrentQuery;
 
-},{"classnames":1,"react":"react"}],15:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],14:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1253,7 +1250,7 @@ CheckedIcon.propTypes = {
 
 exports.default = CheckedIcon;
 
-},{"react":"react"}],16:[function(_dereq_,module,exports){
+},{"react":"react"}],15:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1299,7 +1296,7 @@ var Search = function (_React$Component) {
 
 exports.default = Search;
 
-},{"react":"react"}],17:[function(_dereq_,module,exports){
+},{"react":"react"}],16:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1357,7 +1354,7 @@ UncheckedIcon.propTypes = {
 
 exports.default = UncheckedIcon;
 
-},{"react":"react"}],18:[function(_dereq_,module,exports){
+},{"react":"react"}],17:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1577,7 +1574,7 @@ ListFacet.propTypes = {
 
 exports.default = ListFacet;
 
-},{"../icons/checked":15,"../icons/unchecked":17,"classnames":1,"react":"react"}],19:[function(_dereq_,module,exports){
+},{"../icons/checked":14,"../icons/unchecked":16,"classnames":1,"react":"react"}],18:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1766,7 +1763,7 @@ RangeFacet.propTypes = {
 
 exports.default = RangeFacet;
 
-},{"./range-slider":20,"classnames":1,"react":"react"}],20:[function(_dereq_,module,exports){
+},{"./range-slider":19,"classnames":1,"react":"react"}],19:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1990,7 +1987,7 @@ RangeSlider.propTypes = {
 
 exports.default = RangeSlider;
 
-},{"react":"react","react-dom":"react-dom"}],21:[function(_dereq_,module,exports){
+},{"react":"react","react-dom":"react-dom"}],20:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2051,7 +2048,7 @@ ResultContainer.propTypes = {
 
 exports.default = ResultContainer;
 
-},{"classnames":1,"react":"react"}],22:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],21:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2111,7 +2108,7 @@ Result.propTypes = {
 
 exports.default = Result;
 
-},{"react":"react"}],23:[function(_dereq_,module,exports){
+},{"react":"react"}],22:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2139,7 +2136,7 @@ var _classnames2 = _interopRequireDefault(_classnames);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"classnames":1,"react":"react"}],24:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],23:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2196,7 +2193,7 @@ ResultHeader.propTypes = {
 
 exports.default = ResultHeader;
 
-},{"classnames":1,"react":"react"}],25:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],24:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2253,7 +2250,7 @@ ResultList.propTypes = {
 
 exports.default = ResultList;
 
-},{"classnames":1,"react":"react"}],26:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],25:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2403,7 +2400,7 @@ Pagination.propTypes = {
 
 exports.default = Pagination;
 
-},{"classnames":1,"react":"react"}],27:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],26:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2453,7 +2450,7 @@ Pending.propTypes = {
 
 exports.default = Pending;
 
-},{"react":"react"}],28:[function(_dereq_,module,exports){
+},{"react":"react"}],27:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2552,7 +2549,7 @@ PreloadIndicator.propTypes = {
 
 exports.default = PreloadIndicator;
 
-},{"classnames":1,"react":"react","react-dom":"react-dom"}],29:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react","react-dom":"react-dom"}],28:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2645,7 +2642,7 @@ Result.propTypes = {
 
 exports.default = Result;
 
-},{"classnames":1,"react":"react"}],30:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],29:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2728,7 +2725,7 @@ SearchFieldContainer.propTypes = {
 
 exports.default = SearchFieldContainer;
 
-},{"classnames":1,"react":"react"}],31:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react"}],30:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2902,7 +2899,7 @@ SolrFacetedSearch.propTypes = {
 
 exports.default = SolrFacetedSearch;
 
-},{"./component-pack":13,"classnames":1,"react":"react"}],32:[function(_dereq_,module,exports){
+},{"./component-pack":12,"classnames":1,"react":"react"}],31:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3081,7 +3078,7 @@ SortMenu.propTypes = {
 
 exports.default = SortMenu;
 
-},{"classnames":1,"react":"react","react-dom":"react-dom"}],33:[function(_dereq_,module,exports){
+},{"classnames":1,"react":"react","react-dom":"react-dom"}],32:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3221,7 +3218,7 @@ TextSearch.propTypes = {
 
 exports.default = TextSearch;
 
-},{"../icons/search":16,"classnames":1,"react":"react"}],34:[function(_dereq_,module,exports){
+},{"../icons/search":15,"classnames":1,"react":"react"}],33:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3246,7 +3243,7 @@ exports.SolrFacetedSearch = _solrFacetedSearch2.default;
 exports.defaultComponentPack = _componentPack2.default;
 exports.SolrClient = _solrClient.SolrClient;
 
-},{"./api/solr-client":11,"./components/component-pack":13,"./components/solr-faceted-search":31}],35:[function(_dereq_,module,exports){
+},{"./api/solr-client":10,"./components/component-pack":12,"./components/solr-faceted-search":30}],34:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3297,7 +3294,7 @@ var setQueryFields = function setQueryFields(state, action) {
 	});
 };
 
-},{}],36:[function(_dereq_,module,exports){
+},{}],35:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3340,5 +3337,5 @@ var initialState = {
 	pending: false
 };
 
-},{}]},{},[34])(34)
+},{}]},{},[33])(33)
 });

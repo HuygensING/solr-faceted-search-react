@@ -525,5 +525,17 @@ describe("solr-query", () => { //eslint-disable-line no-undef
 			};
 			expect(solrQuery(query).split("&").indexOf("cursorMark=*") > -1).toEqual(true);
 		});
+
+		it("should set the group param", () => { //eslint-disable-line no-undef
+			const query = {
+				searchFields: [],
+				sortFields: [],
+				rows: 10,
+				start: null,
+				group: {field: "grouped_field"}
+			};
+			expect(solrQuery(query).split("&").indexOf("group=on") > -1).toEqual(true);
+			expect(solrQuery(query).split("&").indexOf("group.field=grouped_field") > -1).toEqual(true);
+		});
 	});
 });
