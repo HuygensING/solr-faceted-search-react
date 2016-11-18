@@ -4,7 +4,8 @@ const initialState = {
 	rows: 0,
 	url: null,
 	pageStrategy: null,
-	start: null
+	start: null,
+	group: null
 };
 
 const setQueryFields = (state, action) => {
@@ -15,7 +16,8 @@ const setQueryFields = (state, action) => {
 		url: action.url,
 		rows: action.rows,
 		pageStrategy: action.pageStrategy,
-		start: action.start
+		start: action.start,
+		group: action.group
 	};
 };
 
@@ -33,6 +35,8 @@ export default function(state=initialState, action) {
 			return {...state, start: action.newStart};
 		case "SET_RESULTS":
 			return action.data.nextCursorMark ? {...state, cursorMark: action.data.nextCursorMark } : state;
+		case "SET_GROUP":
+			return {...state, group: action.group};
 	}
 
 	return state;

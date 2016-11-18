@@ -666,7 +666,12 @@ var SolrClient = function () {
 			var rows = query.rows;
 
 			var payload = { type: "SET_START", newStart: page * rows };
-
+			this.sendQuery((0, _query2.default)(this.state.query, payload));
+		}
+	}, {
+		key: "setGroup",
+		value: function setGroup(group) {
+			var payload = { type: "SET_GROUP", group: group };
 			this.sendQuery((0, _query2.default)(this.state.query, payload));
 		}
 	}, {
@@ -740,7 +745,8 @@ var SolrClient = function () {
 				onNextCursorQuery: this.sendNextCursorQuery.bind(this),
 				onSetCollapse: this.setCollapse.bind(this),
 				onNewSearch: this.resetSearchFields.bind(this),
-				onCsvExport: this.fetchCsv.bind(this)
+				onCsvExport: this.fetchCsv.bind(this),
+				onGroupChange: this.setGroup.bind(this)
 			};
 		}
 	}]);
@@ -3269,6 +3275,8 @@ exports.default = function () {
 			return _extends({}, state, { start: action.newStart });
 		case "SET_RESULTS":
 			return action.data.nextCursorMark ? _extends({}, state, { cursorMark: action.data.nextCursorMark }) : state;
+		case "SET_GROUP":
+			return _extends({}, state, { group: action.group });
 	}
 
 	return state;
@@ -3280,7 +3288,8 @@ var initialState = {
 	rows: 0,
 	url: null,
 	pageStrategy: null,
-	start: null
+	start: null,
+	group: null
 };
 
 var setQueryFields = function setQueryFields(state, action) {
@@ -3290,7 +3299,8 @@ var setQueryFields = function setQueryFields(state, action) {
 		url: action.url,
 		rows: action.rows,
 		pageStrategy: action.pageStrategy,
-		start: action.start
+		start: action.start,
+		group: action.group
 	});
 };
 
