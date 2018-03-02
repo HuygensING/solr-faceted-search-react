@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import cx from "classnames";
 
@@ -103,18 +104,18 @@ SolrFacetedSearch.defaultProps = {
 };
 
 SolrFacetedSearch.propTypes = {
-	bootstrapCss: React.PropTypes.bool,
-	customComponents: React.PropTypes.object,
-	onCsvExport: React.PropTypes.func,
-	onNewSearch: React.PropTypes.func,
-	onPageChange: React.PropTypes.func,
-	onSearchFieldChange: React.PropTypes.func.isRequired,
-	onSelectDoc: React.PropTypes.func,
-	onSortFieldChange: React.PropTypes.func.isRequired,
-	query: React.PropTypes.object,
-	results: React.PropTypes.object,
-	showCsvExport: React.PropTypes.bool,
-	truncateFacetListsAt: React.PropTypes.number
+	bootstrapCss: PropTypes.bool,
+	customComponents: PropTypes.object,
+	onCsvExport: PropTypes.func,
+	onNewSearch: PropTypes.func,
+	onPageChange: PropTypes.func,
+	onSearchFieldChange: PropTypes.func.isRequired,
+	onSelectDoc: PropTypes.func,
+	onSortFieldChange: PropTypes.func.isRequired,
+	query: PropTypes.object,
+	results: PropTypes.object,
+	showCsvExport: PropTypes.bool,
+	truncateFacetListsAt: PropTypes.number
 };
 
 export default SolrFacetedSearch;

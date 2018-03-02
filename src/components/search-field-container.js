@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import cx from "classnames";
 
@@ -26,9 +27,9 @@ class SearchFieldContainer extends React.Component {
 }
 
 SearchFieldContainer.propTypes = {
-	bootstrapCss: React.PropTypes.bool,
-	children: React.PropTypes.array,
-	onNewSearch: React.PropTypes.func
+	bootstrapCss: PropTypes.bool,
+	children: PropTypes.array,
+	onNewSearch: PropTypes.func
 };
 
 export default SearchFieldContainer;

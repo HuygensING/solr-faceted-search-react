@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 
 class UncheckedIcon extends React.Component {
@@ -17,7 +18,7 @@ UncheckedIcon.defaultProps = {
 };
 
 UncheckedIcon.propTypes = {
-	title: React.PropTypes.string
+	title: PropTypes.string
 };
 
 export default UncheckedIcon;

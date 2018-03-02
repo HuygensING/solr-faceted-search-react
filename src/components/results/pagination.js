@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import cx from "classnames";
 
@@ -61,10 +62,10 @@ class Pagination extends React.Component {
 }
 
 Pagination.propTypes = {
-	bootstrapCss: React.PropTypes.bool,
-	onChange: React.PropTypes.func,
-	query: React.PropTypes.object,
-	results: React.PropTypes.object
+	bootstrapCss: PropTypes.bool,
+	onChange: PropTypes.func,
+	query: PropTypes.object,
+	results: PropTypes.object
 };
 
 export default Pagination;

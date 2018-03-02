@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import cx from "classnames";
 
@@ -29,10 +30,10 @@ class Result extends React.Component {
 }
 
 Result.propTypes = {
-	bootstrapCss: React.PropTypes.bool,
-	doc: React.PropTypes.object,
-	fields: React.PropTypes.array,
-	onSelect: React.PropTypes.func.isRequired
+	bootstrapCss: PropTypes.bool,
+	doc: PropTypes.object,
+	fields: PropTypes.array,
+	onSelect: PropTypes.func.isRequired
 };
 
 export default Result;

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import cx from "classnames";
 
@@ -14,8 +15,8 @@ class ResultList extends React.Component {
 }
 
 ResultList.propTypes = {
-	bootstrapCss: React.PropTypes.bool,
-	children: React.PropTypes.array
+	bootstrapCss: PropTypes.bool,
+	children: PropTypes.array
 };
 
 export default ResultList;

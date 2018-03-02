@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 
 class Pending extends React.Component {
@@ -8,7 +9,7 @@ class Pending extends React.Component {
 }
 
 Pending.propTypes = {
-	bootstrapCss: React.PropTypes.bool
+	bootstrapCss: PropTypes.bool
 };
 
 export default Pending;

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import cx from "classnames";
 
@@ -104,19 +105,19 @@ ListFacet.defaultProps = {
 };
 
 ListFacet.propTypes = {
-	bootstrapCss: React.PropTypes.bool,
-	children: React.PropTypes.array,
-	collapse: React.PropTypes.bool,
-	facetSort: React.PropTypes.string,
-	facets: React.PropTypes.array.isRequired,
-	field: React.PropTypes.string.isRequired,
-	label: React.PropTypes.string,
-	onChange: React.PropTypes.func,
-	onFacetSortChange: React.PropTypes.func,
-	onSetCollapse: React.PropTypes.func,
-	query: React.PropTypes.object,
-	truncateFacetListsAt: React.PropTypes.number,
-	value: React.PropTypes.array
+	bootstrapCss: PropTypes.bool,
+	children: PropTypes.array,
+	collapse: PropTypes.bool,
+	facetSort: PropTypes.string,
+	facets: PropTypes.array.isRequired,
+	field: PropTypes.string.isRequired,
+	label: PropTypes.string,
+	onChange: PropTypes.func,
+	onFacetSortChange: PropTypes.func,
+	onSetCollapse: PropTypes.func,
+	query: PropTypes.object,
+	truncateFacetListsAt: PropTypes.number,
+	value: PropTypes.array
 };
 
 export default ListFacet;

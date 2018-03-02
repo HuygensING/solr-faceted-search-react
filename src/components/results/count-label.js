@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 
 const resultCountLabels = {
@@ -22,7 +23,7 @@ class Result extends React.Component {
 }
 
 Result.propTypes = {
-	numFound: React.PropTypes.number.isRequired
+	numFound: PropTypes.number.isRequired
 };
 
 export default Result;
