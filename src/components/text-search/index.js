@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import cx from "classnames";
 import SearchIcon from "../icons/search";
@@ -74,12 +75,12 @@ TextSearch.defaultProps = {
 };
 
 TextSearch.propTypes = {
-	bootstrapCss: React.PropTypes.bool,
-	collapse: React.PropTypes.bool,
-	field: React.PropTypes.string.isRequired,
-	label: React.PropTypes.string,
-	onChange: React.PropTypes.func,
-	onSetCollapse: React.PropTypes.func
+	bootstrapCss: PropTypes.bool,
+	collapse: PropTypes.bool,
+	field: PropTypes.string.isRequired,
+	label: PropTypes.string,
+	onChange: PropTypes.func,
+	onSetCollapse: PropTypes.func
 };
 
 export default TextSearch;

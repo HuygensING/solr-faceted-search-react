@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 
 class CheckedIcon extends React.Component {
@@ -19,7 +20,7 @@ CheckedIcon.defaultProps = {
 };
 
 CheckedIcon.propTypes = {
-	title: React.PropTypes.string
+	title: PropTypes.string
 };
 
 export default CheckedIcon;

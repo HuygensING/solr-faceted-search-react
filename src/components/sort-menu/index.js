@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import ReactDOM from "react-dom";
 import cx from "classnames";
@@ -93,9 +94,9 @@ class SortMenu extends React.Component {
 }
 
 SortMenu.propTypes = {
-	bootstrapCss: React.PropTypes.bool,
-	onChange: React.PropTypes.func,
-	sortFields: React.PropTypes.array
+	bootstrapCss: PropTypes.bool,
+	onChange: PropTypes.func,
+	sortFields: PropTypes.array
 };
 
 export default SortMenu;

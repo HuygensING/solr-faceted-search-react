@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import cx from "classnames";
 
@@ -92,9 +93,9 @@ class CurrentQuery extends React.Component {
 }
 
 CurrentQuery.propTypes = {
-	bootstrapCss: React.PropTypes.bool,
-	onChange: React.PropTypes.func,
-	query: React.PropTypes.object
+	bootstrapCss: PropTypes.bool,
+	onChange: PropTypes.func,
+	query: PropTypes.object
 };
 
 export default CurrentQuery;

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import ReactDOM from "react-dom";
 
@@ -170,9 +171,9 @@ class RangeSlider extends React.Component {
 }
 
 RangeSlider.propTypes = {
-	lowerLimit: React.PropTypes.number,
-	onChange: React.PropTypes.func.isRequired,
-	upperLimit: React.PropTypes.number
+	lowerLimit: PropTypes.number,
+	onChange: PropTypes.func.isRequired,
+	upperLimit: PropTypes.number
 };
 
 

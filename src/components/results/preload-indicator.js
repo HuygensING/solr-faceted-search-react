@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import ReactDOM from "react-dom";
 import cx from "classnames";
@@ -44,10 +45,10 @@ class PreloadIndicator extends React.Component {
 }
 
 PreloadIndicator.propTypes = {
-	bootstrapCss: React.PropTypes.bool,
-	onNextCursorQuery: React.PropTypes.func,
-	query: React.PropTypes.object,
-	results: React.PropTypes.object
+	bootstrapCss: PropTypes.bool,
+	onNextCursorQuery: PropTypes.func,
+	query: PropTypes.object,
+	results: PropTypes.object
 };
 
 export default PreloadIndicator;

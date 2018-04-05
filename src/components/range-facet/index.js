@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import cx from "classnames";
 
@@ -117,14 +118,14 @@ RangeFacet.defaultProps = {
 };
 
 RangeFacet.propTypes = {
-	bootstrapCss: React.PropTypes.bool,
-	collapse: React.PropTypes.bool,
-	facets: React.PropTypes.array.isRequired,
-	field: React.PropTypes.string.isRequired,
-	label: React.PropTypes.string,
-	onChange: React.PropTypes.func,
-	onSetCollapse: React.PropTypes.func,
-	value: React.PropTypes.array
+	bootstrapCss: PropTypes.bool,
+	collapse: PropTypes.bool,
+	facets: PropTypes.array.isRequired,
+	field: PropTypes.string.isRequired,
+	label: PropTypes.string,
+	onChange: PropTypes.func,
+	onSetCollapse: PropTypes.func,
+	value: PropTypes.array
 };
 
 export default RangeFacet;
